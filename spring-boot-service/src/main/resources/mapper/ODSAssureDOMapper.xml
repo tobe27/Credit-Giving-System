@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.business.ODSAssureDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.business.ODSAssureDO">
+    <result column="CREDIT_ID" jdbcType="VARCHAR" property="creditId" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="ASSURE_TYPE" jdbcType="VARCHAR" property="assureType" />
+    <result column="ASSURE_ID" jdbcType="VARCHAR" property="assureId" />
+    <result column="CONT_ID" jdbcType="VARCHAR" property="contId" />
+    <result column="SUM_BALANCE" jdbcType="DECIMAL" property="sumBalance" />
+  </resultMap>
+
+  <insert id="insertSelective" parameterType="com.example.service.business.ODSAssureDO">
+    insert into ODS_CUSTOMER_ASSURE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="creditId != null">
+        CREDIT_ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="assureType != null">
+        ASSURE_TYPE,
+      </if>
+      <if test="assureId != null">
+        ASSURE_ID,
+      </if>
+      <if test="contId != null">
+        CONT_ID,
+      </if>
+      <if test="sumBalance != null">
+        SUM_BALANCE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="creditId != null">
+        #{creditId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="assureType != null">
+        #{assureType,jdbcType=VARCHAR},
+      </if>
+      <if test="assureId != null">
+        #{assureId,jdbcType=VARCHAR},
+      </if>
+      <if test="contId != null">
+        #{contId,jdbcType=VARCHAR},
+      </if>
+      <if test="sumBalance != null">
+        #{sumBalance,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+</mapper>

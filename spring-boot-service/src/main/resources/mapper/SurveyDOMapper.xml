@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.survey.SurveyDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.survey.SurveyDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="HOUSEHOLD_ID" jdbcType="VARCHAR" property="householdId" />
+    <result column="IS_FAMILIAR" jdbcType="VARCHAR" property="isFamiliar" />
+    <result column="NEGATIVE_REASON" jdbcType="VARCHAR" property="negativeReason" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="OUT_WORK" jdbcType="VARCHAR" property="outWork" />
+    <result column="HOUSE_VALUE" jdbcType="VARCHAR" property="houseValue" />
+    <result column="CAR_VALUE" jdbcType="VARCHAR" property="carValue" />
+    <result column="MAIN_BUSINESS" jdbcType="VARCHAR" property="mainBusiness" />
+    <result column="SCALE" jdbcType="VARCHAR" property="scale" />
+    <result column="INCOME" jdbcType="VARCHAR" property="income" />
+    <result column="PAYOUT" jdbcType="VARCHAR" property="payout" />
+    <result column="CREDIT_AMOUNT" jdbcType="VARCHAR" property="creditAmount" />
+    <result column="BORROWER" jdbcType="VARCHAR" property="borrower" />
+    <result column="SURVEY_TYPE" jdbcType="VARCHAR" property="surveyType" />
+    <result column="SENATOR" jdbcType="VARCHAR" property="senator" />
+    <result column="IS_VALID" jdbcType="VARCHAR" property="isValid" />
+    <result column="DATE" jdbcType="VARCHAR" property="date" />
+    <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
+    <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
+  </resultMap>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select *
+    from USER_SURVEY
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+
+  <!--根据身份证号和评议员获取数据-->
+  <select id="listByIdNumberAndSenator" parameterType="com.example.service.survey.SurveyDO" resultMap="BaseResultMap">
+    select *
+    from USER_SURVEY
+    where ID_NUMBER = #{idNumber} and SENATOR = #{senator}
+  </select>
+
+  <select id="listByIdNumberAndIsValid" parameterType="com.example.service.survey.SurveyDO" resultMap="BaseResultMap">
+    select *
+    from USER_SURVEY
+    where 1=1
+    <if test="isValid != null">
+      and IS_VALID = #{isValid}
+    </if>
+     and ID_NUMBER = #{idNumber}
+    ORDER BY created_at DESC
+  </select>
+
+  <select id="listByIdNumbersAndIsValid" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select *
+    from USER_SURVEY
+    where 1=1
+    and IS_VALID = '是'
+    and ID_NUMBER  in
+     
+     <foreach item="item" index="index" collection="idNumberList" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+     
+    ORDER BY created_at DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from USER_SURVEY
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+
+
+  <insert id="insertSelective" parameterType="com.example.service.survey.SurveyDO">
+    insert into USER_SURVEY
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID,
+      </if>
+      <if test="isFamiliar != null">
+        IS_FAMILIAR,
+      </if>
+      <if test="negativeReason != null">
+        NEGATIVE_REASON,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+      <if test="outWork != null">
+        OUT_WORK,
+      </if>
+      <if test="houseValue != null">
+        HOUSE_VALUE,
+      </if>
+      <if test="carValue != null">
+        CAR_VALUE,
+      </if>
+      <if test="mainBusiness != null">
+        MAIN_BUSINESS,
+      </if>
+      <if test="scale != null">
+        SCALE,
+      </if>
+      <if test="income != null">
+        INCOME,
+      </if>
+      <if test="payout != null">
+        PAYOUT,
+      </if>
+      <if test="creditAmount != null">
+        CREDIT_AMOUNT,
+      </if>
+      <if test="borrower != null">
+        BORROWER,
+      </if>
+      <if test="surveyType != null">
+        SURVEY_TYPE,
+      </if>
+      <if test="senator != null">
+        SENATOR,
+      </if>
+      <if test="isValid != null">
+        IS_VALID,
+      </if>
+      <if test="date != null">
+        DATE,
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT,
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="isFamiliar != null">
+        #{isFamiliar,jdbcType=VARCHAR},
+      </if>
+      <if test="negativeReason != null">
+        #{negativeReason,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="outWork != null">
+        #{outWork,jdbcType=VARCHAR},
+      </if>
+      <if test="houseValue != null">
+        #{houseValue,jdbcType=VARCHAR},
+      </if>
+      <if test="carValue != null">
+        #{carValue,jdbcType=VARCHAR},
+      </if>
+      <if test="mainBusiness != null">
+        #{mainBusiness,jdbcType=VARCHAR},
+      </if>
+      <if test="scale != null">
+        #{scale,jdbcType=VARCHAR},
+      </if>
+      <if test="income != null">
+        #{income,jdbcType=VARCHAR},
+      </if>
+      <if test="payout != null">
+        #{payout,jdbcType=VARCHAR},
+      </if>
+      <if test="creditAmount != null">
+        #{creditAmount,jdbcType=VARCHAR},
+      </if>
+      <if test="borrower != null">
+        #{borrower,jdbcType=VARCHAR},
+      </if>
+      <if test="surveyType != null">
+        #{surveyType,jdbcType=VARCHAR},
+      </if>
+      <if test="senator != null">
+        #{senator,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null">
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null">
+        #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.service.survey.SurveyDO">
+    update USER_SURVEY
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="isFamiliar != null">
+        IS_FAMILIAR = #{isFamiliar,jdbcType=VARCHAR},
+      </if>
+      <if test="negativeReason != null">
+        NEGATIVE_REASON = #{negativeReason,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="outWork != null">
+        OUT_WORK = #{outWork,jdbcType=VARCHAR},
+      </if>
+      <if test="houseValue != null">
+        HOUSE_VALUE = #{houseValue,jdbcType=VARCHAR},
+      </if>
+      <if test="carValue != null">
+        CAR_VALUE = #{carValue,jdbcType=VARCHAR},
+      </if>
+      <if test="mainBusiness != null">
+        MAIN_BUSINESS = #{mainBusiness,jdbcType=VARCHAR},
+      </if>
+      <if test="scale != null">
+        SCALE = #{scale,jdbcType=VARCHAR},
+      </if>
+      <if test="income != null">
+        INCOME = #{income,jdbcType=VARCHAR},
+      </if>
+      <if test="payout != null">
+        PAYOUT = #{payout,jdbcType=VARCHAR},
+      </if>
+      <if test="creditAmount != null">
+        CREDIT_AMOUNT = #{creditAmount,jdbcType=VARCHAR},
+      </if>
+      <if test="borrower != null">
+        BORROWER = #{borrower,jdbcType=VARCHAR},
+      </if>
+      <if test="surveyType != null">
+        SURVEY_TYPE = #{surveyType,jdbcType=VARCHAR},
+      </if>
+      <if test="senator != null">
+        SENATOR = #{senator,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null">
+        IS_VALID = #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null">
+        DATE = #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

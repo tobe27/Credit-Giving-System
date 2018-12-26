@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.blue.BlueDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.blue.BlueDO">
+    <result column="CREDIT_ID" jdbcType="VARCHAR" property="creditId" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="AMOUNT_SUM" jdbcType="DECIMAL" property="amountSum" />
+    <result column="BALANCE_SUM" jdbcType="DECIMAL" property="balanceSum" />
+    <result column="START_DATE" jdbcType="VARCHAR" property="startDate" />
+    <result column="END_DATE" jdbcType="VARCHAR" property="endDate" />
+    <result column="LMT_AMOUNT" jdbcType="DECIMAL" property="lmtAmount" />
+    <result column="CUST_MANAGER_ID" jdbcType="VARCHAR" property="custManagerId" />
+    <result column="ORG_ID" jdbcType="VARCHAR" property="orgId" />
+  </resultMap>
+
+
+  <select id="listBlueByUserOrOrgCode" parameterType="com.example.service.blue.BlueDO" resultMap="BaseResultMap">
+    select blue.*
+    from ods_customer_blue blue
+    join user_customer customer on blue.id_number = customer.id_number
+    join grid_info grid on customer.grid_code = grid.grid_code
+    where (select accessable from task_status) = 'Y'
+    <if test="name != null">
+      and blue.name like '%'||#{name}||'%'
+    </if>
+    <if test="idNumber != null and idNumber != ''">
+      and blue.id_number = #{idNumber}
+    </if>
+    <if test="roleId == 1">
+      and grid.user_id = #{userId}
+    </if>
+    <if test="roleId != 1">
+      and grid.org_code in
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
+
+  <insert id="insertSelective" parameterType="com.example.service.blue.BlueDO">
+    insert into ODS_CUSTOMER_BLUE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="creditId != null">
+        CREDIT_ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="amountSum != null">
+        AMOUNT_SUM,
+      </if>
+      <if test="balanceSum != null">
+        BALANCE_SUM,
+      </if>
+      <if test="startDate != null">
+        START_DATE,
+      </if>
+      <if test="endDate != null">
+        END_DATE,
+      </if>
+      <if test="lmtAmount != null">
+        LMT_AMOUNT,
+      </if>
+      <if test="custManagerId != null">
+        CUST_MANAGER_ID,
+      </if>
+      <if test="orgId != null">
+        ORG_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="creditId != null">
+        #{creditId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="amountSum != null">
+        #{amountSum,jdbcType=DECIMAL},
+      </if>
+      <if test="balanceSum != null">
+        #{balanceSum,jdbcType=DECIMAL},
+      </if>
+      <if test="startDate != null">
+        #{startDate,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null">
+        #{endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="lmtAmount != null">
+        #{lmtAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="custManagerId != null">
+        #{custManagerId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

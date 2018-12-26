@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.ods.ODSLimitDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.ods.ODSLimitDO">
+    <result column="CREDIT_ID" jdbcType="VARCHAR" property="creditId" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="LMT_AMOUNT" jdbcType="VARCHAR" property="lmtAmount" />
+    <result column="START_DATE" jdbcType="VARCHAR" property="startDate" />
+    <result column="END_DATE" jdbcType="VARCHAR" property="endDate" />
+    <result column="LMT_TYPE" jdbcType="VARCHAR" property="lmtType" />
+
+    <result column="GRID_NAME" jdbcType="VARCHAR" property="gridName" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+    <result column="CREDIT_AMOUNT" jdbcType="VARCHAR" property="creditAmount" />
+
+  </resultMap>
+
+
+  <select id="listGivings" parameterType="com.example.service.ods.ODSLimitDO" resultMap="BaseResultMap">
+    select give.*, grid.grid_name, customer.register_person as user_name, customer.main_org_name as org_name, conclusion.credit_amount
+    from ODS_CUSTOMER_LIMIT give
+    join DB_CUSTOMER_TAG_RELATION ctr on give.ID_NUMBER = ctr.ID_NUMBER
+    left join user_conclusion conclusion on give.id_number = conclusion.ID_NUMBER
+    join USER_CUSTOMER customer on give.ID_NUMBER = customer.ID_NUMBER
+    join grid_info grid on customer.grid_code = grid.grid_code
+    where (select accessable from task_status) = 'Y' and ctr.TAG_ID = #{tagId}
+    <if test="name != null">
+      and give.name like '%'||#{name}||'%'
+    </if>
+    <if test="idNumber != null and idNumber != ''">
+      and give.id_number = #{idNumber}
+    </if>
+    <if test="gridCode != null">
+      and grid.grid_code = #{gridCode}
+    </if>
+    <if test="roleId == 1">
+      and grid.user_id = #{userId}
+    </if>
+    <if test="roleId != 1">
+      and grid.org_code in
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
+  <insert id="insertSelective" parameterType="com.example.service.ods.ODSLimitDO">
+    insert into ODS_CUSTOMER_LIMIT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="creditId != null">
+        CREDIT_ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="lmtAmount != null">
+        LMT_AMOUNT,
+      </if>
+      <if test="startDate != null">
+        START_DATE,
+      </if>
+      <if test="endDate != null">
+        END_DATE,
+      </if>
+      <if test="lmtType != null">
+        LMT_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="creditId != null">
+        #{creditId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="lmtAmount != null">
+        #{lmtAmount,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null">
+        #{startDate,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null">
+        #{endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="lmtType != null">
+        #{lmtType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

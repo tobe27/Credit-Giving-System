@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.business.ODSLoanDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.business.ODSLoanDO">
+    <result column="CREDIT_ID" jdbcType="VARCHAR" property="creditId" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="ACCOUNT" jdbcType="VARCHAR" property="account" />
+    <result column="LOAN_TYPE" jdbcType="VARCHAR" property="loanType" />
+    <result column="CONT_NO" jdbcType="VARCHAR" property="contNo" />
+    <result column="BILL_NO" jdbcType="VARCHAR" property="billNo" />
+    <result column="AMOUNT" jdbcType="VARCHAR" property="amount" />
+    <result column="BALANCE" jdbcType="DECIMAL" property="balance" />
+    <result column="ORGNO" jdbcType="VARCHAR" property="orgno" />
+
+    <result column="GRID_NAME" jdbcType="VARCHAR" property="gridName" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+  </resultMap>
+
+  <select id="listLoan" parameterType="com.example.service.business.ODSLoanDO" resultMap="BaseResultMap">
+    select give.*, grid.grid_name, customer.register_person as user_name, customer.main_org_name as org_name
+    from ODS_CUSTOMER_LOAN give
+    join DB_CUSTOMER_TAG_RELATION ctr on give.ID_NUMBER = ctr.ID_NUMBER
+    join USER_CUSTOMER customer on give.ID_NUMBER = customer.ID_NUMBER
+    join grid_info grid on customer.grid_code = grid.grid_code
+    where (select accessable from task_status) = 'Y' and ctr.TAG_ID = #{tagId}
+    <if test="name != null">
+      and give.name like '%'||#{name}||'%'
+    </if>
+    <if test="idNumber != null and idNumber != ''">
+      and give.id_number = #{idNumber}
+    </if>
+    <if test="gridCode != null">
+      and grid.grid_code = #{gridCode}
+    </if>
+    <if test="roleId == 1">
+      and grid.user_id = #{userId}
+    </if>
+    <if test="roleId != 1">
+      and grid.org_code in
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
+  <insert id="insertSelective" parameterType="com.example.service.business.ODSLoanDO">
+    insert into ODS_CUSTOMER_LOAN
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="creditId != null">
+        CREDIT_ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="account != null">
+        ACCOUNT,
+      </if>
+      <if test="loanType != null">
+        LOAN_TYPE,
+      </if>
+      <if test="contNo != null">
+        CONT_NO,
+      </if>
+      <if test="billNo != null">
+        BILL_NO,
+      </if>
+      <if test="amount != null">
+        AMOUNT,
+      </if>
+      <if test="balance != null">
+        BALANCE,
+      </if>
+      <if test="orgno != null">
+        ORGNO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="creditId != null">
+        #{creditId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="loanType != null">
+        #{loanType,jdbcType=VARCHAR},
+      </if>
+      <if test="contNo != null">
+        #{contNo,jdbcType=VARCHAR},
+      </if>
+      <if test="billNo != null">
+        #{billNo,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null">
+        #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="orgno != null">
+        #{orgno,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

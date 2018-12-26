@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.business.ODSDepositDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.business.ODSDepositDO">
+    <result column="CREDIT_ID" jdbcType="VARCHAR" property="creditId" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="ACCOUNT" jdbcType="VARCHAR" property="account" />
+    <result column="DEPOSIT_TYPE" jdbcType="VARCHAR" property="depositType" />
+    <result column="BALANCE" jdbcType="VARCHAR" property="balance" />
+  </resultMap>
+
+  <insert id="insertSelective" parameterType="com.example.service.business.ODSDepositDO">
+    insert into ODS_CUSTOMER_DEPOSIT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="creditId != null">
+        CREDIT_ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="account != null">
+        ACCOUNT,
+      </if>
+      <if test="depositType != null">
+        DEPOSIT_TYPE,
+      </if>
+      <if test="balance != null">
+        BALANCE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="creditId != null">
+        #{creditId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="depositType != null">
+        #{depositType,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null">
+        #{balance,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

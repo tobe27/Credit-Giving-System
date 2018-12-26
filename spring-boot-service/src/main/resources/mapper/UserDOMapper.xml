@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.user.UserDOMapper">
+    <resultMap id="BaseResultMap" type="com.example.service.user.UserDO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="work_id" jdbcType="VARCHAR" property="workId" />
+        <result column="id_number" jdbcType="VARCHAR" property="idNumber" />
+        <result column="gender" jdbcType="VARCHAR" property="gender" />
+        <result column="contact" jdbcType="VARCHAR" property="contact" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
+        <result column="corp_name" jdbcType="VARCHAR" property="corpName" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="last_login_at" jdbcType="BIGINT" property="lastLoginAt" />
+        <result column="created_at" jdbcType="BIGINT" property="createdAt" />
+        <result column="updated_at" jdbcType="BIGINT" property="updatedAt" />
+
+        <!--关联使用-->
+        <result column="org_name" jdbcType="VARCHAR" property="orgName" />
+        <result column="grid_code" jdbcType="VARCHAR" property="gridCode" />
+    </resultMap>
+
+    <resultMap id="userRoleRelationResultMap" type="com.example.service.user.UserDO" extends="BaseResultMap">
+        <collection property="roles" column="id" ofType="com.example.service.role.RoleDO" select="listRoles" >
+        </collection>
+    </resultMap>
+
+    <resultMap id="roleResultMap" type="com.example.service.role.RoleDO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="role_en" jdbcType="VARCHAR" property="roleEn" />
+        <result column="role_ch" jdbcType="VARCHAR" property="roleCh" />
+        <result column="created_at" jdbcType="BIGINT" property="createdAt" />
+        <result column="updated_at" jdbcType="BIGINT" property="updatedAt" />
+    </resultMap>
+
+    <!--获取ODS数据最新时间-->
+    <select id="getTaskDate" resultType="String">
+        select taskdate from task_status
+    </select>
+
+    <select id="getUserDO" parameterType="java.lang.Long" resultMap="userRoleRelationResultMap">
+        select user.*, org.org_name
+        from db_user user
+        left JOIN db_org org on org.org_code = user.org_code
+        where user.id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="getUserDOByUsername" parameterType="java.lang.String" resultMap="userRoleRelationResultMap">
+        select user.*
+        from db_user user
+        where user.username = #{username,jdbcType=VARCHAR}
+    </select>
+
+    <select id="listUserByOrgCode"  parameterType="String" resultMap="BaseResultMap">
+        select *
+        from db_user
+        where org_code = #{orgCode}
+    </select>
+
+    <!--获取用户的所有角色-->
+    <select id="listStringRoles" parameterType="Long" resultType="String">
+        select role.role_en
+        from db_role role
+        left join db_user_role_relation ur on role.id = ur.role_id
+        where ur.user_id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <!--获取用户的所有权限-->
+    <select id="listStringPerms" parameterType="Long" resultType="String">
+        select perm.permission_url
+        from db_permission perm
+        left join db_role_permission_relation rp on perm.id = rp.permission_id
+        left join db_user_role_relation ur on rp.role_id = ur.role_id
+        where ur.user_id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="listGridCodeById" parameterType="Long" resultType="String">
+        select grid.grid_code
+        from grid_info grid
+        where grid.user_id =  #{id}
+    </select>
+
+    <!--列表-->
+    <select id="listUserDOs" parameterType="com.example.service.user.UserDO" resultMap="userRoleRelationResultMap">
+        select user.*, org.org_name
+        from db_user user
+        left JOIN db_org org on org.org_code = user.org_code
+        left JOIN db_user_role_relation urr on user.id = urr.user_id
+        left JOIN db_role role on urr.role_id = role.id
+        where 1=1
+        <if test="name != null">
+            and user.name like '%'||#{name}||'%'
+        </if>
+        <if test="username != null and username != ''">
+            and user.username = #{username}
+        </if>
+        <if test="idNumber != null">
+            and user.id_number like '%'||#{idNumber}||'%'
+        </if>
+        <if test="roleId != null">
+            and role.id = #{roleId}
+        </if>
+        and user.org_code in
+        <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by user.created_at DESC
+    </select>
+
+    <select id="listUserIdByOrgCode" parameterType="com.example.service.user.UserDO" resultType="Long">
+        select user.id
+        from db_user user
+        left JOIN db_org org on org.org_code = user.org_code
+        where
+        user.org_code in
+        <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--关联角色-->
+    <select id="listRoles" parameterType="java.lang.Long" resultMap="roleResultMap">
+        select role.*
+        from db_role role
+        left join db_user_role_relation ur on role.id = ur.role_id
+        where ur.user_id = #{id}
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from db_user
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true" parameterType="com.example.service.user.UserDO">
+        insert into db_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="workId != null">
+                work_id,
+            </if>
+            <if test="idNumber != null">
+                id_number,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="contact != null">
+                contact,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="orgCode != null">
+                org_code,
+            </if>
+            <if test="corpName != null">
+                corp_name,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="lastLoginAt != null">
+                last_login_at,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="workId != null">
+                #{workId},
+            </if>
+            <if test="idNumber != null">
+                #{idNumber},
+            </if>
+            <if test="gender != null">
+                #{gender},
+            </if>
+            <if test="contact != null">
+                #{contact},
+            </if>
+            <if test="email != null">
+                #{email},
+            </if>
+
+            <if test="orgCode != null">
+                #{orgCode},
+            </if>
+            <if test="corpName != null">
+                #{corpName},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="lastLoginAt != null">
+                #{lastLoginAt},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=BIGINT},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.service.user.UserDO">
+        update db_user
+        <set>
+
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="workId != null">
+                work_id = #{workId},
+            </if>
+            <if test="idNumber != null">
+                id_number = #{idNumber},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="contact != null">
+                contact = #{contact},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="orgCode != null">
+                org_code = #{orgCode},
+            </if>
+            <if test="corpName != null">
+                corp_name = #{corpName},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="lastLoginAt != null">
+                last_login_at = #{lastLoginAt},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=BIGINT},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

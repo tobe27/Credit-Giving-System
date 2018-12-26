@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.approval.CustomerApprovalDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.approval.CustomerApprovalDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="INTERVIEW_ID" jdbcType="BIGINT" property="interviewId" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="CUSTOMER_ID" jdbcType="BIGINT" property="customerId" />
+    <result column="APPROVAL_OPINION" jdbcType="VARCHAR" property="approvalOpinion" />
+    <result column="APPROVAL_ROLE_ID" jdbcType="BIGINT" property="approvalRoleId" />
+    <result column="APPROVAL_USER_NAME" jdbcType="VARCHAR" property="approvalUserName" />
+    <result column="APPROVAL_USER_ID" jdbcType="BIGINT" property="approvalUserId" />
+    <result column="APPROVAL_RESULT" jdbcType="VARCHAR" property="approvalResult" />
+    <result column="APPROVAL_NODE" jdbcType="VARCHAR" property="approvalNode" />
+    <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
+    <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, INTERVIEW_ID, ID_NUMBER, CUSTOMER_ID, APPROVAL_OPINION, APPROVAL_ROLE_ID, APPROVAL_USER_NAME, 
+    APPROVAL_USER_ID, APPROVAL_RESULT, APPROVAL_NODE, CREATED_AT, UPDATED_AT
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from CUSTOMER_APPROVAL
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from CUSTOMER_APPROVAL
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.service.approval.CustomerApprovalDO">
+    insert into CUSTOMER_APPROVAL (ID, INTERVIEW_ID, ID_NUMBER, 
+      CUSTOMER_ID, APPROVAL_OPINION, APPROVAL_ROLE_ID, 
+      APPROVAL_USER_NAME, APPROVAL_USER_ID, APPROVAL_RESULT, 
+      APPROVAL_NODE, CREATED_AT, UPDATED_AT
+      )
+    values (#{id,jdbcType=BIGINT}, #{interviewId,jdbcType=BIGINT}, #{idNumber,jdbcType=VARCHAR}, 
+      #{customerId,jdbcType=BIGINT}, #{approvalOpinion,jdbcType=VARCHAR}, #{approvalRoleId,jdbcType=BIGINT}, 
+      #{approvalUserName,jdbcType=VARCHAR}, #{approvalUserId,jdbcType=BIGINT}, #{approvalResult,jdbcType=VARCHAR}, 
+      #{approvalNode,jdbcType=VARCHAR}, #{createdAt,jdbcType=BIGINT}, #{updatedAt,jdbcType=BIGINT}
+      )
+  </insert>
+  <select id="getListByInterviewId" parameterType="com.example.service.approval.CustomerApprovalDO"  resultMap="BaseResultMap">
+   select * from CUSTOMER_APPROVAL where INTERVIEW_ID = #{interviewId} order by  CREATED_AT desc
+  </select>
+  <insert id="insertSelective" parameterType="com.example.service.approval.CustomerApprovalDO">
+    insert into CUSTOMER_APPROVAL
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="interviewId != null">
+        INTERVIEW_ID,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="customerId != null">
+        CUSTOMER_ID,
+      </if>
+      <if test="approvalOpinion != null">
+        APPROVAL_OPINION,
+      </if>
+      <if test="approvalRoleId != null">
+        APPROVAL_ROLE_ID,
+      </if>
+      <if test="approvalUserName != null">
+        APPROVAL_USER_NAME,
+      </if>
+      <if test="approvalUserId != null">
+        APPROVAL_USER_ID,
+      </if>
+      <if test="approvalResult != null">
+        APPROVAL_RESULT,
+      </if>
+      <if test="approvalNode != null">
+        APPROVAL_NODE,
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT,
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="interviewId != null">
+        #{interviewId,jdbcType=BIGINT},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null">
+        #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="approvalOpinion != null">
+        #{approvalOpinion,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalRoleId != null">
+        #{approvalRoleId,jdbcType=BIGINT},
+      </if>
+      <if test="approvalUserName != null">
+        #{approvalUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalUserId != null">
+        #{approvalUserId,jdbcType=BIGINT},
+      </if>
+      <if test="approvalResult != null">
+        #{approvalResult,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalNode != null">
+        #{approvalNode,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.service.approval.CustomerApprovalDO">
+    update CUSTOMER_APPROVAL
+    <set>
+      <if test="interviewId != null">
+        INTERVIEW_ID = #{interviewId,jdbcType=BIGINT},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null">
+        CUSTOMER_ID = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="approvalOpinion != null">
+        APPROVAL_OPINION = #{approvalOpinion,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalRoleId != null">
+        APPROVAL_ROLE_ID = #{approvalRoleId,jdbcType=BIGINT},
+      </if>
+      <if test="approvalUserName != null">
+        APPROVAL_USER_NAME = #{approvalUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalUserId != null">
+        APPROVAL_USER_ID = #{approvalUserId,jdbcType=BIGINT},
+      </if>
+      <if test="approvalResult != null">
+        APPROVAL_RESULT = #{approvalResult,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalNode != null">
+        APPROVAL_NODE = #{approvalNode,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.service.approval.CustomerApprovalDO">
+    update CUSTOMER_APPROVAL
+    set INTERVIEW_ID = #{interviewId,jdbcType=BIGINT},
+      ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      CUSTOMER_ID = #{customerId,jdbcType=BIGINT},
+      APPROVAL_OPINION = #{approvalOpinion,jdbcType=VARCHAR},
+      APPROVAL_ROLE_ID = #{approvalRoleId,jdbcType=BIGINT},
+      APPROVAL_USER_NAME = #{approvalUserName,jdbcType=VARCHAR},
+      APPROVAL_USER_ID = #{approvalUserId,jdbcType=BIGINT},
+      APPROVAL_RESULT = #{approvalResult,jdbcType=VARCHAR},
+      APPROVAL_NODE = #{approvalNode,jdbcType=VARCHAR},
+      CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      UPDATED_AT = #{updatedAt,jdbcType=BIGINT}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

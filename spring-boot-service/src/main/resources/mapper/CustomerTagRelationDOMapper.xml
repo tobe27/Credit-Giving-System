@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.customer.CustomerTagRelationDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.customer.CustomerTagRelationDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="TAG_ID" jdbcType="BIGINT" property="tagId" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+      <result column="tag_name" jdbcType="VARCHAR" property="tagName" />
+  </resultMap>
+
+  <select id="listByIdNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select ctr.*, tag.name tag_name
+    from DB_CUSTOMER_TAG_RELATION ctr
+    left JOIN db_tag tag on ctr.tag_id = tag.id
+    where ctr.id_number = #{idNumber}
+  </select>
+
+  <!---->
+  <select id="setIdNumberByInIdNumber" parameterType="com.example.service.customer.CustomerTagRelationDO" resultType="String">
+    select id_number
+    from db_customer_tag_relation
+    where id_number in
+    <foreach collection="idNumberList" index="index" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+  <select id="listTagIdByHouseholdId" parameterType="java.lang.String" resultType="Long">
+    select ctr.tag_id
+    from DB_CUSTOMER_TAG_RELATION ctr
+    left join USER_CUSTOMER customer on ctr.id_number = customer.id_number
+    where customer.HOUSEHOLD_ID = #{householdId}
+  </select>
+  <select id="listCustomerTagRelationsByHouseholdId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select ctr.tag_id, ctr.id_number
+    from db_tag tag
+    left join DB_CUSTOMER_TAG_RELATION ctr on tag.id = ctr.tag_id
+    left join USER_CUSTOMER customer on ctr.id_number = customer.id_number
+    where customer.HOUSEHOLD_ID = #{householdId}
+  </select>
+  
+  <insert id="batchSave" >
+  insert into DB_CUSTOMER_TAG_RELATION(TAG_ID,ID_NUMBER)
+  VALUES
+  <foreach  collection="list" item="item" separator=",">
+        (#{item.tagId}, #{item.idNumber})
+    </foreach>
+</insert>
+  <select id="getListByIdNumbers"  parameterType="java.util.Map" resultMap="BaseResultMap">
+  select * from DB_CUSTOMER_TAG_RELATION where id_number in
+   <foreach item="item" index="index" collection="idNumberList" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+  </select>
+  <delete id="deleteByIdNumbersAndTagId"  parameterType="java.util.Map" >
+  delete from DB_CUSTOMER_TAG_RELATION where id_number in
+   <foreach item="item" index="index" collection="idNumberList" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+                and TAG_ID = #{tagId}
+  </delete>
+
+  <delete id="deleteByTagId" parameterType="java.lang.Long">
+    delete from DB_CUSTOMER_TAG_RELATION
+    where TAG_ID = #{tagId,jdbcType=BIGINT}
+  </delete>
+
+  <delete id="deleteByIdNumberAndTagId" parameterType="com.example.service.customer.CustomerTagRelationDO">
+    delete from DB_CUSTOMER_TAG_RELATION
+    where TAG_ID = #{tagId} and ID_NUMBER = #{idNumber}
+  </delete>
+
+  <delete id="deleteByIdNumber" parameterType="String">
+    delete from DB_CUSTOMER_TAG_RELATION
+    where ID_NUMBER = #{idNumber} and <![CDATA[ TAG_ID > 5]]>
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.example.service.customer.CustomerTagRelationDO">
+    insert into DB_CUSTOMER_TAG_RELATION
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="tagId != null">
+        TAG_ID,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="tagId != null">
+        #{tagId,jdbcType=BIGINT},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

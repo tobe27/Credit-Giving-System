@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.org.OrgDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.org.OrgDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="ORG_CODE" jdbcType="VARCHAR" property="orgCode" />
+    <result column="CORE_ORG_CODE" jdbcType="VARCHAR" property="coreOrgCode" />
+    <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+    <result column="PARENT_ORG_CODE" jdbcType="VARCHAR" property="parentOrgCode" />
+    <result column="CORP_ORG_CODE" jdbcType="VARCHAR" property="corpOrgCode" />
+    <result column="LEVEL" jdbcType="VARCHAR" property="level" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
+    <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
+  </resultMap>
+
+    <!--查询当前机构及其子机构-->
+  <select id="listByOrgCode" parameterType="com.example.service.org.OrgDO" resultMap="BaseResultMap">
+    select * from DB_ORG
+    where org_code in
+    <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+    </foreach>
+  </select>
+
+    <!--查询当前机构及其子机构的OrgCode-->
+    <select id="listStringOrgCodes" parameterType="java.lang.String" resultType="String">
+      with parent(org_code)
+        as (
+        select x.org_code from db_org x where x.org_code = #{orgCode}
+        UNION ALL
+        select son.org_code from db_org son,parent where son.parent_org_code = parent.org_code
+        )
+      select parent.org_code from parent
+    </select>
+
+    <!--查询所有机构-->
+  <select id="listByOrgDO" parameterType="com.example.service.org.OrgDO" resultMap="BaseResultMap">
+    select *
+    from DB_ORG
+    where 1 = 1
+    <if test="parentOrgCode != null">
+        and parent_org_code = #{parentOrgCode}
+    </if>
+    <if test="orgCode != null">
+        and org_code = #{orgCode}
+    </if>
+      <if test="orgName != null">
+          and org_name = #{orgName}
+      </if>
+      <if test="coreOrgCode != null">
+          and core_org_code = #{coreOrgCode}
+      </if>
+  </select>
+
+  <select id="getByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select *
+    from DB_ORG
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+
+  <!--根据状态查询所有机构-->
+  <select id="listAllByStatus" parameterType="com.example.service.org.OrgDO"  resultMap="BaseResultMap" >
+      select * from DB_ORG
+      where 1=1
+      <if test="status != null">
+        and status = #{status}
+      </if>
+  </select>
+
+   <select id="getAll" resultMap="BaseResultMap" >
+      select * from DB_ORG
+    </select>
+    <!--根据机构号删除-->
+  <delete id="deleteByOrgCode" parameterType="java.lang.String">
+    delete from DB_ORG
+    where org_code = #{orgCode}
+  </delete>
+  
+  <select id="getByorgCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+  select *
+    from DB_ORG
+    where org_code = #{orgCode}
+  </select>
+
+  <select id="getByParentorgCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select *
+    from DB_ORG
+    where parent_org_code = #{orgCode}
+  </select>
+
+  <insert id="insertSelective" parameterType="com.example.service.org.OrgDO">
+    insert into DB_ORG
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="orgCode != null">
+        ORG_CODE,
+      </if>
+      <if test="coreOrgCode != null">
+        CORE_ORG_CODE,
+      </if>
+      <if test="orgName != null">
+        ORG_NAME,
+      </if>
+      <if test="parentOrgCode != null">
+        PARENT_ORG_CODE,
+      </if>
+      <if test="corpOrgCode != null">
+        CORP_ORG_CODE,
+      </if>
+      <if test="level != null">
+        LEVEL,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT,
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="orgCode != null">
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="coreOrgCode != null">
+        #{coreOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentOrgCode != null">
+        #{parentOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="corpOrgCode != null">
+        #{corpOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.service.org.OrgDO">
+    update DB_ORG
+    <set>
+      <if test="orgCode != null">
+        ORG_CODE = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="coreOrgCode != null">
+        CORE_ORG_CODE = #{coreOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        ORG_NAME = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentOrgCode != null">
+        PARENT_ORG_CODE = #{parentOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="corpOrgCode != null">
+        CORP_ORG_CODE = #{corpOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        LEVEL = #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

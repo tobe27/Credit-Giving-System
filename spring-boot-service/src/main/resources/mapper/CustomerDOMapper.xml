@@ -1,0 +1,987 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.customer.CustomerDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.customer.CustomerDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="CREDIT_ID" jdbcType="VARCHAR" property="creditId" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="TYPE" jdbcType="VARCHAR" property="type" />
+    <result column="ID_TYPE" jdbcType="VARCHAR" property="idType" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="SIGN_ORG" jdbcType="VARCHAR" property="signOrg" />
+    <result column="IS_LONG_TERM" jdbcType="VARCHAR" property="isLongTerm" />
+    <result column="SIGN_DATE" jdbcType="VARCHAR" property="signDate" />
+    <result column="DUE_DATE" jdbcType="VARCHAR" property="dueDate" />
+    <result column="DISTRICT_ADDRESS" jdbcType="VARCHAR" property="districtAddress" />
+    <result column="BIRTHDAY" jdbcType="VARCHAR" property="birthday" />
+    <result column="GENDER" jdbcType="VARCHAR" property="gender" />
+    <result column="DETAIL_ADDRESS" jdbcType="VARCHAR" property="detailAddress" />
+    <result column="POSTCODE" jdbcType="VARCHAR" property="postcode" />
+    <result column="NATIVE_ADDRESS" jdbcType="VARCHAR" property="nativeAddress" />
+    <result column="PHONE_NUMBER" jdbcType="VARCHAR" property="phoneNumber" />
+    <result column="NATIONALITY" jdbcType="VARCHAR" property="nationality" />
+    <result column="NATION" jdbcType="VARCHAR" property="nation" />
+    <result column="POLITICS_STATUS" jdbcType="VARCHAR" property="politicsStatus" />
+    <result column="EDUCATION_BACKGROUND" jdbcType="VARCHAR" property="educationBackground" />
+    <result column="PHYSICAL_CONDITION" jdbcType="VARCHAR" property="physicalCondition" />
+    <result column="MARITAL_STATUS" jdbcType="VARCHAR" property="maritalStatus" />
+    <result column="SPOUSE_NAME" jdbcType="VARCHAR" property="spouseName" />
+    <result column="SPOUSE_ID_NUMBER" jdbcType="VARCHAR" property="spouseIdNumber" />
+    <result column="SPOUSE_PHONE_NUMBER" jdbcType="VARCHAR" property="spousePhoneNumber" />
+    <result column="SPOUSE_COMPANY_NAME" jdbcType="VARCHAR" property="spouseCompanyName" />
+    <result column="CAREER_TYPE" jdbcType="VARCHAR" property="careerType" />
+    <result column="TAX_TYPE" jdbcType="VARCHAR" property="taxType" />
+    <result column="MAIN_BUSINESS" jdbcType="VARCHAR" property="mainBusiness" />
+    <result column="INDUSTRY_TYPE" jdbcType="VARCHAR" property="industryType" />
+    <result column="IS_STAFF" jdbcType="VARCHAR" property="isStaff" />
+    <result column="IS_STOCKHOLDER" jdbcType="VARCHAR" property="isStockholder" />
+    <result column="IS_CIVIL_SERVANT" jdbcType="VARCHAR" property="isCivilServant" />
+    <result column="IS_HOUSE_OWNER" jdbcType="VARCHAR" property="isHouseOwner" />
+    <result column="HOUSEHOLD_ID" jdbcType="VARCHAR" property="householdId" />
+    <result column="COMPANY_NAME" jdbcType="VARCHAR" property="companyName" />
+    <result column="WORK_YEAR" jdbcType="VARCHAR" property="workYear" />
+    <result column="COMPANY_ADDRESS" jdbcType="VARCHAR" property="companyAddress" />
+    <result column="IS_FARMER" jdbcType="VARCHAR" property="isFarmer" />
+    <result column="IS_BUY_HOME" jdbcType="VARCHAR" property="isBuyHome" />
+    <result column="CELL_NAME" jdbcType="VARCHAR" property="cellName" />
+    <result column="CELL_ADDRESS" jdbcType="VARCHAR" property="cellAddress" />
+    <result column="LIVING_CONDITION" jdbcType="VARCHAR" property="livingCondition" />
+    <result column="IS_BUSINESS_OWNER" jdbcType="VARCHAR" property="isBusinessOwner" />
+    <result column="IS_BORROWER" jdbcType="VARCHAR" property="isBorrower" />
+    <result column="GRID_CODE" jdbcType="VARCHAR" property="gridCode" />
+    <result column="CUSTOMER_MANAGER" jdbcType="VARCHAR" property="customerManager" />
+    <result column="SUPPORT_MANAGER" jdbcType="VARCHAR" property="supportManager" />
+    <result column="MAIN_ORG_NAME" jdbcType="VARCHAR" property="mainOrgName" />
+    <result column="REGISTER_PERSON" jdbcType="VARCHAR" property="registerPerson" />
+    <result column="LAST_MODIFY_PERSON" jdbcType="VARCHAR" property="lastModifyPerson" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+      <result column="INTERVIEW_ID" jdbcType="BIGINT" property="interviewId" />
+      <result column="AMOUNT" jdbcType="VARCHAR" property="amount" />
+    <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
+    <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
+    <!--新增字段-->
+    <result column="RELATIONSHIP" jdbcType="VARCHAR" property="relationship" />
+    <result column="IS_CONCLUDED" jdbcType="VARCHAR" property="isConcluded" />
+    <result column="VALID_TIME" jdbcType="INTEGER" property="validTime" />
+    <result column="AGE" jdbcType="INTEGER" property="age" />
+    <result column="OUT_ENSURE_AMOUNT" jdbcType="DECIMAL" property="outEnsureAmount" />
+
+      <!--关联使用-->
+      <result column="GRID_NAME" jdbcType="VARCHAR" property="gridName" />
+
+  </resultMap>
+
+
+    <!--获取客户的同时显示标签-->
+    <resultMap id="customerTagResultMap" type="com.example.service.customer.CustomerDO" extends="BaseResultMap">
+        <collection property="tags" column="id_number"   ofType="com.example.service.customer.CustomerTagRelationDO" select="listByIdNumber" >
+        </collection>
+    </resultMap>
+
+    <resultMap id="customerTagRelationResultMap" type="com.example.service.customer.CustomerTagRelationDO">
+        <id column="ID" jdbcType="BIGINT" property="id" />
+        <result column="TAG_ID" jdbcType="BIGINT" property="tagId" />
+        <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+        <result column="tag_name" jdbcType="VARCHAR" property="tagName" />
+    </resultMap>
+
+
+  <!--通过姓名和户号获取身份证号-->
+  <select id="getIdNumberByNameAndHouseholdId" parameterType="com.example.service.customer.CustomerDO" resultType="String">
+    select id_number
+    from USER_CUSTOMER
+    where name = #{name} and household_id = #{householdId}
+  </select>
+
+  <select id="getByPrimaryKey" parameterType="java.lang.Long" resultMap="customerTagResultMap">
+    select customer.*, grid.grid_name
+    from USER_CUSTOMER customer
+    left join grid_info grid on grid.grid_code = customer.grid_code
+    where customer.ID = #{id}
+  </select>
+
+
+  <!--通过身份证查询家庭成员所有的身份证号-->
+  <select id="getAllFamilyIdNumbersByIdNumbers" parameterType="java.util.Map" resultType="java.lang.String">
+   select ID_NUMBER from  USER_CUSTOMER where HOUSEHOLD_ID in
+   ( select HOUSEHOLD_ID  from  USER_CUSTOMER  where ID_NUMBER in 
+  
+      <foreach collection="idNumberList" index="index" item="item" open="(" separator="," close=")">
+              #{item}
+           </foreach>
+       )
+  </select>
+
+    <!--通过身份证查询，唯一性判定-->
+  <select id="getByIdNumber" parameterType="java.lang.String" resultMap="customerTagResultMap">
+    select customer.*, grid.grid_name
+    from USER_CUSTOMER customer
+    left join grid_info grid on grid.grid_code = customer.grid_code
+    where customer.id_number = #{idNumber}
+  </select>
+  <select id="getByIdNumbers" parameterType="java.util.Map"  resultMap="BaseResultMap">
+  select * from USER_CUSTOMER where ID_NUMBER in   <foreach item="item" index="index" collection="idNumberList" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+  </select>
+
+  <select id="listByHouseholdIdAndGridCode" parameterType="com.example.service.customer.CustomerDO" resultMap="BaseResultMap">
+    select customer.*
+    from USER_CUSTOMER customer
+    where 1=1
+    <if test="householdId != null and householdId != ''">
+       and customer.household_id = #{householdId}
+    </if>
+    <if test="gridCode != null">
+       and customer.grid_code = #{gridCode}
+    </if>
+    <if test="validTime != null">
+        and customer.valid_time = #{validTime}
+    </if>
+  </select>
+
+    <!--分页列表-登录用户和机构查询客户信息-->
+  <select id="listCustomers" parameterType="com.example.service.customer.CustomerDO" resultMap="customerTagResultMap">
+    select DISTINCT customer.ID, customer.*, grid.grid_name
+    from USER_CUSTOMER customer
+    left join db_customer_tag_relation ctr on customer.id_number = ctr.id_number
+    left join grid_info grid on grid.grid_code = customer.grid_code
+    where 1=1
+    <if test="name != null">
+        and customer.name like '%'||#{name}||'%'
+    </if>
+      <if test="idNumber != null and idNumber != ''">
+          and customer.id_number = #{idNumber}
+      </if>
+      <if test="householdId != null and householdId != ''">
+          and customer.household_id = #{householdId}
+      </if>
+
+      <if test="tagId != null">
+          and ctr.tag_id = #{tagId}
+      </if>
+      <if test="isConcluded != null">
+          and customer.is_concluded = #{isConcluded}
+      </if>
+      <if test="isBorrower != null">
+          and customer.is_borrower = #{isBorrower}
+      </if>
+      <if test="validTime != null and validTime != 3">
+          and customer.valid_time = #{validTime}
+      </if>
+      <if test="validTime != null and validTime == 3">
+          and <![CDATA[ customer.valid_time >= #{validTime}]]>
+      </if>
+      <if test="status != null">
+          and customer.status = #{status}
+      </if>
+      <if test="relationship != null">
+          and customer.relationship = #{relationship}
+      </if>
+      <if test="gridCode != null">
+          and grid.grid_code = #{gridCode}
+      </if>
+--       客户经理只能查看自己网格下的客户
+      <if test="roleId == 1">
+          and grid.user_id = #{userId}
+      </if>
+--       非客户经理可以查看本机构及子机构下的所有客户
+      <if test="roleId != 1">
+          and grid.org_code IN
+          <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+              #{item}
+          </foreach>
+      </if>
+      ORDER BY customer.household_id
+  </select>
+
+    <!--客户标签关联-->
+  <select id="listByIdNumber" parameterType="java.lang.String" resultMap="customerTagRelationResultMap">
+    select ctr.*, tag.name tag_name
+    from DB_CUSTOMER_TAG_RELATION ctr
+    left JOIN db_tag tag on ctr.tag_id = tag.id
+    where ctr.id_number = #{idNumber}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from USER_CUSTOMER
+    where ID = #{id}
+  </delete>
+
+  <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true" parameterType="com.example.service.customer.CustomerDO">
+    insert into USER_CUSTOMER
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="creditId != null">
+        CREDIT_ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="type != null">
+        TYPE,
+      </if>
+      <if test="idType != null">
+        ID_TYPE,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="signOrg != null">
+        SIGN_ORG,
+      </if>
+      <if test="isLongTerm != null">
+        IS_LONG_TERM,
+      </if>
+      <if test="signDate != null">
+        SIGN_DATE,
+      </if>
+      <if test="dueDate != null">
+        DUE_DATE,
+      </if>
+      <if test="districtAddress != null">
+        DISTRICT_ADDRESS,
+      </if>
+      <if test="birthday != null">
+        BIRTHDAY,
+      </if>
+      <if test="gender != null">
+        GENDER,
+      </if>
+      <if test="detailAddress != null">
+        DETAIL_ADDRESS,
+      </if>
+      <if test="postcode != null">
+        POSTCODE,
+      </if>
+      <if test="nativeAddress != null">
+        NATIVE_ADDRESS,
+      </if>
+      <if test="phoneNumber != null">
+        PHONE_NUMBER,
+      </if>
+      <if test="nationality != null">
+        NATIONALITY,
+      </if>
+      <if test="nation != null">
+        NATION,
+      </if>
+      <if test="politicsStatus != null">
+        POLITICS_STATUS,
+      </if>
+      <if test="educationBackground != null">
+        EDUCATION_BACKGROUND,
+      </if>
+      <if test="physicalCondition != null">
+        PHYSICAL_CONDITION,
+      </if>
+      <if test="maritalStatus != null">
+        MARITAL_STATUS,
+      </if>
+      <if test="spouseName != null">
+        SPOUSE_NAME,
+      </if>
+      <if test="spouseIdNumber != null">
+        SPOUSE_ID_NUMBER,
+      </if>
+      <if test="spousePhoneNumber != null">
+        SPOUSE_PHONE_NUMBER,
+      </if>
+      <if test="spouseCompanyName != null">
+        SPOUSE_COMPANY_NAME,
+      </if>
+      <if test="careerType != null">
+        CAREER_TYPE,
+      </if>
+      <if test="taxType != null">
+        TAX_TYPE,
+      </if>
+      <if test="mainBusiness != null">
+        MAIN_BUSINESS,
+      </if>
+      <if test="industryType != null">
+        INDUSTRY_TYPE,
+      </if>
+      <if test="isStaff != null">
+        IS_STAFF,
+      </if>
+      <if test="isStockholder != null">
+        IS_STOCKHOLDER,
+      </if>
+      <if test="isCivilServant != null">
+        IS_CIVIL_SERVANT,
+      </if>
+      <if test="isHouseOwner != null">
+        IS_HOUSE_OWNER,
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID,
+      </if>
+      <if test="companyName != null">
+        COMPANY_NAME,
+      </if>
+      <if test="workYear != null">
+        WORK_YEAR,
+      </if>
+      <if test="companyAddress != null">
+        COMPANY_ADDRESS,
+      </if>
+      <if test="isFarmer != null">
+        IS_FARMER,
+      </if>
+      <if test="isBuyHome != null">
+        IS_BUY_HOME,
+      </if>
+      <if test="cellName != null">
+        CELL_NAME,
+      </if>
+      <if test="cellAddress != null">
+        CELL_ADDRESS,
+      </if>
+      <if test="livingCondition != null">
+        LIVING_CONDITION,
+      </if>
+      <if test="isBusinessOwner != null">
+        IS_BUSINESS_OWNER,
+      </if>
+      <if test="isBorrower != null">
+        IS_BORROWER,
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE,
+      </if>
+      <if test="customerManager != null">
+        CUSTOMER_MANAGER,
+      </if>
+      <if test="supportManager != null">
+        SUPPORT_MANAGER,
+      </if>
+      <if test="mainOrgName != null">
+        MAIN_ORG_NAME,
+      </if>
+      <if test="registerPerson != null">
+        REGISTER_PERSON,
+      </if>
+      <if test="lastModifyPerson != null">
+        LAST_MODIFY_PERSON,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="relationship != null">
+        RELATIONSHIP,
+      </if>
+      <if test="isConcluded != null">
+        IS_CONCLUDED,
+      </if>
+      <if test="validTime != null">
+        VALID_TIME,
+      </if>
+      <if test="age != null">
+        AGE,
+      </if>
+        <if test="interviewId != null">
+            INTERVIEW_ID,
+        </if>
+        <if test="amount != null">
+            AMOUNT,
+        </if>
+      <if test="createdAt != null">
+        CREATED_AT,
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="creditId != null">
+        #{creditId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="idType != null">
+        #{idType,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="signOrg != null">
+        #{signOrg,jdbcType=VARCHAR},
+      </if>
+      <if test="isLongTerm != null">
+        #{isLongTerm,jdbcType=VARCHAR},
+      </if>
+      <if test="signDate != null">
+        #{signDate,jdbcType=VARCHAR},
+      </if>
+      <if test="dueDate != null">
+        #{dueDate,jdbcType=VARCHAR},
+      </if>
+      <if test="districtAddress != null">
+        #{districtAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        #{birthday,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="detailAddress != null">
+        #{detailAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="postcode != null">
+        #{postcode,jdbcType=VARCHAR},
+      </if>
+      <if test="nativeAddress != null">
+        #{nativeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNumber != null">
+        #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="nationality != null">
+        #{nationality,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null">
+        #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="politicsStatus != null">
+        #{politicsStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="educationBackground != null">
+        #{educationBackground,jdbcType=VARCHAR},
+      </if>
+      <if test="physicalCondition != null">
+        #{physicalCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="maritalStatus != null">
+        #{maritalStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseName != null">
+        #{spouseName,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseIdNumber != null">
+        #{spouseIdNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="spousePhoneNumber != null">
+        #{spousePhoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseCompanyName != null">
+        #{spouseCompanyName,jdbcType=VARCHAR},
+      </if>
+      <if test="careerType != null">
+        #{careerType,jdbcType=VARCHAR},
+      </if>
+      <if test="taxType != null">
+        #{taxType,jdbcType=VARCHAR},
+      </if>
+      <if test="mainBusiness != null">
+        #{mainBusiness,jdbcType=VARCHAR},
+      </if>
+      <if test="industryType != null">
+        #{industryType,jdbcType=VARCHAR},
+      </if>
+      <if test="isStaff != null">
+        #{isStaff,jdbcType=VARCHAR},
+      </if>
+      <if test="isStockholder != null">
+        #{isStockholder,jdbcType=VARCHAR},
+      </if>
+      <if test="isCivilServant != null">
+        #{isCivilServant,jdbcType=VARCHAR},
+      </if>
+      <if test="isHouseOwner != null">
+        #{isHouseOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="workYear != null">
+        #{workYear,jdbcType=VARCHAR},
+      </if>
+      <if test="companyAddress != null">
+        #{companyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="isFarmer != null">
+        #{isFarmer,jdbcType=VARCHAR},
+      </if>
+      <if test="isBuyHome != null">
+        #{isBuyHome,jdbcType=VARCHAR},
+      </if>
+      <if test="cellName != null">
+        #{cellName,jdbcType=VARCHAR},
+      </if>
+      <if test="cellAddress != null">
+        #{cellAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="livingCondition != null">
+        #{livingCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="isBusinessOwner != null">
+        #{isBusinessOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="isBorrower != null">
+        #{isBorrower,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManager != null">
+        #{customerManager,jdbcType=VARCHAR},
+      </if>
+      <if test="supportManager != null">
+        #{supportManager,jdbcType=VARCHAR},
+      </if>
+      <if test="mainOrgName != null">
+        #{mainOrgName,jdbcType=VARCHAR},
+      </if>
+      <if test="registerPerson != null">
+        #{registerPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyPerson != null">
+        #{lastModifyPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="relationship != null">
+        #{relationship},
+      </if>
+      <if test="isConcluded != null">
+        #{isConcluded},
+      </if>
+      <if test="validTime != null">
+        #{validTime},
+      </if>
+      <if test="age != null">
+        #{age},
+      </if>
+        <if test="interviewId != null">
+            #{interviewId,jdbcType=BIGINT},
+        </if>
+        <if test="amount != null">
+            #{amount,jdbcType=VARCHAR},
+        </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+<insert id="batchSave" parameterType="java.util.List">
+  insert into USER_CUSTOMER(
+  CREDIT_ID,NAME,
+TYPE,ID_TYPE,ID_NUMBER,SIGN_ORG,IS_LONG_TERM,SIGN_DATE,DUE_DATE,DISTRICT_ADDRESS,BIRTHDAY,GENDER,DETAIL_ADDRESS,POSTCODE,NATIVE_ADDRESS,PHONE_NUMBER,NATIONALITY,
+NATION,POLITICS_STATUS,EDUCATION_BACKGROUND,PHYSICAL_CONDITION,MARITAL_STATUS,SPOUSE_NAME,SPOUSE_ID_NUMBER,SPOUSE_PHONE_NUMBER,SPOUSE_COMPANY_NAME,
+CAREER_TYPE,TAX_TYPE,MAIN_BUSINESS,INDUSTRY_TYPE,IS_STAFF,IS_STOCKHOLDER,IS_CIVIL_SERVANT,IS_HOUSE_OWNER,HOUSEHOLD_ID,COMPANY_NAME,WORK_YEAR,COMPANY_ADDRESS,
+IS_FARMER,IS_BUY_HOME,CELL_NAME,CELL_ADDRESS,LIVING_CONDITION,IS_BUSINESS_OWNER,IS_BORROWER,GRID_CODE,CUSTOMER_MANAGER,SUPPORT_MANAGER,MAIN_ORG_NAME,
+REGISTER_PERSON,LAST_MODIFY_PERSON,STATUS,RELATIONSHIP,IS_CONCLUDED,VALID_TIME,AGE,INTERVIEW_ID,AMOUNT,CREATED_AT,UPDATED_AT
+  
+  )
+  VALUES
+  <foreach  collection="list" item="item" separator=",">
+        (
+        
+ #{item.creditId}, #{item.name}, #{item.type},#{item.idType}, #{item.idNumber}, #{item.signOrg}, #{item.isLongTerm}, 
+ #{item.signDate}, #{item.dueDate}, #{item.districtAddress},#{item.birthday}, #{item.gender}, #{item.detailAddress}, #{item.postcode}, 
+ #{item.nativeAddress}, #{item.phoneNumber}, #{item.nationality},#{item.nation}, #{item.politicsStatus}, #{item.educationBackground}, #{item.physicalCondition}, 
+ #{item.maritalStatus}, #{item.spouseName}, #{item.spouseIdNumber},#{item.spousePhoneNumber}, #{item.spouseCompanyName}, #{item.careerType}, #{item.taxType}, 
+ #{item.mainBusiness}, #{item.industryType}, #{item.isStaff},#{item.isStockholder}, #{item.isCivilServant}, #{item.isHouseOwner}, #{item.householdId}, 
+ #{item.companyName}, #{item.workYear}, #{item.companyAddress},#{item.isFarmer}, #{item.isBuyHome}, #{item.cellName}, #{item.cellAddress}, 
+ #{item.livingCondition}, #{item.isBusinessOwner}, #{item.isBorrower},#{item.gridCode}, #{item.customerManager}, #{item.supportManager}, #{item.mainOrgName}, 
+ #{item.registerPerson}, #{item.lastModifyPerson}, #{item.status},#{item.relationship}, #{item.isConcluded}, #{item.validTime}, #{item.age}, 
+ #{item.interviewId}, #{item.amount}, #{item.createdAt},#{item.updatedAt}
+ 
+   )
+    </foreach>
+</insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.service.customer.CustomerDO">
+    update USER_CUSTOMER
+    <set>
+      <if test="creditId != null">
+        CREDIT_ID = #{creditId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="idType != null">
+        ID_TYPE = #{idType,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="signOrg != null">
+        SIGN_ORG = #{signOrg,jdbcType=VARCHAR},
+      </if>
+      <if test="isLongTerm != null">
+        IS_LONG_TERM = #{isLongTerm,jdbcType=VARCHAR},
+      </if>
+      <if test="signDate != null">
+        SIGN_DATE = #{signDate,jdbcType=VARCHAR},
+      </if>
+      <if test="dueDate != null">
+        DUE_DATE = #{dueDate,jdbcType=VARCHAR},
+      </if>
+      <if test="districtAddress != null">
+        DISTRICT_ADDRESS = #{districtAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        BIRTHDAY = #{birthday,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        GENDER = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="detailAddress != null">
+        DETAIL_ADDRESS = #{detailAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="postcode != null">
+        POSTCODE = #{postcode,jdbcType=VARCHAR},
+      </if>
+      <if test="nativeAddress != null">
+        NATIVE_ADDRESS = #{nativeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNumber != null">
+        PHONE_NUMBER = #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="nationality != null">
+        NATIONALITY = #{nationality,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null">
+        NATION = #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="politicsStatus != null">
+        POLITICS_STATUS = #{politicsStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="educationBackground != null">
+        EDUCATION_BACKGROUND = #{educationBackground,jdbcType=VARCHAR},
+      </if>
+      <if test="physicalCondition != null">
+        PHYSICAL_CONDITION = #{physicalCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="maritalStatus != null">
+        MARITAL_STATUS = #{maritalStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseName != null">
+        SPOUSE_NAME = #{spouseName,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseIdNumber != null">
+        SPOUSE_ID_NUMBER = #{spouseIdNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="spousePhoneNumber != null">
+        SPOUSE_PHONE_NUMBER = #{spousePhoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseCompanyName != null">
+        SPOUSE_COMPANY_NAME = #{spouseCompanyName,jdbcType=VARCHAR},
+      </if>
+      <if test="careerType != null">
+        CAREER_TYPE = #{careerType,jdbcType=VARCHAR},
+      </if>
+      <if test="taxType != null">
+        TAX_TYPE = #{taxType,jdbcType=VARCHAR},
+      </if>
+      <if test="mainBusiness != null">
+        MAIN_BUSINESS = #{mainBusiness,jdbcType=VARCHAR},
+      </if>
+      <if test="industryType != null">
+        INDUSTRY_TYPE = #{industryType,jdbcType=VARCHAR},
+      </if>
+      <if test="isStaff != null">
+        IS_STAFF = #{isStaff,jdbcType=VARCHAR},
+      </if>
+      <if test="isStockholder != null">
+        IS_STOCKHOLDER = #{isStockholder,jdbcType=VARCHAR},
+      </if>
+      <if test="isCivilServant != null">
+        IS_CIVIL_SERVANT = #{isCivilServant,jdbcType=VARCHAR},
+      </if>
+      <if test="isHouseOwner != null">
+        IS_HOUSE_OWNER = #{isHouseOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="workYear != null">
+        WORK_YEAR = #{workYear,jdbcType=VARCHAR},
+      </if>
+      <if test="companyAddress != null">
+        COMPANY_ADDRESS = #{companyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="isFarmer != null">
+        IS_FARMER = #{isFarmer,jdbcType=VARCHAR},
+      </if>
+      <if test="isBuyHome != null">
+        IS_BUY_HOME = #{isBuyHome,jdbcType=VARCHAR},
+      </if>
+      <if test="cellName != null">
+        CELL_NAME = #{cellName,jdbcType=VARCHAR},
+      </if>
+      <if test="cellAddress != null">
+        CELL_ADDRESS = #{cellAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="livingCondition != null">
+        LIVING_CONDITION = #{livingCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="isBusinessOwner != null">
+        IS_BUSINESS_OWNER = #{isBusinessOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="isBorrower != null">
+        IS_BORROWER = #{isBorrower,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManager != null">
+        CUSTOMER_MANAGER = #{customerManager,jdbcType=VARCHAR},
+      </if>
+      <if test="supportManager != null">
+        SUPPORT_MANAGER = #{supportManager,jdbcType=VARCHAR},
+      </if>
+      <if test="mainOrgName != null">
+        MAIN_ORG_NAME = #{mainOrgName,jdbcType=VARCHAR},
+      </if>
+      <if test="registerPerson != null">
+        REGISTER_PERSON = #{registerPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyPerson != null">
+        LAST_MODIFY_PERSON = #{lastModifyPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="relationship != null">
+        RELATIONSHIP = #{relationship},
+      </if>
+      <if test="isConcluded != null">
+        IS_CONCLUDED = #{isConcluded},
+      </if>
+      <if test="validTime != null">
+        VALID_TIME = #{validTime},
+      </if>
+      <if test="age != null">
+        AGE = #{age},
+      </if>
+        <if test="interviewId != null">
+            INTERVIEW_ID = #{interviewId,jdbcType=BIGINT},
+        </if>
+        <if test="amount != null">
+            AMOUNT = #{amount,jdbcType=VARCHAR},
+        </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--根据身份证进行更新-->
+  <update id="updateByIdNumberSelective" parameterType="com.example.service.customer.CustomerDO">
+    update USER_CUSTOMER
+    <set>
+      <if test="creditId != null">
+        CREDIT_ID = #{creditId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="idType != null">
+        ID_TYPE = #{idType,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="signOrg != null">
+        SIGN_ORG = #{signOrg,jdbcType=VARCHAR},
+      </if>
+      <if test="isLongTerm != null">
+        IS_LONG_TERM = #{isLongTerm,jdbcType=VARCHAR},
+      </if>
+      <if test="signDate != null">
+        SIGN_DATE = #{signDate,jdbcType=VARCHAR},
+      </if>
+      <if test="dueDate != null">
+        DUE_DATE = #{dueDate,jdbcType=VARCHAR},
+      </if>
+      <if test="districtAddress != null">
+        DISTRICT_ADDRESS = #{districtAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        BIRTHDAY = #{birthday,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        GENDER = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="detailAddress != null">
+        DETAIL_ADDRESS = #{detailAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="postcode != null">
+        POSTCODE = #{postcode,jdbcType=VARCHAR},
+      </if>
+      <if test="nativeAddress != null">
+        NATIVE_ADDRESS = #{nativeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNumber != null">
+        PHONE_NUMBER = #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="nationality != null">
+        NATIONALITY = #{nationality,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null">
+        NATION = #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="politicsStatus != null">
+        POLITICS_STATUS = #{politicsStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="educationBackground != null">
+        EDUCATION_BACKGROUND = #{educationBackground,jdbcType=VARCHAR},
+      </if>
+      <if test="physicalCondition != null">
+        PHYSICAL_CONDITION = #{physicalCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="maritalStatus != null">
+        MARITAL_STATUS = #{maritalStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseName != null">
+        SPOUSE_NAME = #{spouseName,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseIdNumber != null">
+        SPOUSE_ID_NUMBER = #{spouseIdNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="spousePhoneNumber != null">
+        SPOUSE_PHONE_NUMBER = #{spousePhoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseCompanyName != null">
+        SPOUSE_COMPANY_NAME = #{spouseCompanyName,jdbcType=VARCHAR},
+      </if>
+      <if test="careerType != null">
+        CAREER_TYPE = #{careerType,jdbcType=VARCHAR},
+      </if>
+      <if test="taxType != null">
+        TAX_TYPE = #{taxType,jdbcType=VARCHAR},
+      </if>
+      <if test="mainBusiness != null">
+        MAIN_BUSINESS = #{mainBusiness,jdbcType=VARCHAR},
+      </if>
+      <if test="industryType != null">
+        INDUSTRY_TYPE = #{industryType,jdbcType=VARCHAR},
+      </if>
+      <if test="isStaff != null">
+        IS_STAFF = #{isStaff,jdbcType=VARCHAR},
+      </if>
+      <if test="isStockholder != null">
+        IS_STOCKHOLDER = #{isStockholder,jdbcType=VARCHAR},
+      </if>
+      <if test="isCivilServant != null">
+        IS_CIVIL_SERVANT = #{isCivilServant,jdbcType=VARCHAR},
+      </if>
+      <if test="isHouseOwner != null">
+        IS_HOUSE_OWNER = #{isHouseOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="workYear != null">
+        WORK_YEAR = #{workYear,jdbcType=VARCHAR},
+      </if>
+      <if test="companyAddress != null">
+        COMPANY_ADDRESS = #{companyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="isFarmer != null">
+        IS_FARMER = #{isFarmer,jdbcType=VARCHAR},
+      </if>
+      <if test="isBuyHome != null">
+        IS_BUY_HOME = #{isBuyHome,jdbcType=VARCHAR},
+      </if>
+      <if test="cellName != null">
+        CELL_NAME = #{cellName,jdbcType=VARCHAR},
+      </if>
+      <if test="cellAddress != null">
+        CELL_ADDRESS = #{cellAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="livingCondition != null">
+        LIVING_CONDITION = #{livingCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="isBusinessOwner != null">
+        IS_BUSINESS_OWNER = #{isBusinessOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="isBorrower != null">
+        IS_BORROWER = #{isBorrower,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManager != null">
+        CUSTOMER_MANAGER = #{customerManager,jdbcType=VARCHAR},
+      </if>
+      <if test="supportManager != null">
+        SUPPORT_MANAGER = #{supportManager,jdbcType=VARCHAR},
+      </if>
+      <if test="mainOrgName != null">
+        MAIN_ORG_NAME = #{mainOrgName,jdbcType=VARCHAR},
+      </if>
+      <if test="registerPerson != null">
+        REGISTER_PERSON = #{registerPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyPerson != null">
+        LAST_MODIFY_PERSON = #{lastModifyPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="relationship != null">
+        RELATIONSHIP = #{relationship},
+      </if>
+      <if test="isConcluded != null">
+        IS_CONCLUDED = #{isConcluded},
+      </if>
+      <if test="validTime != null">
+        VALID_TIME = #{validTime},
+      </if>
+      <if test="age != null">
+        AGE = #{age},
+      </if>
+      <if test="interviewId != null">
+        INTERVIEW_ID = #{interviewId,jdbcType=BIGINT},
+      </if>
+      <if test="amount != null">
+        AMOUNT = #{amount,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID_NUMBER = #{idNumber}
+  </update>
+
+</mapper>

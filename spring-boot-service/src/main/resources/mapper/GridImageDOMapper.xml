@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.grid.GridImageDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.grid.GridImageDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="GRID_CODE" jdbcType="VARCHAR" property="gridCode" />
+    <result column="ORIGINAL_NAME" jdbcType="VARCHAR" property="originalName" />
+    <result column="SYSTEM_NAME" jdbcType="VARCHAR" property="systemName" />
+    <result column="PATH" jdbcType="VARCHAR" property="path" />
+    <result column="USER_ID" jdbcType="BIGINT" property="userId" />
+    <result column="TYPE" jdbcType="VARCHAR" property="type" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="DELETE_PATH" jdbcType="VARCHAR" property="deletePath" />
+    <result column="DELETE_TIME" jdbcType="BIGINT" property="deleteTime" />
+    <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
+    <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
+    <result column="COMMENT" jdbcType="VARCHAR" property="comment" />
+    <result column="IMAGE_NUM" jdbcType="VARCHAR" property="imageNum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, GRID_CODE, ORIGINAL_NAME, SYSTEM_NAME, PATH, USER_ID, TYPE, STATUS, DELETE_PATH, 
+    DELETE_TIME, CREATED_AT, UPDATED_AT, COMMENT, IMAGE_NUM
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from GRID_IMAGE
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from GRID_IMAGE
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
+  select * from GRID_IMAGE where grid_code = #{gridCode} and type=#{type}
+  </select>
+  <insert id="insert" parameterType="com.example.service.grid.GridImageDO">
+    insert into GRID_IMAGE (ID, GRID_CODE, ORIGINAL_NAME, 
+      SYSTEM_NAME, PATH, USER_ID, 
+      TYPE, STATUS, DELETE_PATH, 
+      DELETE_TIME, CREATED_AT, UPDATED_AT, 
+      COMMENT, IMAGE_NUM)
+    values (#{id,jdbcType=BIGINT}, #{gridCode,jdbcType=VARCHAR}, #{originalName,jdbcType=VARCHAR}, 
+      #{systemName,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
+      #{type,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{deletePath,jdbcType=VARCHAR}, 
+      #{deleteTime,jdbcType=BIGINT}, #{createdAt,jdbcType=BIGINT}, #{updatedAt,jdbcType=BIGINT}, 
+      #{comment,jdbcType=VARCHAR}, #{imageNum,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.service.grid.GridImageDO">
+    insert into GRID_IMAGE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE,
+      </if>
+      <if test="originalName != null">
+        ORIGINAL_NAME,
+      </if>
+      <if test="systemName != null">
+        SYSTEM_NAME,
+      </if>
+      <if test="path != null">
+        PATH,
+      </if>
+      <if test="userId != null">
+        USER_ID,
+      </if>
+      <if test="type != null">
+        TYPE,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="deletePath != null">
+        DELETE_PATH,
+      </if>
+      <if test="deleteTime != null">
+        DELETE_TIME,
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT,
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT,
+      </if>
+      <if test="comment != null">
+        COMMENT,
+      </if>
+      <if test="imageNum != null">
+        IMAGE_NUM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="gridCode != null">
+        #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="originalName != null">
+        #{originalName,jdbcType=VARCHAR},
+      </if>
+      <if test="systemName != null">
+        #{systemName,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="deletePath != null">
+        #{deletePath,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteTime != null">
+        #{deleteTime,jdbcType=BIGINT},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=BIGINT},
+      </if>
+      <if test="comment != null">
+        #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="imageNum != null">
+        #{imageNum,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.service.grid.GridImageDO">
+    update GRID_IMAGE
+    <set>
+      <if test="gridCode != null">
+        GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="originalName != null">
+        ORIGINAL_NAME = #{originalName,jdbcType=VARCHAR},
+      </if>
+      <if test="systemName != null">
+        SYSTEM_NAME = #{systemName,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        PATH = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="deletePath != null">
+        DELETE_PATH = #{deletePath,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteTime != null">
+        DELETE_TIME = #{deleteTime,jdbcType=BIGINT},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+      <if test="comment != null">
+        COMMENT = #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="imageNum != null">
+        IMAGE_NUM = #{imageNum,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.service.grid.GridImageDO">
+    update GRID_IMAGE
+    set GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      ORIGINAL_NAME = #{originalName,jdbcType=VARCHAR},
+      SYSTEM_NAME = #{systemName,jdbcType=VARCHAR},
+      PATH = #{path,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=BIGINT},
+      TYPE = #{type,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      DELETE_PATH = #{deletePath,jdbcType=VARCHAR},
+      DELETE_TIME = #{deleteTime,jdbcType=BIGINT},
+      CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      COMMENT = #{comment,jdbcType=VARCHAR},
+      IMAGE_NUM = #{imageNum,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

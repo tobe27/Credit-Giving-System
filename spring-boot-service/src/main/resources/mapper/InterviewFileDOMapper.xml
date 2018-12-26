@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.interview.InterviewFileDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.interview.InterviewFileDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="CUSTOMER_NAME" jdbcType="VARCHAR" property="customerName" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="CUSTOMER_ID" jdbcType="BIGINT" property="customerId" />
+    <result column="INTERVIEW_ID" jdbcType="BIGINT" property="interviewId" />
+    <result column="SYSTEM_NAME" jdbcType="VARCHAR" property="systemName" />
+    <result column="PATH" jdbcType="VARCHAR" property="path" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="USER_ID" jdbcType="BIGINT" property="userId" />
+    <result column="TYPE" jdbcType="VARCHAR" property="type" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="DELETE_PATH" jdbcType="VARCHAR" property="deletePath" />
+    <result column="DELETE_TIME" jdbcType="BIGINT" property="deleteTime" />
+    <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
+    <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CUSTOMER_NAME, ID_NUMBER, CUSTOMER_ID, INTERVIEW_ID, SYSTEM_NAME, PATH, USER_NAME, 
+    USER_ID, TYPE, STATUS, DELETE_PATH, DELETE_TIME, CREATED_AT, UPDATED_AT
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from INTERVIEW_FILE
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from INTERVIEW_FILE
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.service.interview.InterviewFileDO">
+    insert into INTERVIEW_FILE (ID, CUSTOMER_NAME, ID_NUMBER, 
+      CUSTOMER_ID, INTERVIEW_ID, SYSTEM_NAME, 
+      PATH, USER_NAME, USER_ID, 
+      TYPE, STATUS, DELETE_PATH, 
+      DELETE_TIME, CREATED_AT, UPDATED_AT
+      )
+    values (#{id,jdbcType=BIGINT}, #{customerName,jdbcType=VARCHAR}, #{idNumber,jdbcType=VARCHAR}, 
+      #{customerId,jdbcType=BIGINT}, #{interviewId,jdbcType=BIGINT}, #{systemName,jdbcType=VARCHAR}, 
+      #{path,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
+      #{type,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{deletePath,jdbcType=VARCHAR}, 
+      #{deleteTime,jdbcType=BIGINT}, #{createdAt,jdbcType=BIGINT}, #{updatedAt,jdbcType=BIGINT}
+      )
+  </insert>
+  <select id="getOneByIdNumber" parameterType="com.example.service.interview.InterviewFileDO" resultMap="BaseResultMap">
+   select * from INTERVIEW_FILE  where id_number= #{idNumber} and type='3' order by CREATED_AT desc fetch first 1 rows only 
+  </select>
+  <select id="getList" parameterType="com.example.service.interview.InterviewFileDO"  resultMap="BaseResultMap">
+    select * from INTERVIEW_FILE where INTERVIEW_ID = #{interviewId} and type = #{type}  order by CREATED_AT desc
+    </select>
+  <insert id="insertSelective" parameterType="com.example.service.interview.InterviewFileDO">
+    insert into INTERVIEW_FILE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="customerName != null">
+        CUSTOMER_NAME,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="customerId != null">
+        CUSTOMER_ID,
+      </if>
+      <if test="interviewId != null">
+        INTERVIEW_ID,
+      </if>
+      <if test="systemName != null">
+        SYSTEM_NAME,
+      </if>
+      <if test="path != null">
+        PATH,
+      </if>
+      <if test="userName != null">
+        USER_NAME,
+      </if>
+      <if test="userId != null">
+        USER_ID,
+      </if>
+      <if test="type != null">
+        TYPE,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="deletePath != null">
+        DELETE_PATH,
+      </if>
+      <if test="deleteTime != null">
+        DELETE_TIME,
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT,
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="customerName != null">
+        #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null">
+        #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="interviewId != null">
+        #{interviewId,jdbcType=BIGINT},
+      </if>
+      <if test="systemName != null">
+        #{systemName,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="deletePath != null">
+        #{deletePath,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteTime != null">
+        #{deleteTime,jdbcType=BIGINT},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.service.interview.InterviewFileDO">
+    update INTERVIEW_FILE
+    <set>
+      <if test="customerName != null">
+        CUSTOMER_NAME = #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null">
+        CUSTOMER_ID = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="interviewId != null">
+        INTERVIEW_ID = #{interviewId,jdbcType=BIGINT},
+      </if>
+      <if test="systemName != null">
+        SYSTEM_NAME = #{systemName,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        PATH = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="deletePath != null">
+        DELETE_PATH = #{deletePath,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteTime != null">
+        DELETE_TIME = #{deleteTime,jdbcType=BIGINT},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.service.interview.InterviewFileDO">
+    update INTERVIEW_FILE
+    set CUSTOMER_NAME = #{customerName,jdbcType=VARCHAR},
+      ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      CUSTOMER_ID = #{customerId,jdbcType=BIGINT},
+      INTERVIEW_ID = #{interviewId,jdbcType=BIGINT},
+      SYSTEM_NAME = #{systemName,jdbcType=VARCHAR},
+      PATH = #{path,jdbcType=VARCHAR},
+      USER_NAME = #{userName,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=BIGINT},
+      TYPE = #{type,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      DELETE_PATH = #{deletePath,jdbcType=VARCHAR},
+      DELETE_TIME = #{deleteTime,jdbcType=BIGINT},
+      CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      UPDATED_AT = #{updatedAt,jdbcType=BIGINT}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

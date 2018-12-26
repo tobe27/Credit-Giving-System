@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.customer.ODSCustomerDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.customer.ODSCustomerDO">
+    <result column="CREDIT_ID" jdbcType="VARCHAR" property="creditId" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="TYPE" jdbcType="VARCHAR" property="type" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="SIGN_ORG" jdbcType="VARCHAR" property="signOrg" />
+    <result column="IS_LONG_TERM" jdbcType="VARCHAR" property="isLongTerm" />
+    <result column="SIGN_DATE" jdbcType="VARCHAR" property="signDate" />
+    <result column="DUE_DATE" jdbcType="VARCHAR" property="dueDate" />
+    <result column="DISTRICT_ADDRESS" jdbcType="VARCHAR" property="districtAddress" />
+    <result column="BIRTHDAY" jdbcType="VARCHAR" property="birthday" />
+    <result column="GENDER" jdbcType="VARCHAR" property="gender" />
+    <result column="DETAIL_ADDRESS" jdbcType="VARCHAR" property="detailAddress" />
+    <result column="POSTCODE" jdbcType="VARCHAR" property="postcode" />
+    <result column="NATIVE_ADDRESS" jdbcType="VARCHAR" property="nativeAddress" />
+    <result column="PHONE_NUMBER" jdbcType="VARCHAR" property="phoneNumber" />
+    <result column="NATIONALITY" jdbcType="VARCHAR" property="nationality" />
+    <result column="NATION" jdbcType="VARCHAR" property="nation" />
+    <result column="POLITICS_STATUS" jdbcType="VARCHAR" property="politicsStatus" />
+    <result column="EDUCATION_BACKGROUND" jdbcType="VARCHAR" property="educationBackground" />
+    <result column="PHYSICAL_CONDITION" jdbcType="VARCHAR" property="physicalCondition" />
+    <result column="MARITAL_STATUS" jdbcType="VARCHAR" property="maritalStatus" />
+    <result column="SPOUSE_NAME" jdbcType="VARCHAR" property="spouseName" />
+    <result column="SPOUSE_ID_NUMBER" jdbcType="VARCHAR" property="spouseIdNumber" />
+    <result column="SPOUSE_PHONE_NUMBER" jdbcType="VARCHAR" property="spousePhoneNumber" />
+    <result column="SPOUSE_COMPANY_NAME" jdbcType="VARCHAR" property="spouseCompanyName" />
+    <result column="CAREER_TYPE" jdbcType="VARCHAR" property="careerType" />
+    <result column="TAX_TYPE" jdbcType="VARCHAR" property="taxType" />
+    <result column="MAIN_BUSINESS" jdbcType="VARCHAR" property="mainBusiness" />
+    <result column="INDUSTRY_TYPE" jdbcType="VARCHAR" property="industryType" />
+    <result column="IS_STAFF" jdbcType="VARCHAR" property="isStaff" />
+    <result column="IS_STOCKHOLDER" jdbcType="VARCHAR" property="isStockholder" />
+    <result column="IS_CIVIL_SERVANT" jdbcType="VARCHAR" property="isCivilServant" />
+    <result column="IS_HOUSE_OWNER" jdbcType="VARCHAR" property="isHouseOwner" />
+    <result column="CUST_MANAGER_ID" jdbcType="VARCHAR" property="custManagerId" />
+    <result column="ORG_ID" jdbcType="VARCHAR" property="orgId" />
+  </resultMap>
+
+  <!--查询ODS客户数据,状态为Y-->
+  <select id="listODSByIdNumber" parameterType="String" resultMap="BaseResultMap">
+    select *
+    from ods_customer_info
+    where (select accessable from task_status) = 'Y' and id_number = #{idNumber}
+  </select>
+  <select id="listODSByIdNumbers" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select *
+    from ods_customer_info
+    where (select accessable from task_status) = 'Y' and id_number 
+    in   <foreach item="item" index="index" collection="idNumberList" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+    
+  </select>
+</mapper>

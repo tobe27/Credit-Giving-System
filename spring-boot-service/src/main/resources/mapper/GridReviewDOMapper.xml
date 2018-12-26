@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.grid.GridReviewDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.grid.GridReviewDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="GRID_CODE" jdbcType="VARCHAR" property="gridCode" />
+    <result column="GRID_NAME" jdbcType="VARCHAR" property="gridName" />
+    <result column="PHONE" jdbcType="VARCHAR" property="phone" />
+    <result column="GRID_REVIEW_NAME" jdbcType="VARCHAR" property="gridReviewName" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="DUTIES" jdbcType="VARCHAR" property="duties" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="ADDRESS" jdbcType="VARCHAR" property="address" />
+    <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
+    <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
+    <result column="TYPE" jdbcType="VARCHAR" property="type" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, GRID_CODE, GRID_NAME, PHONE, GRID_REVIEW_NAME, ID_NUMBER, DUTIES, DESCRIPTION, 
+    ADDRESS, CREATED_AT, UPDATED_AT, TYPE, STATUS
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from GRID_REVIEW
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+
+  <!--根据姓名和网格编号获取调查元ID-->
+  <select id="getReviewByNameAndGridCode" parameterType="com.example.service.grid.GridReviewDO" resultType="Long">
+    select id
+    from GRID_REVIEW
+    where GRID_REVIEW_NAME = #{gridReviewName} and GRID_CODE = #{gridCode}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from GRID_REVIEW
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByGridCode"  parameterType="com.example.service.grid.GridReviewDO">
+  delete from GRID_REVIEW where GRID_CODE = #{gridCode}
+  </delete>
+  <insert id="insert" parameterType="com.example.service.grid.GridReviewDO">
+    insert into GRID_REVIEW (ID, GRID_CODE, GRID_NAME, 
+      PHONE, GRID_REVIEW_NAME, ID_NUMBER, 
+      DUTIES, DESCRIPTION, ADDRESS, 
+      CREATED_AT, UPDATED_AT, TYPE, 
+      STATUS)
+    values (#{id,jdbcType=BIGINT}, #{gridCode,jdbcType=VARCHAR}, #{gridName,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{gridReviewName,jdbcType=VARCHAR}, #{idNumber,jdbcType=VARCHAR}, 
+      #{duties,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{createdAt,jdbcType=BIGINT}, #{updatedAt,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.service.grid.GridReviewDO">
+    insert into GRID_REVIEW
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE,
+      </if>
+      <if test="gridName != null">
+        GRID_NAME,
+      </if>
+      <if test="phone != null">
+        PHONE,
+      </if>
+      <if test="gridReviewName != null">
+        GRID_REVIEW_NAME,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="duties != null">
+        DUTIES,
+      </if>
+      <if test="description != null">
+        DESCRIPTION,
+      </if>
+      <if test="address != null">
+        ADDRESS,
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT,
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT,
+      </if>
+      <if test="type != null">
+        TYPE,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="gridCode != null">
+        #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gridName != null">
+        #{gridName,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="gridReviewName != null">
+        #{gridReviewName,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="duties != null">
+        #{duties,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.service.grid.GridReviewDO">
+    update GRID_REVIEW
+    <set>
+      <if test="gridCode != null">
+        GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gridName != null">
+        GRID_NAME = #{gridName,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="gridReviewName != null">
+        GRID_REVIEW_NAME = #{gridReviewName,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="duties != null">
+        DUTIES = #{duties,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.service.grid.GridReviewDO">
+    update GRID_REVIEW
+    set GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      GRID_NAME = #{gridName,jdbcType=VARCHAR},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      GRID_REVIEW_NAME = #{gridReviewName,jdbcType=VARCHAR},
+      ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      DUTIES = #{duties,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      TYPE = #{type,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.resident.ResidentDOMapper">
+
+  <resultMap id="BaseResultMap" type="com.example.service.resident.ResidentDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="CONTACT" jdbcType="VARCHAR" property="contact" />
+    <result column="COUNTY" jdbcType="VARCHAR" property="county" />
+    <result column="TOWNSHIP" jdbcType="VARCHAR" property="township" />
+    <result column="VILLAGE" jdbcType="VARCHAR" property="village" />
+    <result column="GROUP" jdbcType="VARCHAR" property="group" />
+    <result column="HOUSEHOLD_ID" jdbcType="VARCHAR" property="householdId" />
+    <result column="RELATIONSHIP" jdbcType="VARCHAR" property="relationship" />
+    <result column="IS_IN_LIST" jdbcType="VARCHAR" property="isInList" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="USER_ID" jdbcType="BIGINT" property="userId" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+    <result column="GRID_CODE" jdbcType="VARCHAR" property="gridCode" />
+    <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
+    <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
+    <!--关联使用字段-->
+    <result column="GRID_NAME" jdbcType="VARCHAR" property="gridName" />
+  </resultMap>
+
+  <!--通过身份证修改户籍表身份证号，户号，网格-->
+  <update id="modifyResidentIdNumberAndHouseholdIdAndGridCodeByOldIdNumber" parameterType="com.example.service.resident.ResidentDO">
+    update user_resident
+    set
+    <if test="idNumber != null" >
+      ID_NUMBER = #{idNumber},
+    </if>
+      <if test="name != null" >
+          name = #{name},
+      </if>
+    <if test="householdId != null" >
+      HOUSEHOLD_ID = #{householdId},
+    </if>
+      <if test="relationship != null" >
+          relationship = #{relationship},
+      </if>
+    <if test="gridCode != null" >
+      GRID_CODE = #{gridCode}
+    </if>
+    where id_number = #{oldIdNumber}
+  </update>
+
+  <!--通过身份证修改客户表身份证号，户号，网格-->
+  <update id="modifyCustomerIdNumberAndHouseholdIdAndGridCodeByOldIdNumber" parameterType="com.example.service.resident.ResidentDO">
+    update user_customer
+    set
+    <if test="idNumber != null" >
+      ID_NUMBER = #{idNumber},
+    </if>
+      <if test="name != null" >
+          name = #{name},
+      </if>
+    <if test="householdId != null" >
+      HOUSEHOLD_ID = #{householdId},
+    </if>
+      <if test="relationship != null" >
+          relationship = #{relationship},
+      </if>
+    <if test="gridCode != null" >
+      GRID_CODE = #{gridCode}
+    </if>
+    where id_number = #{oldIdNumber}
+  </update>
+
+  <!--通过身份证修改调查表身份证号，户号-->
+  <update id="modifySurveyIdNumberAndHouseholdIdByOldIdNumber" parameterType="com.example.service.resident.ResidentDO">
+    update user_survey
+    set
+    <if test="idNumber != null" >
+      ID_NUMBER = #{idNumber},
+    </if>
+    <if test="householdId != null" >
+      HOUSEHOLD_ID = #{householdId}
+    </if>
+    where id_number = #{oldIdNumber}
+  </update>
+
+  <update id="modifyNameByNameAndHouseholdId" parameterType="com.example.service.resident.ResidentDO">
+    update user_survey
+    set
+    <if test="name != null" >
+      name = #{name}
+    </if>
+    where name = #{name} and household_id = #{householdId}
+  </update>
+
+  <!--通过身份证修改标签关联表身份证号-->
+  <update id="modifyCustomerTagIdNumberByOldIdNumber" parameterType="com.example.service.resident.ResidentDO">
+    update db_customer_tag_relation
+    set
+    <if test="idNumber != null" >
+      ID_NUMBER = #{idNumber}
+    </if>
+    where id_number = #{oldIdNumber}
+  </update>
+
+  <select id="getByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select resident.*, grid.grid_name
+    from USER_RESIDENT resident
+    join GRID_INFO grid on resident.grid_code = grid.grid_code
+    where resident.ID = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getByIdNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select resident.*
+    from USER_RESIDENT resident
+    where resident.ID_NUMBER = #{idNumber}
+  </select>
+
+  <select id="listByHouseholdId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select resident.*
+    from USER_RESIDENT resident
+    where resident.HOUSEHOLD_ID = #{householdId}
+  </select>
+  
+  <select id="getByIdNumers" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select resident.*
+    from USER_RESIDENT resident
+    where ID_NUMBER in   <foreach item="item" index="index" collection="idNumberList" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+  </select>
+  
+
+
+  <select id="listByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select resident.*
+    from USER_RESIDENT resident
+    where resident.USER_ID = #{userId}
+  </select>
+
+  <select id="listByNameOrIdNumberOrHouseholdId" parameterType="com.example.service.resident.ResidentDO" resultMap="BaseResultMap">
+    select resident.*, grid.grid_name
+    from USER_RESIDENT resident
+    left join GRID_INFO grid on resident.grid_code = grid.grid_code
+    where 1=1
+    <if test="name != null">
+      and resident.name like '%'||#{name}||'%'
+    </if>
+    <if test="idNumber != null and idNumber != ''">
+      and resident.id_number = #{idNumber}
+    </if>
+    <if test="householdId != null and householdId != ''">
+      and resident.household_id = #{householdId}
+    </if>
+    <if test="gridCode != null">
+      and resident.grid_code = #{gridCode}
+    </if>
+    --       客户经理只能查看自己网格下的客户
+    <if test="roleId == 1">
+      and grid.user_id = #{userId}
+    </if>
+    --       非客户经理可以查看本机构及子机构下的所有客户
+    <if test="roleId != 1">
+      and grid.org_code IN
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    ORDER BY resident.created_at DESC, resident.household_id
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from USER_RESIDENT
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.example.service.resident.ResidentDO">
+    insert into USER_RESIDENT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="contact != null">
+        CONTACT,
+      </if>
+      <if test="county != null">
+        COUNTY,
+      </if>
+      <if test="township != null">
+        TOWNSHIP,
+      </if>
+      <if test="village != null">
+        VILLAGE,
+      </if>
+      <if test="group != null">
+        GROUP,
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID,
+      </if>
+      <if test="relationship != null">
+        RELATIONSHIP,
+      </if>
+      <if test="isInList != null">
+        IS_IN_LIST,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+      <if test="userId != null">
+        USER_ID,
+      </if>
+      <if test="userName != null">
+        USER_NAME,
+      </if>
+      <if test="orgName != null">
+        ORG_NAME,
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE,
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT,
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null">
+        #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="county != null">
+        #{county,jdbcType=VARCHAR},
+      </if>
+      <if test="township != null">
+        #{township,jdbcType=VARCHAR},
+      </if>
+      <if test="village != null">
+        #{village,jdbcType=VARCHAR},
+      </if>
+      <if test="group != null">
+        #{group,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="relationship != null">
+        #{relationship,jdbcType=VARCHAR},
+      </if>
+      <if test="isInList != null">
+        #{isInList,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+<insert id="batchSave" parameterType="java.util.List">
+  insert into USER_RESIDENT(NAME,ID_NUMBER,CONTACT,COUNTY,TOWNSHIP,VILLAGE,
+        GROUP,HOUSEHOLD_ID,RELATIONSHIP,IS_IN_LIST,REMARK,USER_ID,USER_NAME, ORG_NAME,GRID_CODE,CREATED_AT,UPDATED_AT)
+  VALUES
+  <foreach  collection="list" item="item" separator=",">
+        (#{item.name}, #{item.idNumber}, #{item.contact},#{item.county}, #{item.township}, #{item.village}, #{item.group}, #{item.householdId}, #{item.relationship}
+        , #{item.isInList}, #{item.remark}, #{item.userId}, #{item.userName}, #{item.orgName}, #{item.gridCode},#{item.createdAt},#{item.updatedAt})
+    </foreach>
+</insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.service.resident.ResidentDO">
+    update USER_RESIDENT
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null">
+        CONTACT = #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="county != null">
+        COUNTY = #{county,jdbcType=VARCHAR},
+      </if>
+      <if test="township != null">
+        TOWNSHIP = #{township,jdbcType=VARCHAR},
+      </if>
+      <if test="village != null">
+        VILLAGE = #{village,jdbcType=VARCHAR},
+      </if>
+      <if test="group != null">
+        GROUP = #{group,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="relationship != null">
+        RELATIONSHIP = #{relationship,jdbcType=VARCHAR},
+      </if>
+      <if test="isInList != null">
+        IS_IN_LIST = #{isInList,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        ORG_NAME = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

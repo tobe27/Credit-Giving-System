@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.grid.GridInfoDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.grid.GridInfoDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="GRID_CODE" jdbcType="VARCHAR" property="gridCode" />
+    <result column="GRID_NAME" jdbcType="VARCHAR" property="gridName" />
+    <result column="ORG_CODE" jdbcType="VARCHAR" property="orgCode" />
+     <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+    <result column="GRID_TYPE" jdbcType="VARCHAR" property="gridType" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="USER_ID" jdbcType="BIGINT" property="userId" />
+     <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="ASSIST_MANAGER" jdbcType="VARCHAR" property="assistManager" />
+    <result column="SUPERVISE_MANAGER" jdbcType="VARCHAR" property="superviseManager" />
+    <result column="QR_CODE" jdbcType="VARCHAR" property="qrCode" />
+    <result column="GRID_MAP" jdbcType="VARCHAR" property="gridMap" />
+    <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
+    <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+     <result column="TOWNSHIP" jdbcType="VARCHAR" property="township" />
+      <result column="VILLAGE" jdbcType="VARCHAR" property="village" />
+       <result column="GROUP" jdbcType="VARCHAR" property="group" />
+      <collection property="listReview" column="grid_code"   ofType="com.example.service.grid.GridReviewDO" select="getGridReviews" >
+      </collection>
+  </resultMap>
+  <resultMap id="GridReviewResultMap" type="com.example.service.grid.GridReviewDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="grid_code" jdbcType="VARCHAR" property="gridCode" />
+    <result column="grid_name" jdbcType="VARCHAR" property="gridName" />
+    <result column="grid_review_name" jdbcType="VARCHAR" property="gridReviewName" />
+    <result column="id_number" jdbcType="VARCHAR" property="idNumber" />
+    <result column="duties" jdbcType="VARCHAR" property="duties" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+     <result column="phone" jdbcType="VARCHAR" property="phone" />
+     <result column="type" jdbcType="VARCHAR" property="type" />
+      <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="created_at" jdbcType="BIGINT" property="createdAt" />
+    <result column="updated_at" jdbcType="BIGINT" property="updatedAt" />
+  </resultMap>
+
+  <select id="checkExistByGridCode" parameterType="String" resultType="String">
+    select grid_code from grid_info where grid_code = #{gridCode}
+  </select>
+
+  <select id="getGridReviews" parameterType="java.lang.String" resultMap="GridReviewResultMap">
+    select *
+    from grid_review gr
+    where  gr.grid_code = #{grid_code}
+  </select>
+  
+  <sql id="Base_Column_List">
+    ID, GRID_CODE, GRID_NAME, ORG_CODE, GRID_TYPE, DESCRIPTION, USER_ID, ASSIST_MANAGER, 
+    SUPERVISE_MANAGER, QR_CODE, GRID_MAP, CREATED_AT, UPDATED_AT, STATUS,TOWNSHIP VILLAGE,GROUP
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    gi.*,DO.ORG_NAME AS ORG_NAME, DU.NAME AS USER_NAME
+    from GRID_INFO gi  left join DB_ORG DO  ON  gi.ORG_CODE=DO.ORG_CODE   left join DB_USER DU ON  gi.USER_ID=DU.ID
+    where gi.ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from GRID_INFO
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.service.grid.GridInfoDO">
+    insert into GRID_INFO (ID, GRID_CODE, GRID_NAME, 
+      ORG_CODE, GRID_TYPE, DESCRIPTION, 
+      USER_ID, ASSIST_MANAGER, SUPERVISE_MANAGER, 
+      QR_CODE, GRID_MAP, CREATED_AT, 
+      UPDATED_AT, STATUS)
+    values (#{id,jdbcType=BIGINT}, #{gridCode,jdbcType=VARCHAR}, #{gridName,jdbcType=VARCHAR}, 
+      #{orgCode,jdbcType=VARCHAR}, #{gridType,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, #{assistManager,jdbcType=VARCHAR}, #{superviseManager,jdbcType=VARCHAR}, 
+      #{qrCode,jdbcType=VARCHAR}, #{gridMap,jdbcType=VARCHAR}, #{createdAt,jdbcType=BIGINT}, 
+      #{updatedAt,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR})
+  </insert>
+  
+  <select id="checkSameGridCode"  parameterType="com.example.service.grid.GridInfoDO"  resultMap="BaseResultMap">
+        select *
+        from GRID_INFO
+        where GRID_CODE = #{gridCode}
+        <if test="id !=null">
+        and id !=#{id}
+        </if>
+  </select>
+  <select id="getList"  parameterType="java.util.Map" resultMap="BaseResultMap">
+  select grid.*, org.ORG_NAME AS  ORG_NAME  from GRID_INFO grid left join db_user user on  grid.user_id=user.id 
+   left join DB_ORG org  on grid.ORG_CODE=org.ORG_CODE
+   where 1=1
+   <if test="userId != null">
+       and grid.USER_ID = #{userId}
+      </if>
+      <if test="orgCodeList != null">
+       and grid.ORG_CODE in   
+       <foreach item="item" index="index" collection="orgCodeList" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+      </if>
+      <if test="gridName != null">
+        and grid.GRID_NAME  like '%'||#{gridName}||'%'
+      </if>
+       <if test="gridCode != null">
+       and  grid.GRID_CODE= #{gridCode}  
+      </if>
+     
+      <if test="gridType != null">
+      and  grid.GRID_TYPE= #{gridType}
+      </if>
+      
+       <if test="realName != null">
+     and   user.name  like '%'||#{realName}||'%'
+      </if>
+      
+  </select>
+  
+  <insert id="insertSelective" parameterType="com.example.service.grid.GridInfoDO">
+    insert into GRID_INFO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE,
+      </if>
+      <if test="gridName != null">
+        GRID_NAME,
+      </if>
+      <if test="orgCode != null">
+        ORG_CODE,
+      </if>
+      <if test="gridType != null">
+        GRID_TYPE,
+      </if>
+      <if test="description != null">
+        DESCRIPTION,
+      </if>
+      <if test="userId != null">
+        USER_ID,
+      </if>
+      <if test="assistManager != null">
+        ASSIST_MANAGER,
+      </if>
+      <if test="superviseManager != null">
+        SUPERVISE_MANAGER,
+      </if>
+      <if test="qrCode != null">
+        QR_CODE,
+      </if>
+      <if test="gridMap != null">
+        GRID_MAP,
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT,
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="township!= null">
+        TOWNSHIP,
+      </if>
+      <if test="village != null">
+        VILLAGE,
+      </if>
+      <if test="group !=null">
+        GROUP,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="gridCode != null">
+        #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gridName != null">
+        #{gridName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null">
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gridType != null">
+        #{gridType,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="assistManager != null">
+        #{assistManager,jdbcType=VARCHAR},
+      </if>
+      <if test="superviseManager != null">
+        #{superviseManager,jdbcType=VARCHAR},
+      </if>
+      <if test="qrCode != null">
+        #{qrCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gridMap != null">
+        #{gridMap,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="township != null">
+        #{township,jdbcType=VARCHAR},
+      </if>
+      <if test="village != null">
+        #{village,jdbcType=VARCHAR},
+      </if>
+      <if test="group != null">
+        #{group,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.service.grid.GridInfoDO">
+    update GRID_INFO
+    <set>
+      <if test="gridCode != null">
+        GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gridName != null">
+        GRID_NAME = #{gridName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null">
+        ORG_CODE = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gridType != null">
+        GRID_TYPE = #{gridType,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="assistManager != null">
+        ASSIST_MANAGER = #{assistManager,jdbcType=VARCHAR},
+      </if>
+      <if test="superviseManager != null">
+        SUPERVISE_MANAGER = #{superviseManager,jdbcType=VARCHAR},
+      </if>
+      <if test="qrCode != null">
+        QR_CODE = #{qrCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gridMap != null">
+        GRID_MAP = #{gridMap,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+       <if test="township != null">
+        TOWNSHIP= #{township,jdbcType=VARCHAR},
+      </if>
+       <if test="village != null">
+        VILLAGE= #{village,jdbcType=VARCHAR},
+      </if>
+       <if test="group != null">
+        GROUP = #{group,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.service.grid.GridInfoDO">
+    update GRID_INFO
+    set GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      GRID_NAME = #{gridName,jdbcType=VARCHAR},
+      ORG_CODE = #{orgCode,jdbcType=VARCHAR},
+      GRID_TYPE = #{gridType,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=BIGINT},
+      ASSIST_MANAGER = #{assistManager,jdbcType=VARCHAR},
+      SUPERVISE_MANAGER = #{superviseManager,jdbcType=VARCHAR},
+      QR_CODE = #{qrCode,jdbcType=VARCHAR},
+      GRID_MAP = #{gridMap,jdbcType=VARCHAR},
+      CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      STATUS = #{status,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="getResidentFamliyCount" parameterType="java.util.Map" resultType="java.lang.String">
+  select count(1) as residentFamliyCount from (select distinct  HOUSEHOLD_ID from USER_RESIDENT where GRID_CODE =#{gridCode})
+  </select>
+  
+   <select id="getResidentPeopleCount" parameterType="java.util.Map" resultType="java.lang.String">
+  select count(1) as residentPeopleCount from (select distinct  id_number from USER_RESIDENT where GRID_CODE=#{gridCode})
+  </select>
+  
+   <select id="getBlackFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
+  select COUNT(1) as blackFamilyCount from (select distinct ur.household_id from USER_RESIDENT  ur     right join CUSTOMER_BLACK  cb    on   ur.ID_NUMBER = cb.ID_NUMBER where ur.GRID_CODE=#{gridCode})
+  </select>
+  
+   <select id="getPovertyFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
+  select COUNT(1) as povertyFamilyCount   from (select distinct ur.household_id from USER_RESIDENT  ur     right join CUSTOMER_POVERTY cp    on   ur.ID_NUMBER = cp.ID_NUMBER where ur.GRID_CODE=#{gridCode})
+  </select>
+   <select id="getGreyFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
+  select COUNT(1) as greyFamilyCount from (select distinct household_id  from CUSTOMER_GREY where GRID_CODE=#{gridCode})
+  </select>
+  
+  <select id="getWhiteFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
+  select COUNT(1) as whiteFamilyCount from (select distinct household_id  from CUSTOMER_WHITE where GRID_CODE=#{gridCode})
+  </select>
+  
+  <select id="getCreditedFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
+    SELECT COUNT(1) as creditedFamilyCount FROM (select distinct UR.HOUSEHOLD_ID  from ODS_CUSTOMER_LIMIT OCL    LEFT JOIN  USER_RESIDENT  UR  ON OCL.ID_NUMBER = UR.ID_NUMBER  where GRID_CODE=#{gridCode} )
+  </select>
+  
+  <select id="getCreditLimit" parameterType="java.util.Map" resultType="java.lang.String">
+    SELECT SUM(cast(char(OCL.LMT_AMOUNT) as decimal(24,2))) as creditLimit FROM  ODS_CUSTOMER_LIMIT OCL LEFT JOIN USER_RESIDENT  UR ON OCL.ID_NUMBER = UR.ID_NUMBER  where UR.GRID_CODE=#{gridCode}
+  </select>
+   <select id="getUsedCreditLimit" parameterType="java.util.Map" resultType="java.lang.String">
+  SELECT SUM(OCL.BALANCE) as usedCreditLimit  FROM  ODS_CUSTOMER_LOAN OCL LEFT JOIN USER_RESIDENT  UR ON OCL.ID_NUMBER = UR.ID_NUMBER  where UR.GRID_CODE=#{gridCode}
+
+  </select>
+  
+  
+  
+</mapper>

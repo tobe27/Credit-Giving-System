@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.business.BusinessDOMapper">
+    <resultMap id="BaseResultMap" type="com.example.service.business.BusinessDO">
+        <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+        <result column="HOUSEHOLD_ID" jdbcType="VARCHAR" property="householdId" />
+    </resultMap>
+
+    <resultMap id="BusinessResultMap" type="com.example.service.business.BusinessDO" extends="BaseResultMap">
+        <collection property="assureDOList" column="household_id"   ofType="com.example.service.business.ODSAssureDO" select="listAssureByIdNumber" >
+        </collection>
+        <collection property="depositDOList" column="household_id"   ofType="com.example.service.business.ODSDepositDO" select="listDepositByIdNumber" >
+        </collection>
+        <collection property="loanDOList" column="household_id"   ofType="com.example.service.business.ODSLoanDO" select="listLoanByIdNumber" >
+        </collection>
+    </resultMap>
+
+    <resultMap id="AssureResultMap" type="com.example.service.business.ODSAssureDO">
+        <result column="CREDIT_ID" jdbcType="VARCHAR" property="creditId" />
+        <result column="NAME" jdbcType="VARCHAR" property="name" />
+        <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+        <result column="ASSURE_TYPE" jdbcType="VARCHAR" property="assureType" />
+        <result column="ASSURE_ID" jdbcType="VARCHAR" property="assureId" />
+        <result column="CONT_ID" jdbcType="VARCHAR" property="contId" />
+        <result column="SUM_BALANCE" jdbcType="DECIMAL" property="sumBalance" />
+    </resultMap>
+
+    <resultMap id="DepositResultMap" type="com.example.service.business.ODSDepositDO">
+        <result column="CREDIT_ID" jdbcType="VARCHAR" property="creditId" />
+        <result column="NAME" jdbcType="VARCHAR" property="name" />
+        <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+        <result column="ACCOUNT" jdbcType="VARCHAR" property="account" />
+        <result column="DEPOSIT_TYPE" jdbcType="VARCHAR" property="depositType" />
+        <result column="BALANCE_SUM" jdbcType="VARCHAR" property="balanceSum" />
+    </resultMap>
+
+    <resultMap id="LoanResultMap" type="com.example.service.business.ODSLoanDO">
+        <result column="CREDIT_ID" jdbcType="VARCHAR" property="creditId" />
+        <result column="NAME" jdbcType="VARCHAR" property="name" />
+        <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+        <result column="ACCOUNT" jdbcType="VARCHAR" property="account" />
+        <result column="LOAN_TYPE" jdbcType="VARCHAR" property="loanType" />
+        <result column="CONT_NO" jdbcType="VARCHAR" property="contNo" />
+        <result column="BILL_NO" jdbcType="VARCHAR" property="billNo" />
+        <result column="AMOUNT" jdbcType="VARCHAR" property="amount" />
+        <result column="BALANCE" jdbcType="DECIMAL" property="balance" />
+        <result column="ORGNO" jdbcType="VARCHAR" property="orgno" />
+    </resultMap>
+
+    <select id="getBusinessByIdNumber" parameterType="String" resultMap="BusinessResultMap">
+        select household_id
+        from user_customer
+        where id_number = #{idNumber}
+    </select>
+    
+    <select id="listAssureByIdNumber" parameterType="String" resultMap="AssureResultMap">
+        select *
+        from ods_customer_assure
+        where (select accessable from task_status) = 'Y'
+        and id_number
+        in  (select id_number from user_customer where household_id = #{householdId})
+    </select>
+
+    <select id="listDepositByIdNumber" parameterType="String" resultMap="DepositResultMap">
+        select *
+        from ods_customer_deposit_sum
+        where (select accessable from task_status) = 'Y'
+        and id_number
+        in  (select id_number from user_customer where household_id = #{householdId})
+    </select>
+
+    <select id="listLoanByIdNumber" parameterType="String" resultMap="LoanResultMap">
+        select *
+        from ods_customer_loan
+        where (select accessable from task_status) = 'Y' and
+        id_number
+        in  (select id_number from user_customer where household_id = #{householdId})
+    </select>
+
+
+</mapper>

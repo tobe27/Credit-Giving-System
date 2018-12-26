@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.grey.CustomerGreyDOMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.grey.CustomerGreyDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="CUSTOMER_ID" jdbcType="BIGINT" property="customerId" />
+    <result column="CUSTOMER_NAME" jdbcType="VARCHAR" property="customerName" />
+    <result column="HOUSEHOLD_ID" jdbcType="VARCHAR" property="householdId" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="REASON" jdbcType="VARCHAR" property="reason" />
+    <result column="PHONE" jdbcType="VARCHAR" property="phone" />
+    <result column="GRID_CODE" jdbcType="VARCHAR" property="gridCode" />
+    <result column="GRID_NAME" jdbcType="VARCHAR" property="gridName" />
+    <result column="ORG_CODE" jdbcType="VARCHAR" property="orgCode" />
+    <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+    <result column="USER_ID" jdbcType="BIGINT" property="userId" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
+    <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CUSTOMER_ID, CUSTOMER_NAME, HOUSEHOLD_ID, ID_NUMBER, REASON, PHONE, GRID_CODE, 
+    GRID_NAME, ORG_CODE, ORG_NAME, USER_ID, USER_NAME, STATUS, CREATED_AT, UPDATED_AT
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from CUSTOMER_GREY
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+   <select id="getByIdNumber" parameterType="java.util.Map" resultMap="BaseResultMap">
+  select * from CUSTOMER_GREY where  ID_NUMBER  = #{idNumber}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from CUSTOMER_GREY
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <select id="getByIdNumbers" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select *
+    from CUSTOMER_GREY
+    where ID_NUMBER in   <foreach item="item" index="index" collection="idNumberList" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+  </select>
+  
+  <insert id="insert" parameterType="com.example.service.grey.CustomerGreyDO">
+    insert into CUSTOMER_GREY (ID, CUSTOMER_ID, CUSTOMER_NAME, 
+      HOUSEHOLD_ID, ID_NUMBER, REASON, 
+      PHONE, GRID_CODE, GRID_NAME, 
+      ORG_CODE, ORG_NAME, USER_ID, 
+      USER_NAME, STATUS, CREATED_AT, 
+      UPDATED_AT)
+    values (#{id,jdbcType=BIGINT}, #{customerId,jdbcType=BIGINT}, #{customerName,jdbcType=VARCHAR}, 
+      #{householdId,jdbcType=VARCHAR}, #{idNumber,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{gridCode,jdbcType=VARCHAR}, #{gridName,jdbcType=VARCHAR}, 
+      #{orgCode,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
+      #{userName,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{createdAt,jdbcType=BIGINT}, 
+      #{updatedAt,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.service.grey.CustomerGreyDO">
+    insert into CUSTOMER_GREY
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="customerId != null">
+        CUSTOMER_ID,
+      </if>
+      <if test="customerName != null">
+        CUSTOMER_NAME,
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="reason != null">
+        REASON,
+      </if>
+      <if test="phone != null">
+        PHONE,
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE,
+      </if>
+      <if test="gridName != null">
+        GRID_NAME,
+      </if>
+      <if test="orgCode != null">
+        ORG_CODE,
+      </if>
+      <if test="orgName != null">
+        ORG_NAME,
+      </if>
+      <if test="userId != null">
+        USER_ID,
+      </if>
+      <if test="userName != null">
+        USER_NAME,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT,
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="customerId != null">
+        #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="customerName != null">
+        #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null">
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gridName != null">
+        #{gridName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null">
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.service.grey.CustomerGreyDO">
+    update CUSTOMER_GREY
+    <set>
+      <if test="customerId != null">
+        CUSTOMER_ID = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="customerName != null">
+        CUSTOMER_NAME = #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null">
+        REASON = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gridName != null">
+        GRID_NAME = #{gridName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null">
+        ORG_CODE = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        ORG_NAME = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
+     select cg.* from CUSTOMER_GREY cg  left join  GRID_INFO  gi on cg.grid_code=gi.grid_code 
+     
+     where 1=1 and cg.org_code  like #{orgCode}||'%'
+          <if test="userId != null">
+     and   gi.USER_ID  = #{userId}
+      </if>
+       <if test="gridCode != null">
+     and  cg.GRID_CODE  = #{gridCode}
+      </if>
+       <if test="someOrgCode != null">
+     and  cg.org_code  = #{someOrgCode}
+      </if>
+      
+      <if test="idNumber != null">
+     and   cg.ID_NUMBER  like '%'||#{idNumber}||'%'
+      </if>
+       <if test="customerName != null">
+     and   cg.CUSTOMER_NAME  like '%'||#{customerName}||'%'
+      </if>
+    
+      order by cg.created_at desc
+  </select>
+  
+  
+  <update id="updateByPrimaryKey" parameterType="com.example.service.grey.CustomerGreyDO">
+    update CUSTOMER_GREY
+    set CUSTOMER_ID = #{customerId,jdbcType=BIGINT},
+      CUSTOMER_NAME = #{customerName,jdbcType=VARCHAR},
+      HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR},
+      ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      REASON = #{reason,jdbcType=VARCHAR},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      GRID_NAME = #{gridName,jdbcType=VARCHAR},
+      ORG_CODE = #{orgCode,jdbcType=VARCHAR},
+      ORG_NAME = #{orgName,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=BIGINT},
+      USER_NAME = #{userName,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      UPDATED_AT = #{updatedAt,jdbcType=BIGINT}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
