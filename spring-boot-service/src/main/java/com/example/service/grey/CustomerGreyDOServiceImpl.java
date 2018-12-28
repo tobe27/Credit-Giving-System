@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,7 @@ public class CustomerGreyDOServiceImpl implements CustomerGreyDOService {
 	 * @return
 	 * @throws Exception
 	 */
+	@Transactional
 	@Override
 	public boolean deleteByPrimaryKey(Long id) throws Exception {
 		//删除客户标签中的灰名单
@@ -58,6 +60,7 @@ public class CustomerGreyDOServiceImpl implements CustomerGreyDOService {
 	 * @return
 	 * @throws Exception
 	 */
+	@Transactional
 	@Override
 	public boolean insertSelective(CustomerGreyDO record) throws Exception {
 		long now=System.currentTimeMillis();
@@ -145,6 +148,7 @@ public class CustomerGreyDOServiceImpl implements CustomerGreyDOService {
 	 * @return
 	 * @throws Exception
 	 */
+	@Transactional
 	@Override
 	public List<CustomerGreyDO> getList(Map<String, Object> map) throws Exception {
 		if(!map.containsKey("roleId") || !map.containsKey("userId")|| !map.containsKey("orgCode")||!map.containsKey("pageNum")||!map.containsKey("pageSize")) {

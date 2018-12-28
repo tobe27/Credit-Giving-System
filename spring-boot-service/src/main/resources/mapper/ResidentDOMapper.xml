@@ -86,9 +86,9 @@
     update user_survey
     set
     <if test="name != null" >
-      name = #{name}
+      borrower = #{name}
     </if>
-    where name = #{name} and household_id = #{householdId}
+    where borrower = #{oldName} and household_id = #{householdId}
   </update>
 
   <!--通过身份证修改标签关联表身份证号-->

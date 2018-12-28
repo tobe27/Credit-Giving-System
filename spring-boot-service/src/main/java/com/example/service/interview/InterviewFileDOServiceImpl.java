@@ -32,6 +32,7 @@ public class InterviewFileDOServiceImpl implements InterviewFileDOService {
 	 * @return
 	 * @throws Exception
 	 */
+	@Transactional
 	@Override
 	public boolean deleteByPrimaryKey(Long id) throws Exception {
 		InterviewFileDO interviewFileDO= interviewFileDOMapper.selectByPrimaryKey(id);
@@ -126,6 +127,7 @@ public class InterviewFileDOServiceImpl implements InterviewFileDOService {
 	 * @return
 	 * @throws Exception
 	 */
+	@Transactional
 	@Override
 	public List<Map<String,Object>> getList(InterviewFileDO record) throws Exception {
 		if( "".equals(record.getIdNumber()) || record.getType()==null ) {

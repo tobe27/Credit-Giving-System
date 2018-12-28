@@ -136,8 +136,11 @@
     <if test="gridCode != null">
        and customer.grid_code = #{gridCode}
     </if>
-    <if test="validTime != null">
-        and customer.valid_time = #{validTime}
+    <if test="validTime != null and validTime != 3">
+       and customer.valid_time = #{validTime}
+    </if>
+    <if test="validTime != null and validTime == 3">
+       and <![CDATA[ customer.valid_time < 0 ]]>
     </if>
   </select>
 

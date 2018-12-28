@@ -55,6 +55,7 @@ public class CustomerPovertyDOServiceImpl implements CustomerPovertyDOService {
      * @return
      * @throws Exception
     */
+	@Transactional
 	@Override
 	public boolean deleteByPrimaryKey(Long id) throws Exception {
 		//删除客户标签中的贫困户标签
@@ -74,8 +75,12 @@ public class CustomerPovertyDOServiceImpl implements CustomerPovertyDOService {
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public boolean insertSelective(CustomerPovertyDO record) throws Exception {
+		if (StringUtil.isNotIdNumber(record.getIdNumber())) {
+            throw new ServiceException("不是有效的中国居民身份证号！");
+        }
 		//校验是否已存在相同身份证号的贫困户
 		Map<String,Object> checkMap=new HashMap<>();
 		checkMap.put("idNumber", record.getIdNumber());
@@ -162,6 +167,7 @@ public class CustomerPovertyDOServiceImpl implements CustomerPovertyDOService {
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public List<CustomerPovertyDO> getList(Map<String, Object> map) throws Exception {
 		if(!map.containsKey("roleId") || !map.containsKey("orgCode")||!map.containsKey("pageNum")||!map.containsKey("pageSize")) {
@@ -195,6 +201,7 @@ public class CustomerPovertyDOServiceImpl implements CustomerPovertyDOService {
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public Map<String,Object> importFromExcel(List<Map<String, Object>> list,Map<String,Object> paramMap) throws Exception {
 		if(list.size()>5000) {
@@ -218,22 +225,36 @@ public class CustomerPovertyDOServiceImpl implements CustomerPovertyDOService {
 	        }
 			if(map.get("2")==null||"".equals(map.get("2").toString())) {
 				 throw new ServiceException("身份证号:"+idNumber+"的姓名为空");
+			}else if(map.get("2").toString().length()>10) {
+				 throw new ServiceException("身份证号:"+idNumber+"的姓名长度超过了10位");
 			}
 			String country="";
             if(map.get("1")!=null) {
             	country=map.get("1").toString();
+            if(country.length()>10) {
+           		 throw new ServiceException("身份证号:"+idNumber+"的县的长度超过了10位");
+           	}
             }
             String relation="";
             if(map.get("4")!=null) {
             	relation=map.get("4").toString();
+            if(relation.length()>10) {
+               		 throw new ServiceException("身份证号:"+idNumber+"与户主关系超过了10位");
+               	}
             }
             String overcome="";
             if(map.get("5")!=null) {
             	overcome=map.get("5").toString();
+            	 if(overcome.length()>20) {
+               		 throw new ServiceException("身份证号:"+idNumber+"的脱贫属性超过了20位");
+               	}
             }
             String poverty="";
             if(map.get("6")!=null) {
             	poverty=map.get("6").toString();
+            	if(poverty.length()>20) {
+              		 throw new ServiceException("身份证号:"+idNumber+"的贫困户属性超过了20位");
+              	}
             }
 			idNumberList.add(idNumber);
 			CustomerPovertyDO customerPovertyDO=new CustomerPovertyDO();
@@ -259,11 +280,21 @@ public class CustomerPovertyDOServiceImpl implements CustomerPovertyDOService {
 			toList.add(new CustomerTagRelationDO().setIdNumber(povrrtyDOList.get(i).getIdNumber()).setTagId((long)3));
 			 saveReList.add(povrrtyDOList.get(i));
 			 if(saveReList.size()>=200) {
-				 asyncTaskPovertySave.executeAsyncTask(saveReList,customerPovertyDOMapper);
+				 try {
+					asyncTaskPovertySave.executeAsyncTask(saveReList,customerPovertyDOMapper);
+				} catch (Exception e) {
+					logger.info("批量导入贫困户异常" + e.getMessage());
+					throw new ServiceException("批量导入贫困户异常！");
+				}
 	               saveReList=new ArrayList<>();
 	            }
 	            if(i==povrrtyDOList.size()-1) {
-	            	asyncTaskPovertySave.executeAsyncTask(saveReList, customerPovertyDOMapper);
+	            	try {
+						asyncTaskPovertySave.executeAsyncTask(saveReList, customerPovertyDOMapper);
+					} catch (Exception e) {
+						logger.info("批量导入贫困户异常" + e.getMessage());
+						throw new ServiceException("批量导入贫困户异常！");
+					}
 	            }
 		}		
 		//删除白名单和标签

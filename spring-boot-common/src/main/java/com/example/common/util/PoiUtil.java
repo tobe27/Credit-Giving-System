@@ -372,7 +372,7 @@ import com.lowagie.text.pdf.PdfWriter;
 	        String saveFile="";
 	        //如果是linux系统
 	        if(isOSLinux()) {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+pathType+"/"+dateNowStr+System.currentTimeMillis();
+	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+pathType+"/"+dateNowStr;
 	            tempFile =new File(path);
 	            if(!tempFile.exists()) {
 	                tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
@@ -380,12 +380,12 @@ import com.lowagie.text.pdf.PdfWriter;
 	            }
 	            saveFile=path+"/"+file.getOriginalFilename();
 	        }else {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+pathType+"\\"+dateNowStr+System.currentTimeMillis();
+	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+pathType+"\\"+dateNowStr;
 	            tempFile =new File(path);
 	            if(!tempFile.exists()) {
 	                tempFile.mkdirs();
 	            }
-	            saveFile=path+"\\"+file.getOriginalFilename();
+	            saveFile=path+"\\"+System.currentTimeMillis()+file.getOriginalFilename();
 	        }
 	        File storeFile = new File(saveFile);
 	        String fileName=path+file.getOriginalFilename();//上传后的文件名

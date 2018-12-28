@@ -411,23 +411,28 @@ public class ResidentDOServiceImpl implements ResidentDOService {
             }
             if(map.get("6")==null||"".equals(map.get("6").toString())) {
                 throw new ServiceException("身份证号:"+idNumber+" 的姓名为空");
+            }else if(map.get("6").toString().length()>10) {
+           		 throw new ServiceException("身份证号:"+idNumber+"的姓名长度超过了10位");
             }
             if(map.get("10")==null||"".equals(map.get("10").toString())||map.get("10").toString().length()>20) {
                 throw new ServiceException("身份证号:"+idNumber+" 的户号为空或者长度超过20位");
             }
 
-            if(map.get("10")==null||"".equals(map.get("10").toString())) {
-                throw new ServiceException("身份证号:"+idNumber+"的户号为空");
-            }
             //如果是户主记录下户号
-            if((map.get("9")!=null)&&("户主".equals(map.get("9").toString().toString().replace(" ", "")))) {
-                master.add(map.get("10").toString().toString().replace(" ", ""));
+            if((map.get("9")!=null)&&("户主".equals(map.get("9").toString().replace(" ", "")))) {
+                master.add(map.get("10").toString().replace(" ", ""));
+            }
+            if(map.get("9")!=null&&map.get("9").toString().length()>110) {
+            	 throw new ServiceException("身份证号:"+idNumber+" 的与户主关系长度超过20位");
             }
             houseHoldId.add(map.get("10").toString().replace(" ", ""));
             idNumberList.add(idNumber);
             String phone="";
             if(map.get("11")!=null) {
                 phone=map.get("11").toString();
+                if(phone.length()>11) {
+           		 throw new ServiceException("身份证号:"+idNumber+"的联系方式长度超过了11位");
+           	}
             }
             String ship="";
             if(map.get("9")!=null) {
@@ -436,6 +441,9 @@ public class ResidentDOServiceImpl implements ResidentDOService {
             String country="";
             if(map.get("2")!=null) {
             	country=map.get("2").toString();
+            	if(country.length()>10) {
+              		 throw new ServiceException("身份证号:"+idNumber+"的县级名称长度超过了10位");
+              	}
             }
             ResidentDO residentDO=new ResidentDO();
             residentDO.setName(map.get("6").toString()).setIdNumber(idNumber).setGridName(paramMap.get("gridName").toString()).setOrgCode(paramMap.get("orgCode").toString()).setOrgName(paramMap.get("orgName").toString())
@@ -476,11 +484,21 @@ public class ResidentDOServiceImpl implements ResidentDOService {
 
             saveReList.add(residentDOList.get(i));
             if(saveReList.size()>=200) {
-                asyncTaskResidentSave.executeAsyncTask(saveReList, residentDOMapper);
+                try {
+					asyncTaskResidentSave.executeAsyncTask(saveReList, residentDOMapper);
+				} catch (Exception e) {
+					logger.info("批量导入户籍异常" + e.getMessage());
+					throw new ServiceException("批量导入户籍异常");
+				}
                 saveReList=new ArrayList<>();
             }
             if(i==residentDOList.size()-1) {
-                asyncTaskResidentSave.executeAsyncTask(saveReList, residentDOMapper);
+                try {
+					asyncTaskResidentSave.executeAsyncTask(saveReList, residentDOMapper);
+				} catch (Exception e) {
+					logger.info("批量导入户籍异常" + e.getMessage());
+					throw new ServiceException("批量导入户籍异常");
+				}
             }
         }
         long now2=System.currentTimeMillis();
@@ -507,11 +525,21 @@ public class ResidentDOServiceImpl implements ResidentDOService {
                 for(int i=0;i<saveList.size();i++) {
                     saveCuList.add(saveList.get(i));
                     if(saveCuList.size()>=200) {
-                        asyncTaskCustomerSave.executeAsyncTask(saveCuList, customerDOMapper,odsCustomerDOMapper);
+                        try {
+							asyncTaskCustomerSave.executeAsyncTask(saveCuList, customerDOMapper,odsCustomerDOMapper);
+						} catch (Exception e) {
+							logger.info("批量导入客户异常" + e.getMessage());
+							throw new ServiceException("批量导入客户异常");
+						}
                         saveCuList=new ArrayList<>();
                     }
                     if(i==saveList.size()-1) {
-                        asyncTaskCustomerSave.executeAsyncTask(saveCuList, customerDOMapper,odsCustomerDOMapper);
+                        try {
+							asyncTaskCustomerSave.executeAsyncTask(saveCuList, customerDOMapper,odsCustomerDOMapper);
+						} catch (Exception e) {
+							logger.info("批量导入客户异常" + e.getMessage());
+							throw new ServiceException("批量导入客户异常");	
+						}
                     }
                 }
             }

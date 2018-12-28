@@ -133,6 +133,7 @@ public class GridImageServiceImpl implements GridImageService {
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public List<Map<String,Object>> getBaseCodeList(String GridCode,String type) throws Exception {
 		if("".equals(type)||"".equals(GridCode)) {

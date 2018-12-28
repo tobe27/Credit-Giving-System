@@ -218,10 +218,12 @@ public class CustomerDOServiceImpl implements CustomerDOService {
         long start = System.currentTimeMillis();
         List<Map<String, Object>> houseOwnerMapList = new ArrayList<>();
 
-        // 一次查询出需要导出的所有数据
+        // 一次查询出需要导出的所有数据,根据次数和
         List<CustomerDO> surveyFamilyList;
         try {
-            surveyFamilyList = customerDOMapper.listByHouseholdIdAndGridCode(new CustomerDO().setGridCode(record.getGridCode()));
+            surveyFamilyList = customerDOMapper.listByHouseholdIdAndGridCode(new CustomerDO()
+                    .setGridCode(record.getGridCode())
+                    .setValidTime(record.getValidTime()));
         } catch (Exception e) {
             logger.info("查询调查表信息异常:" + e.getMessage());
             throw new ServiceException("查询调查表信息异常");
@@ -230,7 +232,7 @@ public class CustomerDOServiceImpl implements CustomerDOService {
         logger.info("导出总个数：" + surveyFamilyList.size());
         logger.info("客户查询耗时:" + (getDataTime - start));
         if (surveyFamilyList.size() == 0) {
-            throw new ServiceException("没有数据!");
+            throw new ServiceException("没有数据或者有效调查次数已有3次!");
         }
 
         List<CustomerDO> houseOwnerList = new ArrayList<>();

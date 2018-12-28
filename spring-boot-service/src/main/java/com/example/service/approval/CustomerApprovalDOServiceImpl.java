@@ -73,6 +73,9 @@ public class CustomerApprovalDOServiceImpl implements CustomerApprovalDOService 
 		
 		map.put("idList", interviewIdList);
 		List<CustomerInterviewDO> list=customerInterviewDOMapper.getListByIds(map);
+		if(list==null||list.isEmpty()) {
+			throw new ServiceException("未检索到有效面签面谈信息");
+		}
 		for(CustomerInterviewDO cio:list) {
 			List<CustomerTagRelationDO> listTags=customerTagRelationDOMapper.listCustomerTagRelationsByHouseholdId(cio.getHouseholdId());
 		    for(CustomerTagRelationDO tag:listTags) {

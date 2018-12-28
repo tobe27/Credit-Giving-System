@@ -73,5 +73,7 @@ public class ResidentDO {
     private List<String> orgCodeList;
     private String oldIdNumber;
     private String oldHouseholdId;
+    private String oldName;
+    private String borrower;
 
 }

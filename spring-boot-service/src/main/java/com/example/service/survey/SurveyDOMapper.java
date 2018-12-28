@@ -15,6 +15,8 @@ public interface SurveyDOMapper {
 
     SurveyDO selectByPrimaryKey(Long id);
 
+    int countValidTimeByIdNumberAndIsValid(SurveyDO record);
+
     List<SurveyDO> listByIdNumberAndIsValid(SurveyDO record);
 
     List<SurveyDO> listByIdNumberAndSenator(SurveyDO record);

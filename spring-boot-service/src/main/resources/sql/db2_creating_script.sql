@@ -1,0 +1,2638 @@
+-- This CLP file was created using DB2LOOK Version "9.7" 
+-- Timestamp: 2018年12月26日 星期三 20时00分24秒
+-- Database Name: DB2GRID        
+-- Database Manager Version: DB2/LINUXX8664 Version 9.7.0  
+-- Database Codepage: 1208
+-- Database Collating Sequence is: IDENTITY
+
+
+
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."FILE_STATUS"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."FILE_STATUS"  (
+		  "SERIALNO" VARCHAR(32) NOT NULL , 
+		  "TASKNAME" VARCHAR(32) , 
+		  "TASKDATE" VARCHAR(20) , 
+		  "FILENAME" VARCHAR(200) , 
+		  "SKIPLINE" VARCHAR(20) , 
+		  "STARTTIME" VARCHAR(20) , 
+		  "ENDTIME" VARCHAR(20) , 
+		  "FILENOTE" VARCHAR(200) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."FILE_STATUS"
+
+ALTER TABLE "DB2INST1"."FILE_STATUS" 
+	ADD PRIMARY KEY
+		("SERIALNO");
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."FTP_FILE"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."FTP_FILE"  (
+		  "ID" VARCHAR(20) NOT NULL , 
+		  "FILEDIR" VARCHAR(200) , 
+		  "FLGFILE" VARCHAR(80) , 
+		  "ZIPFILE" VARCHAR(100) , 
+		  "TXTFILE" VARCHAR(100) , 
+		  "NOTE1" VARCHAR(800) , 
+		  "NOTE2" VARCHAR(800) , 
+		  "ISINUSE" VARCHAR(1) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."FTP_FILE"
+
+ALTER TABLE "DB2INST1"."FTP_FILE" 
+	ADD PRIMARY KEY
+		("ID");
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."OBJECT_MAXSN"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."OBJECT_MAXSN"  (
+		  "TABLENAME" VARCHAR(80) NOT NULL , 
+		  "COLUMNNAME" VARCHAR(80) NOT NULL , 
+		  "MAXSERIALNO" VARCHAR(80) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."OBJECT_MAXSN"
+
+ALTER TABLE "DB2INST1"."OBJECT_MAXSN" 
+	ADD CONSTRAINT "PK_OBJECT_MAXSN" PRIMARY KEY
+		("TABLENAME",
+		 "COLUMNNAME");
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_BLACK"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_BLACK"  (
+		  "CUSNAME" VARCHAR(100) , 
+		  "CERTCODE" VARCHAR(50) , 
+		  "REASON" VARCHAR(300) , 
+		  "SOURCE" VARCHAR(50) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_BLACK_1"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_BLACK_1"  (
+		  "CUSNAME" VARCHAR(100) , 
+		  "CERTCODE" VARCHAR(50) , 
+		  "REASON" VARCHAR(300) , 
+		  "SOURCE" VARCHAR(50) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_BLACK_2"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_BLACK_2"  (
+		  "CUSNAME" VARCHAR(100) , 
+		  "CERTCODE" VARCHAR(50) , 
+		  "REASON" VARCHAR(200) , 
+		  "SOURCE" VARCHAR(50) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_DB_USER"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_DB_USER"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "USERNAME" VARCHAR(20) NOT NULL , 
+		  "PASSWORD" VARCHAR(100) NOT NULL , 
+		  "NAME" VARCHAR(40) NOT NULL , 
+		  "WORK_ID" VARCHAR(20) NOT NULL , 
+		  "ID_NUMBER" VARCHAR(18) , 
+		  "GENDER" VARCHAR(2) , 
+		  "CONTACT" VARCHAR(30) , 
+		  "EMAIL" VARCHAR(50) , 
+		  "ORG_CODE" VARCHAR(50) NOT NULL , 
+		  "CORP_NAME" VARCHAR(20) NOT NULL , 
+		  "STATUS" VARCHAR(2) NOT NULL , 
+		  "LAST_LOGIN_AT" BIGINT , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."ODS_DB_USER"
+
+ALTER TABLE "DB2INST1"."ODS_DB_USER" 
+	ADD CONSTRAINT "PK_ID" PRIMARY KEY
+		("ID");
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S01_CIFM21"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S01_CIFM21"  (
+		  "C21CUSNO" VARCHAR(32) , 
+		  "C21ACCNO" VARCHAR(50) , 
+		  "C21ACCTYP" VARCHAR(10) , 
+		  "C21ORGNO" VARCHAR(10) , 
+		  "C21FLAG" VARCHAR(5) , 
+		  "C21LPRTDT" VARCHAR(20) , 
+		  "START_DT" VARCHAR(20) , 
+		  "END_DT" VARCHAR(20) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S01_CIFM21"
+
+CREATE INDEX "DB2INST1"."INDEX_S01_CIFM21_C21ACCNO" ON "DB2INST1"."S01_CIFM21" 
+		("C21ACCNO" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."S01_CIFM21"
+
+CREATE INDEX "DB2INST1"."INDEX_S01_CIFM21_C21CUSNO" ON "DB2INST1"."S01_CIFM21" 
+		("C21CUSNO" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S01_CIFM22"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S01_CIFM22"  (
+		  "C22CUSNO" VARCHAR(32) , 
+		  "C22CUSTYP" VARCHAR(3) , 
+		  "C22CUSNAM" VARCHAR(186) , 
+		  "C22CUSNA1" VARCHAR(186) , 
+		  "C22CUSENA" VARCHAR(150) , 
+		  "C22PBKTYP" VARCHAR(3) , 
+		  "C22PBKNUM" VARCHAR(80) , 
+		  "C22VISDAT" VARCHAR(20) , 
+		  "C22LOSDAT" VARCHAR(20) , 
+		  "C22VISDPT" VARCHAR(150) , 
+		  "C22CTYCOD" VARCHAR(10) , 
+		  "C22CRTDPT" VARCHAR(18) , 
+		  "C22CRTTLR" VARCHAR(18) , 
+		  "C22CRTDAT" VARCHAR(20) , 
+		  "C22CTLCOD" VARCHAR(10) , 
+		  "C22CUSSTS" VARCHAR(10) , 
+		  "C22SERLEV" VARCHAR(12) , 
+		  "C22SHRCOD" VARCHAR(80) , 
+		  "C22LOACOD" VARCHAR(80) , 
+		  "C22ADDRID" VARCHAR(80) , 
+		  "C22REMARK" VARCHAR(200) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S01_CIFM22"
+
+CREATE INDEX "DB2INST1"."INDEX_S01_CIFM22_C22CUSNO" ON "DB2INST1"."S01_CIFM22" 
+		("C22CUSNO" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."S01_CIFM22"
+
+CREATE INDEX "DB2INST1"."INDEX_S01_CIFM22_C22PBKNUM" ON "DB2INST1"."S01_CIFM22" 
+		("C22PBKNUM" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S01_CIFM25"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S01_CIFM25"  (
+		  "C25CUSNO" VARCHAR(30) , 
+		  "C25ADRCO1" VARCHAR(150) , 
+		  "C25ADRCO2" VARCHAR(150) , 
+		  "C25ADRCO3" VARCHAR(150) , 
+		  "C25ADRPO1" VARCHAR(18) , 
+		  "C25ADRPO2" VARCHAR(18) , 
+		  "C25ADRPO3" VARCHAR(18) , 
+		  "C25PHCOMY" VARCHAR(60) , 
+		  "C25PHCFAX" VARCHAR(60) , 
+		  "C25PHHOME" VARCHAR(60) , 
+		  "C25PHHAND" VARCHAR(60) , 
+		  "C25EMAIL" VARCHAR(90) , 
+		  "C25EHTTP" VARCHAR(90) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S01_CIFM25"
+
+CREATE INDEX "DB2INST1"."INDEX_S01_CIFM25_C25CUSNO" ON "DB2INST1"."S01_CIFM25" 
+		("C25CUSNO" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S01_CIFM26"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S01_CIFM26"  (
+		  "C26CUSNO" VARCHAR(32) , 
+		  "C26SPLNAM" VARCHAR(90) , 
+		  "C26BRNDAT" VARCHAR(20) , 
+		  "C26CUSSEX" VARCHAR(5) , 
+		  "C26CUSPEP" VARCHAR(6) , 
+		  "C26EDULEV" VARCHAR(6) , 
+		  "C26MARSTS" VARCHAR(5) , 
+		  "C26POST" VARCHAR(20) , 
+		  "C26INCOM" VARCHAR(24) , 
+		  "C26OTHIDT" VARCHAR(5) , 
+		  "C26OTHIDN" VARCHAR(80) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S01_CIFM26"
+
+CREATE INDEX "DB2INST1"."INDEX_S01_CIFM26_C26CUSNO" ON "DB2INST1"."S01_CIFM26" 
+		("C26CUSNO" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S01_DPFM22"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S01_DPFM22"  (
+		  "D22ACCT" VARCHAR(60) , 
+		  "D22ACCS" VARCHAR(60) , 
+		  "D22NODE" VARCHAR(20) , 
+		  "D22SBNO" VARCHAR(20) , 
+		  "D22ACCTYP" VARCHAR(5) , 
+		  "D22HDFLG" VARCHAR(5) , 
+		  "D22CLSFLG" VARCHAR(5) , 
+		  "D22CCY" VARCHAR(5) , 
+		  "D22CSHTRF" VARCHAR(5) , 
+		  "D22PRDID" VARCHAR(20) , 
+		  "D22OPNDAT" VARCHAR(20) , 
+		  "D22STRDAT" VARCHAR(20) , 
+		  "D22ENDDAT" VARCHAR(20) , 
+		  "D22TERM1" VARCHAR(10) , 
+		  "D22TERM2" VARCHAR(10) , 
+		  "D22BALE" VARCHAR(20) , 
+		  "D22BALD" VARCHAR(5) , 
+		  "D22BALEN" VARCHAR(20) , 
+		  "D22EBALD" VARCHAR(5) , 
+		  "D22LBALE" VARCHAR(20) , 
+		  "D22LBALD" VARCHAR(5) , 
+		  "D22CTLBAL" VARCHAR(20) , 
+		  "D22FRZBAL" VARCHAR(20) , 
+		  "D22OVDBAL" VARCHAR(20) , 
+		  "D22CVDB1" VARCHAR(30) , 
+		  "D22CVDB2" VARCHAR(30) , 
+		  "D22CVDB3" VARCHAR(30) , 
+		  "D22ITPLAN" VARCHAR(5) , 
+		  "D22ITFLT" VARCHAR(5) , 
+		  "D22LSTDTE" VARCHAR(20) , 
+		  "D22ACCCHR" VARCHAR(10) , 
+		  "D22ACCCH1" VARCHAR(10) , 
+		  "D22YZFLG" VARCHAR(5) , 
+		  "D22TDUCTL" VARCHAR(5) , 
+		  "D22CSHFLG" VARCHAR(5) , 
+		  "D22ADVTIM" VARCHAR(10) , 
+		  "D22DMOD" VARCHAR(5) , 
+		  "D22INTRAT" VARCHAR(5) , 
+		  "D22FRZFLG" VARCHAR(5) , 
+		  "D22MRTFLG" VARCHAR(5) , 
+		  "D22PRVFLG" VARCHAR(5) , 
+		  "D22PBLIN" VARCHAR(10) , 
+		  "D22CVNFLG" VARCHAR(5) , 
+		  "D22SECFLG" VARCHAR(5) , 
+		  "D22OVDFLG" VARCHAR(5) , 
+		  "D22IINFLG" VARCHAR(5) , 
+		  "D22INTFLG" VARCHAR(5) , 
+		  "D22ITFLG" VARCHAR(5) , 
+		  "D22NRAMT" VARCHAR(20) , 
+		  "D22PMSAMT" VARCHAR(20) , 
+		  "D22INTPRD" VARCHAR(20) , 
+		  "D22DONTIM" VARCHAR(10) , 
+		  "D22NXDAT" VARCHAR(20) , 
+		  "D22LZFLG" VARCHAR(5) , 
+		  "D22LIEID" VARCHAR(5) , 
+		  "D22DTFLG" VARCHAR(5) , 
+		  "D22ZCTIM" VARCHAR(5) , 
+		  "D22CONNO" VARCHAR(60) , 
+		  "D22FEEFLG" VARCHAR(5) , 
+		  "D22REMARK" VARCHAR(200) , 
+		  "D22OLBAL" VARCHAR(20) , 
+		  "D22FLAG" VARCHAR(20) , 
+		  "D22RATE" VARCHAR(10) , 
+		  "D22DACCD" VARCHAR(5) , 
+		  "START_DT" VARCHAR(20) , 
+		  "END_DT" VARCHAR(20) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S01_DPFM22"
+
+CREATE INDEX "DB2INST1"."INDEX_S01_DPFM22_D22ACCT" ON "DB2INST1"."S01_DPFM22" 
+		("D22ACCT" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S01_LNFM21"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S01_LNFM21"  (
+		  "L21ORGNO" VARCHAR(18) , 
+		  "L21ACCT" VARCHAR(66) , 
+		  "L21PRDCD" VARCHAR(9) , 
+		  "L21SUBN" VARCHAR(24) , 
+		  "L21CCY" VARCHAR(6) , 
+		  "L21CUSTYP" VARCHAR(3) , 
+		  "L21DKXZ" VARCHAR(6) , 
+		  "L21FLBZ" VARCHAR(3) , 
+		  "L21LLTZ" VARCHAR(6) , 
+		  "L21DKLX" VARCHAR(6) , 
+		  "L21HYDM" VARCHAR(6) , 
+		  "L21QYGM" VARCHAR(6) , 
+		  "L21RISK" VARCHAR(9) , 
+		  "L21TMFLG" VARCHAR(6) , 
+		  "L21NORINT" VARCHAR(3) , 
+		  "L21PINFLT" VARCHAR(10) , 
+		  "L21PINRAT" VARCHAR(30) , 
+		  "L21OVRINT" VARCHAR(6) , 
+		  "L21NYRATE" VARCHAR(10) , 
+		  "L21INTMOD" VARCHAR(3) , 
+		  "L21SJINT" VARCHAR(30) , 
+		  "L21INRAT" VARCHAR(30) , 
+		  "L21PINT" VARCHAR(3) , 
+		  "L21ADDID" VARCHAR(24) , 
+		  "L21INTWAY" VARCHAR(9) , 
+		  "L21BBWAY" VARCHAR(9) , 
+		  "L21ASSMOD" VARCHAR(6) , 
+		  "L21LOAUSE" VARCHAR(6) , 
+		  "L21PREFLD" VARCHAR(6) , 
+		  "L21LMTTYP" VARCHAR(12) , 
+		  "L21ACCND" VARCHAR(6) , 
+		  "L21ODATE" VARCHAR(20) , 
+		  "L21SDATE" VARCHAR(20) , 
+		  "L21EDATE" VARCHAR(20) , 
+		  "L21GDATE" VARCHAR(20) , 
+		  "L21EXTNUM" VARCHAR(10) , 
+		  "L21JZFLAG" VARCHAR(3) , 
+		  "L21RDATE" VARCHAR(20) , 
+		  "L21FDATE" VARCHAR(20) , 
+		  "L21ADSDAT" VARCHAR(20) , 
+		  "L21LDATE" VARCHAR(20) , 
+		  "L21LTIME" VARCHAR(10) , 
+		  "L21ERMON" VARCHAR(30) , 
+		  "L21RTNTIM" VARCHAR(10) , 
+		  "L21FRTIM" VARCHAR(10) , 
+		  "L21CURTIM" VARCHAR(10) , 
+		  "L21RBSPA" VARCHAR(10) , 
+		  "L21FCHG" VARCHAR(3) , 
+		  "L21CHGCAL" VARCHAR(3) , 
+		  "L21CHGINT" VARCHAR(3) , 
+		  "L21ARDNO" VARCHAR(9) , 
+		  "L21ZDKK" VARCHAR(3) , 
+		  "L21DBACC" VARCHAR(66) , 
+		  "L21ACCSI" VARCHAR(18) , 
+		  "L21LNSNAM" VARCHAR(186) , 
+		  "L21LBARN" VARCHAR(72) , 
+		  "L21COOM" VARCHAR(30) , 
+		  "L21IMTAMT" VARCHAR(30) , 
+		  "L21ZXZJ" VARCHAR(6) , 
+		  "L21FNDSRC" VARCHAR(6) , 
+		  "L21WJFL" VARCHAR(6) , 
+		  "L21YTDK" VARCHAR(6) , 
+		  "L21BXDZL" VARCHAR(60) , 
+		  "L21BXDHM" VARCHAR(90) , 
+		  "L21FXTZ" VARCHAR(60) , 
+		  "L21DKZRR" VARCHAR(18) , 
+		  "L21GHXDY" VARCHAR(18) , 
+		  "L21ZGSPDW" VARCHAR(6) , 
+		  "L21JJH" VARCHAR(72) , 
+		  "L21JJHM" VARCHAR(60) , 
+		  "L21HTNUM" VARCHAR(72) , 
+		  "L21BEIZ" VARCHAR(150) , 
+		  "L21BDATE" VARCHAR(20) , 
+		  "L21BAMT" VARCHAR(30) , 
+		  "L21BAK1" VARCHAR(60) , 
+		  "L21BAK2" VARCHAR(60) , 
+		  "START_DT" VARCHAR(20) , 
+		  "END_DT" VARCHAR(20) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S01_LNFM21"
+
+CREATE INDEX "DB2INST1"."INDEX_S01_LNFM21_L21ACCT" ON "DB2INST1"."S01_LNFM21" 
+		("L21ACCT" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S01_LNFM22"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S01_LNFM22"  (
+		  "L22ORGNO" VARCHAR(18) , 
+		  "L22ACCT" VARCHAR(66) , 
+		  "L22CHAT" VARCHAR(6) , 
+		  "L22SUBN" VARCHAR(24) , 
+		  "L22CCY" VARCHAR(6) , 
+		  "L22FLAG" VARCHAR(15) , 
+		  "L22LBALD" VARCHAR(3) , 
+		  "L22LBAL" VARCHAR(20) , 
+		  "L22BALD" VARCHAR(3) , 
+		  "L22BAL" VARCHAR(20) , 
+		  "L22EBALD" VARCHAR(3) , 
+		  "L22EBAL" VARCHAR(20) , 
+		  "L22ACCUM" VARCHAR(24) , 
+		  "L22ACCUM1" VARCHAR(24) , 
+		  "L22ACCUM2" VARCHAR(24) , 
+		  "L22ACMDAY" VARCHAR(10) , 
+		  "L22ACMDAY1" VARCHAR(10) , 
+		  "L22ACMDAY2" VARCHAR(10) , 
+		  "L22INTNUM" VARCHAR(6) , 
+		  "L22INTTYP" VARCHAR(3) , 
+		  "L22IRTRAT" VARCHAR(20) , 
+		  "L22IRTFLT" VARCHAR(10) , 
+		  "L22IRCHGM" VARCHAR(6) , 
+		  "L22SDATE" VARCHAR(20) , 
+		  "L22DUEDT" VARCHAR(20) , 
+		  "L22LINDT" VARCHAR(20) , 
+		  "L22LTXDT" VARCHAR(20) , 
+		  "L22CTLBAL" VARCHAR(20) , 
+		  "L22STAN1" VARCHAR(45) , 
+		  "L22BDATE" VARCHAR(20) , 
+		  "L22JZAMT" VARCHAR(20) , 
+		  "L22DACCD" VARCHAR(24) , 
+		  "START_DT" VARCHAR(20) , 
+		  "END_DT" VARCHAR(20) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S01_LNFM22"
+
+CREATE INDEX "DB2INST1"."INDEX_S01_LNFM22_L22ACCT" ON "DB2INST1"."S01_LNFM22" 
+		("L22ACCT" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S02_CXD_JGGL"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S02_CXD_JGGL"  (
+		  "项目" VARCHAR(100) , 
+		  "代码" VARCHAR(100) , 
+		  "拼音" VARCHAR(100) , 
+		  "JGBH" VARCHAR(100) , 
+		  "JGMC" VARCHAR(100) , 
+		  "JGH" VARCHAR(100) , 
+		  "SFFRJG" VARCHAR(100) , 
+		  "SFYYWD" VARCHAR(100) , 
+		  "XZQH" VARCHAR(100) , 
+		  "XZJB" VARCHAR(100) , 
+		  "JBCD" VARCHAR(100) , 
+		  "SDDZ" VARCHAR(100) , 
+		  "JGDZ" VARCHAR(100) , 
+		  "JGDH" VARCHAR(100) , 
+		  "HZXM" VARCHAR(100) , 
+		  "RHJGBM" VARCHAR(100) , 
+		  "SFXNJG" VARCHAR(100) , 
+		  "XGRY" VARCHAR(100) , 
+		  "XGSJ" VARCHAR(100) , 
+		  "属性" VARCHAR(100) , 
+		  "默认" VARCHAR(100) , 
+		  "停用" VARCHAR(100) , 
+		  "备注" VARCHAR(100) , 
+		  "ID_9DSOFT" VARCHAR(100) , 
+		  "权限" VARCHAR(100) , 
+		  "JCCD" VARCHAR(100) , 
+		  "JGCZ" VARCHAR(100) , 
+		  "YZBM" VARCHAR(100) , 
+		  "FRXM" VARCHAR(100) , 
+		  "LXR" VARCHAR(100) , 
+		  "SJJG" VARCHAR(100) , 
+		  "CZHM" VARCHAR(100) , 
+		  "BJJG" VARCHAR(100) , 
+		  "YWJB" VARCHAR(100) , 
+		  "JGLB" VARCHAR(100) , 
+		  "QYRHJGBM" VARCHAR(100) , 
+		  "NORUN" VARCHAR(100) , 
+		  "SFSMS" VARCHAR(100) , 
+		  "SFNSH" VARCHAR(100) , 
+		  "START_DT" VARCHAR(100) , 
+		  "END_DT" VARCHAR(100) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S02_CXD_JGGL"
+
+CREATE INDEX "DB2INST1"."INDEX_S02_CXD_JGGL_JGBH" ON "DB2INST1"."S02_CXD_JGGL" 
+		("JGBH" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S02_CXD_RYGL"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S02_CXD_RYGL"  (
+		  "代码" VARCHAR(200) , 
+		  "项目" VARCHAR(200) , 
+		  "拼音" VARCHAR(200) , 
+		  "XB" VARCHAR(200) , 
+		  "SSJG" VARCHAR(200) , 
+		  "ZW" VARCHAR(200) , 
+		  "BGDH" VARCHAR(200) , 
+		  "SJHM" VARCHAR(200) , 
+		  "CZDH" VARCHAR(200) , 
+		  "DZXX" VARCHAR(200) , 
+		  "YZBM" VARCHAR(200) , 
+		  "DZ" VARCHAR(200) , 
+		  "BZ" VARCHAR(200) , 
+		  "USERID" VARCHAR(200) , 
+		  "ID_9DSOFT" VARCHAR(200) , 
+		  "SSBM" VARCHAR(200) , 
+		  "GH" VARCHAR(200) , 
+		  "ISKHJL" VARCHAR(200) , 
+		  "YWJS" VARCHAR(200) , 
+		  "DLDM" VARCHAR(200) , 
+		  "DDRQ" VARCHAR(200) , 
+		  "WHRY" VARCHAR(200) , 
+		  "DCJG" VARCHAR(200) , 
+		  "KHJLDJ" VARCHAR(200) , 
+		  "父代码" VARCHAR(200) , 
+		  "SFZHM" VARCHAR(200) , 
+		  "TSRQ" VARCHAR(200) , 
+		  "SGZH" VARCHAR(200) , 
+		  "PXZH" VARCHAR(200) , 
+		  "SMSGROUP" VARCHAR(200) , 
+		  "操作状态" VARCHAR(200) , 
+		  "START_DT" VARCHAR(200) , 
+		  "END_DT" VARCHAR(200) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S02_CXD_RYGL"
+
+CREATE INDEX "DB2INST1"."INDEX_S02_CXD_RYGL_GH" ON "DB2INST1"."S02_CXD_RYGL" 
+		("GH" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S02_KDB_BZDB"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S02_KDB_BZDB"  (
+		  "YWBH" VARCHAR(120) , 
+		  "DBZL" VARCHAR(60) , 
+		  "DBYWBH" VARCHAR(90) , 
+		  "DBRKHH" VARCHAR(120) , 
+		  "DBRMC" VARCHAR(180) , 
+		  "ZBJG" VARCHAR(180) , 
+		  "DBJE" VARCHAR(30) , 
+		  "BZFS" VARCHAR(30) , 
+		  "BZXS" VARCHAR(30) , 
+		  "BZSXRQ" VARCHAR(20) , 
+		  "BZDQRQ" VARCHAR(20) , 
+		  "BZ" VARCHAR(600) , 
+		  "XGRY" VARCHAR(90) , 
+		  "XGSJ" VARCHAR(20) , 
+		  "ID_9DSOFT" VARCHAR(30) , 
+		  "KSXGID" VARCHAR(120) , 
+		  "YWZL" VARCHAR(30) , 
+		  "ZT" VARCHAR(30) , 
+		  "KHNM" VARCHAR(120) , 
+		  "XH" VARCHAR(30) , 
+		  "DBNL" VARCHAR(30) , 
+		  "FSZT" VARCHAR(3) , 
+		  "LBXZBH" VARCHAR(60) , 
+		  "ZHTBH" VARCHAR(90) , 
+		  "SFZF" VARCHAR(30) , 
+		  "START_DT" VARCHAR(20) , 
+		  "END_DT" VARCHAR(20) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S02_KDB_BZDB"
+
+CREATE INDEX "DB2INST1"."INDEX_S02_KDB_BZDB_DBRKHH" ON "DB2INST1"."S02_KDB_BZDB" 
+		("DBRKHH" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."S02_KDB_BZDB"
+
+CREATE INDEX "DB2INST1"."INDEX_S02_KDB_BZDB_ZHTBH" ON "DB2INST1"."S02_KDB_BZDB" 
+		("ZHTBH" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S02_KKH_GRXX"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S02_KKH_GRXX"  (
+		  "KHH" VARCHAR(96) , 
+		  "KHNM" VARCHAR(180) , 
+		  "KHMC" VARCHAR(180) , 
+		  "XB" VARCHAR(12) , 
+		  "XMPY" VARCHAR(90) , 
+		  "ZJHM" VARCHAR(90) , 
+		  "ZJLX" VARCHAR(30) , 
+		  "QFJG" VARCHAR(180) , 
+		  "QFRQ" VARCHAR(20) , 
+		  "DQRQ" VARCHAR(20) , 
+		  "KHLX" VARCHAR(30) , 
+		  "CSRQ" VARCHAR(20) , 
+		  "PQDZ" VARCHAR(60) , 
+		  "XXDZ" VARCHAR(600) , 
+		  "YZBM" VARCHAR(18) , 
+		  "HJDZ" VARCHAR(600) , 
+		  "HJSZDYZBM" VARCHAR(18) , 
+		  "JTDH" VARCHAR(90) , 
+		  "SJ" VARCHAR(90) , 
+		  "CZ" VARCHAR(90) , 
+		  "EMAIL" VARCHAR(150) , 
+		  "GJ" VARCHAR(60) , 
+		  "MZ" VARCHAR(30) , 
+		  "ZZMM" VARCHAR(30) , 
+		  "XL" VARCHAR(30) , 
+		  "JKZK" VARCHAR(30) , 
+		  "HYZK" VARCHAR(30) , 
+		  "ZBJG" VARCHAR(60) , 
+		  "SBM" VARCHAR(120) , 
+		  "KHJL" VARCHAR(90) , 
+		  "POXM" VARCHAR(90) , 
+		  "POSFZH" VARCHAR(90) , 
+		  "ZYYW" VARCHAR(762) , 
+		  "SSHY" VARCHAR(30) , 
+		  "POGZDW" VARCHAR(150) , 
+		  "LRRY" VARCHAR(90) , 
+		  "LRSJ" VARCHAR(20) , 
+		  "XGRY" VARCHAR(90) , 
+		  "XGSJ" VARCHAR(20) , 
+		  "XYDJ" VARCHAR(30) , 
+		  "XYDJSXRQ" VARCHAR(20) , 
+		  "XYDJDQRQ" VARCHAR(20) , 
+		  "PJYEAR" VARCHAR(12) , 
+		  "PJZBBB" VARCHAR(60) , 
+		  "PJMODEL" VARCHAR(30) , 
+		  "SXED" VARCHAR(30) , 
+		  "SXKSRQ" VARCHAR(20) , 
+		  "SXJZRQ" VARCHAR(20) , 
+		  "ID_9DSOFT" VARCHAR(30) , 
+		  "SX_GID" VARCHAR(120) , 
+		  "PJ_GID" VARCHAR(120) , 
+		  "ISFP" VARCHAR(3) , 
+		  "DEL_FLAG" VARCHAR(3) , 
+		  "SFGD" VARCHAR(6) , 
+		  "PODH" VARCHAR(60) , 
+		  "SFBHZG" VARCHAR(6) , 
+		  "SFXYH" VARCHAR(6) , 
+		  "GLTZ" VARCHAR(30) , 
+		  "GTSPMC" VARCHAR(90) , 
+		  "GTYYZZHM" VARCHAR(120) , 
+		  "ZXYZSJ" VARCHAR(20) , 
+		  "YYDZ" VARCHAR(150) , 
+		  "SFGJGZRY" VARCHAR(6) , 
+		  "SXYEAR" VARCHAR(12) , 
+		  "XW" VARCHAR(30) , 
+		  "PJSQJG" VARCHAR(60) , 
+		  "SXSQJG" VARCHAR(60) , 
+		  "NJRQ" VARCHAR(20) , 
+		  "NJJZRQ" VARCHAR(20) , 
+		  "NJGID" VARCHAR(120) , 
+		  "DKZH" VARCHAR(120) , 
+		  "FNKKH" VARCHAR(120) , 
+		  "XYDJ_DM" VARCHAR(30) , 
+		  "SFHZ" VARCHAR(6) , 
+		  "HZNM" VARCHAR(120) , 
+		  "GHJL" VARCHAR(90) , 
+		  "NNJHSXED" VARCHAR(30) , 
+		  "JHYSSXED" VARCHAR(30) , 
+		  "KHFLBGID" VARCHAR(120) , 
+		  "HANDCLASS" VARCHAR(30) , 
+		  "ISHAND" VARCHAR(12) , 
+		  "FLTZFLAG" VARCHAR(12) , 
+		  "DBSXED" VARCHAR(30) , 
+		  "DBSXKSRQ" VARCHAR(20) , 
+		  "DBSXJZRQ" VARCHAR(20) , 
+		  "DBSX_GID" VARCHAR(120) , 
+		  "DBSXYEAR" VARCHAR(12) , 
+		  "DBSXSQJG" VARCHAR(60) , 
+		  "DBSXLX" VARCHAR(30) , 
+		  "FFNSXED" VARCHAR(30) , 
+		  "FFNSXKSRQ" VARCHAR(20) , 
+		  "FFNSXJZRQ" VARCHAR(20) , 
+		  "FFNSX_GID" VARCHAR(120) , 
+		  "FFNSXYEAR" VARCHAR(12) , 
+		  "FFNSXSQJG" VARCHAR(60) , 
+		  "FNKSX" VARCHAR(30) , 
+		  "SFCQ" VARCHAR(6) , 
+		  "ZY" VARCHAR(60) , 
+		  "START_DT" VARCHAR(20) , 
+		  "END_DT" VARCHAR(20) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S02_KKH_GRXX"
+
+CREATE INDEX "DB2INST1"."INDEX_S02_KKH_GRXX_KHH" ON "DB2INST1"."S02_KKH_GRXX" 
+		("KHH" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."S02_KKH_GRXX"
+
+CREATE INDEX "DB2INST1"."INDEX_S02_KKH_GRXX_KHNM" ON "DB2INST1"."S02_KKH_GRXX" 
+		("KHNM" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."S02_KKH_GRXX"
+
+CREATE INDEX "DB2INST1"."INDEX_S02_KKH_GRXX_ZJHM" ON "DB2INST1"."S02_KKH_GRXX" 
+		("ZJHM" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S02_KSX_HTMAIN"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S02_KSX_HTMAIN"  (
+		  "KSXGID" VARCHAR(120) , 
+		  "KHNM" VARCHAR(120) , 
+		  "ZHTBH" VARCHAR(120) , 
+		  "QYRQ" VARCHAR(20) , 
+		  "QYJG" VARCHAR(60) , 
+		  "HTDM" VARCHAR(180) , 
+		  "HTBH" VARCHAR(90) , 
+		  "DBFS" VARCHAR(120) , 
+		  "HTSXRQ" VARCHAR(20) , 
+		  "HTJZRQ" VARCHAR(20) , 
+		  "HTJE" VARCHAR(30) , 
+		  "DKQX" VARCHAR(30) , 
+		  "LB" VARCHAR(30) , 
+		  "XGRY" VARCHAR(90) , 
+		  "XGSJ" VARCHAR(20) , 
+		  "ID_9DSOFT" VARCHAR(30) , 
+		  "HTSYR" VARCHAR(120) , 
+		  "SQJG" VARCHAR(60) , 
+		  "HTFL" VARCHAR(3) , 
+		  "INPUTHTXX" VARCHAR(3) , 
+		  "CPMC" VARCHAR(90) , 
+		  "SXFS" VARCHAR(30) , 
+		  "BZXS" VARCHAR(3) , 
+		  "VIRTUAL" VARCHAR(3) , 
+		  "LBXZBH" VARCHAR(90) , 
+		  "START_DT" VARCHAR(20) , 
+		  "END_DT" VARCHAR(20) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S02_KSX_HTMAIN"
+
+CREATE INDEX "DB2INST1"."INDEX_S02_KSX_HTMAIN_ZHTBH" ON "DB2INST1"."S02_KSX_HTMAIN" 
+		("ZHTBH" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."TASK_ARGS"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."TASK_ARGS"  (
+		  "NAME" VARCHAR(100) NOT NULL , 
+		  "VALUE" VARCHAR(100) , 
+		  "ISINUSE" VARCHAR(1) , 
+		  "NOTES" VARCHAR(200) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."TASK_ARGS"
+
+ALTER TABLE "DB2INST1"."TASK_ARGS" 
+	ADD PRIMARY KEY
+		("NAME");
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."TASK_STATUS"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."TASK_STATUS"  (
+		  "TASKNAME" VARCHAR(32) NOT NULL , 
+		  "TASKDATE" VARCHAR(20) , 
+		  "STATUS" VARCHAR(20) , 
+		  "TASKNOTE" VARCHAR(200) , 
+		  "ACTIVATE" VARCHAR(1) , 
+		  "ACCESSABLE" VARCHAR(1) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."TASK_STATUS"
+
+ALTER TABLE "DB2INST1"."TASK_STATUS" 
+	ADD PRIMARY KEY
+		("TASKNAME");
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."UNIT_STATUS"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."UNIT_STATUS"  (
+		  "SERIALNO" VARCHAR(32) NOT NULL , 
+		  "TASKNAME" VARCHAR(32) , 
+		  "TASKDATE" VARCHAR(20) , 
+		  "UNITNAME" VARCHAR(32) , 
+		  "STARTTIME" VARCHAR(20) , 
+		  "ENDTIME" VARCHAR(20) , 
+		  "UNITNOTE" VARCHAR(200) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."UNIT_STATUS"
+
+ALTER TABLE "DB2INST1"."UNIT_STATUS" 
+	ADD PRIMARY KEY
+		("SERIALNO");
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_RESIDENT"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_RESIDENT"  (
+		  "ORGCODE" VARCHAR(100) , 
+		  "XIAN" VARCHAR(100) , 
+		  "XINGZHEN" VARCHAR(100) , 
+		  "XZC" VARCHAR(100) , 
+		  "ZRC" VARCHAR(100) , 
+		  "XM" VARCHAR(100) , 
+		  "CERTCODE" VARCHAR(100) , 
+		  "ADDRESS" VARCHAR(200) , 
+		  "GX" VARCHAR(100) , 
+		  "WGH" VARCHAR(50) , 
+		  "HH" VARCHAR(100) , 
+		  "TEL" VARCHAR(100) , 
+		  "KHJL" VARCHAR(100) , 
+		  "CZH" VARCHAR(20) , 
+		  "CSRQ" VARCHAR(20) , 
+		  "AGE" VARCHAR(20) , 
+		  "GENDER" VARCHAR(20) , 
+		  "SOURCE" VARCHAR(20) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."ODS_RESIDENT"
+
+CREATE INDEX "DB2INST1"."INDEX_ODS_RESIDENT_CERTCODE" ON "DB2INST1"."ODS_RESIDENT" 
+		("CERTCODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."ODS_RESIDENT"
+
+CREATE INDEX "DB2INST1"."INDEX_ODS_RESIDENT_HH" ON "DB2INST1"."ODS_RESIDENT" 
+		("HH" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_RESIDENT_DISTINCT"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_RESIDENT_DISTINCT"  (
+		  "ORGCODE" VARCHAR(100) , 
+		  "XIAN" VARCHAR(100) , 
+		  "XINGZHEN" VARCHAR(100) , 
+		  "XZC" VARCHAR(100) , 
+		  "ZRC" VARCHAR(100) , 
+		  "XM" VARCHAR(100) , 
+		  "CERTCODE" VARCHAR(100) , 
+		  "ADDRESS" VARCHAR(200) , 
+		  "GX" VARCHAR(100) , 
+		  "WGH" VARCHAR(50) , 
+		  "HH" VARCHAR(100) , 
+		  "TEL" VARCHAR(100) , 
+		  "KHJL" VARCHAR(100) , 
+		  "CZH" VARCHAR(20) , 
+		  "CSRQ" VARCHAR(20) , 
+		  "AGE" VARCHAR(20) , 
+		  "GENDER" VARCHAR(20) , 
+		  "SOURCE" VARCHAR(20) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."CUSTOMER_APPROVAL"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."CUSTOMER_APPROVAL"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "INTERVIEW_ID" BIGINT , 
+		  "ID_NUMBER" VARCHAR(20) , 
+		  "CUSTOMER_ID" BIGINT , 
+		  "APPROVAL_OPINION" VARCHAR(200) , 
+		  "APPROVAL_ROLE_ID" BIGINT , 
+		  "APPROVAL_USER_NAME" VARCHAR(40) , 
+		  "APPROVAL_USER_ID" BIGINT , 
+		  "APPROVAL_RESULT" VARCHAR(5) , 
+		  "APPROVAL_NODE" VARCHAR(5) , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."CUSTOMER_APPROVAL"
+
+ALTER TABLE "DB2INST1"."CUSTOMER_APPROVAL" 
+	ADD CONSTRAINT "CUSTOMER_APPROVAL_PK" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_APPROVAL"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_APPROVAL_ID_NUMBER" ON "DB2INST1"."CUSTOMER_APPROVAL" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_APPROVAL"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_APPROVAL_INTERVIEW_ID" ON "DB2INST1"."CUSTOMER_APPROVAL" 
+		("INTERVIEW_ID" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."CUSTOMER_BLACK"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."CUSTOMER_BLACK"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "CUSTOMER_ID" BIGINT , 
+		  "CUSTOMER_NAME" VARCHAR(40) , 
+		  "HOUSEHOLD_ID" VARCHAR(40) , 
+		  "ID_NUMBER" VARCHAR(20) , 
+		  "REASON" VARCHAR(600) , 
+		  "PHONE" VARCHAR(20) , 
+		  "GRID_CODE" VARCHAR(40) , 
+		  "GRID_NAME" VARCHAR(200) , 
+		  "ORG_CODE" VARCHAR(60) , 
+		  "ORG_NAME" VARCHAR(200) , 
+		  "USER_ID" BIGINT , 
+		  "USER_NAME" VARCHAR(40) , 
+		  "STATUS" VARCHAR(5) , 
+		  "UPDATED_AT" BIGINT NOT NULL , 
+		  "CREATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."CUSTOMER_BLACK"
+
+ALTER TABLE "DB2INST1"."CUSTOMER_BLACK" 
+	ADD CONSTRAINT "CUSTOMER_BLACK_PK" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_BLACK"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_BLACK_GRID_CODE" ON "DB2INST1"."CUSTOMER_BLACK" 
+		("GRID_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_BLACK"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_BLACK_ID_NUMBER" ON "DB2INST1"."CUSTOMER_BLACK" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_BLACK"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_BLACK_ORG_CODE" ON "DB2INST1"."CUSTOMER_BLACK" 
+		("ORG_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."CUSTOMER_GREY"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."CUSTOMER_GREY"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "CUSTOMER_ID" BIGINT , 
+		  "CUSTOMER_NAME" VARCHAR(60) , 
+		  "HOUSEHOLD_ID" VARCHAR(20) , 
+		  "ID_NUMBER" VARCHAR(18) NOT NULL , 
+		  "REASON" VARCHAR(100) , 
+		  "PHONE" VARCHAR(20) , 
+		  "GRID_CODE" VARCHAR(20) , 
+		  "GRID_NAME" VARCHAR(200) , 
+		  "ORG_CODE" VARCHAR(20) , 
+		  "ORG_NAME" VARCHAR(200) , 
+		  "USER_ID" BIGINT , 
+		  "USER_NAME" VARCHAR(60) , 
+		  "STATUS" VARCHAR(5) , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."CUSTOMER_GREY"
+
+ALTER TABLE "DB2INST1"."CUSTOMER_GREY" 
+	ADD CONSTRAINT "CUSTOMER_GREY_PK" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_GREY"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_GREY_GRID_CODE" ON "DB2INST1"."CUSTOMER_GREY" 
+		("GRID_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_GREY"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_GREY_ID_NUMBER" ON "DB2INST1"."CUSTOMER_GREY" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_GREY"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_GREY_ORG_CODE" ON "DB2INST1"."CUSTOMER_GREY" 
+		("ORG_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_GREY"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_GREY_USER_ID" ON "DB2INST1"."CUSTOMER_GREY" 
+		("USER_ID" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."CUSTOMER_IMAGE"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."CUSTOMER_IMAGE"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "CUSTOMER_NAME" VARCHAR(50) , 
+		  "ID_NUMBER" VARCHAR(20) NOT NULL , 
+		  "GRID_CODE" VARCHAR(20) NOT NULL , 
+		  "ORIGINAL_NAME" VARCHAR(200) , 
+		  "SYSTEM_NAME" VARCHAR(150) , 
+		  "PATH" VARCHAR(200) , 
+		  "UPLOAD_USER_ID" BIGINT , 
+		  "TYPE" VARCHAR(10) , 
+		  "DELETE_FLAG" VARCHAR(10) , 
+		  "DELETE_PATH" VARCHAR(150) , 
+		  "DELETE_TIME" BIGINT , 
+		  "CREATED_AT" BIGINT , 
+		  "UPDATED_AT" BIGINT )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+COMMENT ON TABLE "DB2INST1"."CUSTOMER_IMAGE" IS '客户影像资料表';
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."CUSTOMER_IMAGE"
+
+ALTER TABLE "DB2INST1"."CUSTOMER_IMAGE" 
+	ADD CONSTRAINT "CUSTOMER_IMAGE_PK" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_IMAGE"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_IMAGE_GRID_CODE" ON "DB2INST1"."CUSTOMER_IMAGE" 
+		("GRID_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."CUSTOMER_INTERVIEW"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."CUSTOMER_INTERVIEW"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "CUSTOMER_ID" BIGINT , 
+		  "CUSTOMER_NAME" VARCHAR(40) , 
+		  "ID_NUMBER" VARCHAR(20) , 
+		  "SEX" VARCHAR(5) , 
+		  "IS_MARRIED" VARCHAR(10) , 
+		  "EDUCATION" VARCHAR(10) , 
+		  "PHONE" VARCHAR(20) , 
+		  "FAMILY_SIZE" VARCHAR(5) , 
+		  "NATIVE_ADDRESS" VARCHAR(100) , 
+		  "RESIDENCE_ADDRESS" VARCHAR(100) , 
+		  "CARD_HOLDER" VARCHAR(40) , 
+		  "CARD_NUMBER" VARCHAR(40) , 
+		  "APPRAISE_SUM" VARCHAR(30) , 
+		  "APPLIED_SUM" VARCHAR(30) , 
+		  "TIME_LIMIT" VARCHAR(5) , 
+		  "PROVIDE" VARCHAR(30) , 
+		  "REPAYMENT" VARCHAR(30) , 
+		  "INTEREST_SETTLEMENT" VARCHAR(30) , 
+		  "TYPE" VARCHAR(5) , 
+		  "USER_ID" BIGINT , 
+		  "USER_NAME" VARCHAR(40) , 
+		  "ORG_CODE" VARCHAR(100) , 
+		  "ORG_NAME" VARCHAR(200) , 
+		  "GRID_NAME" VARCHAR(200) , 
+		  "GRID_CODE" VARCHAR(40) , 
+		  "COMMENT" VARCHAR(100) , 
+		  "APPROVAL_STATUS" VARCHAR(5) , 
+		  "STATUS" VARCHAR(5) , 
+		  "ATTACH_FLAG" VARCHAR(5) , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL , 
+		  "PURPOSE" VARCHAR(40) , 
+		  "HOUSEHOLD_ID" VARCHAR(40) )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."CUSTOMER_INTERVIEW"
+
+ALTER TABLE "DB2INST1"."CUSTOMER_INTERVIEW" 
+	ADD CONSTRAINT "CUSTOMER_INTERVIEW_PK" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_INTERVIEW"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_INTERVIEW_GRID_CODE" ON "DB2INST1"."CUSTOMER_INTERVIEW" 
+		("GRID_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_INTERVIEW"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_INTERVIEW_ID_NUMBER" ON "DB2INST1"."CUSTOMER_INTERVIEW" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_INTERVIEW"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_INTERVIEW_ORG_CODE" ON "DB2INST1"."CUSTOMER_INTERVIEW" 
+		("ORG_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_INTERVIEW"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_INTERVIEW_USER_ID" ON "DB2INST1"."CUSTOMER_INTERVIEW" 
+		("USER_ID" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."CUSTOMER_WHITE"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."CUSTOMER_WHITE"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "CUSTOMER_ID" BIGINT , 
+		  "CUSTOMER_NAME" VARCHAR(40) , 
+		  "ID_NUMBER" VARCHAR(18) NOT NULL , 
+		  "LIMIT" DECIMAL(10,4) , 
+		  "PHONE" VARCHAR(20) , 
+		  "GRID_CODE" VARCHAR(20) NOT NULL , 
+		  "GRID_NAME" VARCHAR(200) , 
+		  "ORG_CODE" VARCHAR(20) NOT NULL , 
+		  "ORG_NAME" VARCHAR(200) , 
+		  "USER_ID" BIGINT NOT NULL , 
+		  "USER_NAME" VARCHAR(40) , 
+		  "STATUS" VARCHAR(5) WITH DEFAULT '0' , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL , 
+		  "HOUSEHOLD_ID" VARCHAR(20) )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."CUSTOMER_WHITE"
+
+ALTER TABLE "DB2INST1"."CUSTOMER_WHITE" 
+	ADD CONSTRAINT "CUSTOMER_WHITE_PK" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_WHITE"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_WHITE_GRID_CODE" ON "DB2INST1"."CUSTOMER_WHITE" 
+		("GRID_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_WHITE"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_WHITE_ID_NUMBER" ON "DB2INST1"."CUSTOMER_WHITE" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_WHITE"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_WHITE_ORG_CODE" ON "DB2INST1"."CUSTOMER_WHITE" 
+		("ORG_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_WHITE"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_WHITE_USER_ID" ON "DB2INST1"."CUSTOMER_WHITE" 
+		("USER_ID" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."DB_CUSTOMER_TAG_RELATION"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."DB_CUSTOMER_TAG_RELATION"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "TAG_ID" BIGINT NOT NULL , 
+		  "ID_NUMBER" VARCHAR(50) NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."DB_CUSTOMER_TAG_RELATION"
+
+ALTER TABLE "DB2INST1"."DB_CUSTOMER_TAG_RELATION" 
+	ADD CONSTRAINT "PK_ID" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."DB_CUSTOMER_TAG_RELATION"
+
+CREATE INDEX "DB2INST1"."INDEX_DB_CUSTOMER_TAG_RELATION_ID_NUMBER" ON "DB2INST1"."DB_CUSTOMER_TAG_RELATION" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+ALTER TABLE "DB2INST1"."DB_CUSTOMER_TAG_RELATION" ALTER COLUMN "ID" RESTART WITH 1744360;
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."DB_ORG"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."DB_ORG"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "ORG_CODE" VARCHAR(20) NOT NULL , 
+		  "CORE_ORG_CODE" VARCHAR(20) NOT NULL , 
+		  "ORG_NAME" VARCHAR(200) NOT NULL , 
+		  "PARENT_ORG_CODE" VARCHAR(20) NOT NULL , 
+		  "CORP_ORG_CODE" VARCHAR(20) , 
+		  "LEVEL" VARCHAR(2) NOT NULL , 
+		  "REMARK" VARCHAR(400) , 
+		  "STATUS" VARCHAR(2) NOT NULL , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."DB_ORG"
+
+ALTER TABLE "DB2INST1"."DB_ORG" 
+	ADD CONSTRAINT "PK_ID" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."DB_ORG"
+
+CREATE UNIQUE INDEX "DB2INST1"."INDEX_DB_ORG_CORE_ORG_CODE" ON "DB2INST1"."DB_ORG" 
+		("CORE_ORG_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."DB_ORG"
+
+CREATE UNIQUE INDEX "DB2INST1"."INDEX_DB_ORG_ORG_CODE" ON "DB2INST1"."DB_ORG" 
+		("ORG_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."DB_ORG"
+
+CREATE UNIQUE INDEX "DB2INST1"."INDEX_DB_ORG_ORG_NAME" ON "DB2INST1"."DB_ORG" 
+		("ORG_NAME" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."DB_ORG"
+
+CREATE INDEX "DB2INST1"."INDEX_DB_ORG_PARENT_ORG_CODE" ON "DB2INST1"."DB_ORG" 
+		("PARENT_ORG_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+ALTER TABLE "DB2INST1"."DB_ORG" ALTER COLUMN "ID" RESTART WITH 280;
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."DB_PERMISSION"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."DB_PERMISSION"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "PERMISSION_CH" VARCHAR(80) NOT NULL , 
+		  "PERMISSION_URL" VARCHAR(100) NOT NULL , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."DB_PERMISSION"
+
+ALTER TABLE "DB2INST1"."DB_PERMISSION" 
+	ADD PRIMARY KEY
+		("ID");
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."DB_ROLE"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."DB_ROLE"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "ROLE_EN" VARCHAR(20) NOT NULL , 
+		  "ROLE_CH" VARCHAR(40) NOT NULL , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+COMMENT ON COLUMN "DB2INST1"."DB_ROLE"."ROLE_CH" IS '角色中文名';
+
+COMMENT ON COLUMN "DB2INST1"."DB_ROLE"."ROLE_EN" IS '角色英文名';
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."DB_ROLE"
+
+ALTER TABLE "DB2INST1"."DB_ROLE" 
+	ADD PRIMARY KEY
+		("ID");
+
+
+ALTER TABLE "DB2INST1"."DB_ROLE" ALTER COLUMN "ID" RESTART WITH 40;
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."DB_ROLE_PERMISSION_RELATION"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."DB_ROLE_PERMISSION_RELATION"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "ROLE_ID" BIGINT NOT NULL , 
+		  "PERMISSION_ID" BIGINT NOT NULL , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."DB_ROLE_PERMISSION_RELATION"
+
+ALTER TABLE "DB2INST1"."DB_ROLE_PERMISSION_RELATION" 
+	ADD PRIMARY KEY
+		("ID");
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."DB_TAG"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."DB_TAG"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "NAME" VARCHAR(50) NOT NULL , 
+		  "DESCRIPTION" VARCHAR(100) NOT NULL , 
+		  "TYPE" VARCHAR(40) NOT NULL , 
+		  "REMARK" VARCHAR(200) , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."DB_TAG"
+
+ALTER TABLE "DB2INST1"."DB_TAG" 
+	ADD CONSTRAINT "PK_ID" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."DB_TAG"
+
+CREATE UNIQUE INDEX "DB2INST1"."UK_NAME" ON "DB2INST1"."DB_TAG" 
+		("NAME" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+ALTER TABLE "DB2INST1"."DB_TAG" ALTER COLUMN "ID" RESTART WITH 40;
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."DB_USER"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."DB_USER"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "USERNAME" VARCHAR(20) NOT NULL , 
+		  "PASSWORD" VARCHAR(100) NOT NULL , 
+		  "NAME" VARCHAR(50) NOT NULL , 
+		  "WORK_ID" VARCHAR(20) NOT NULL , 
+		  "ID_NUMBER" VARCHAR(18) , 
+		  "GENDER" VARCHAR(2) , 
+		  "CONTACT" VARCHAR(30) , 
+		  "EMAIL" VARCHAR(50) , 
+		  "ORG_CODE" VARCHAR(50) NOT NULL , 
+		  "CORP_NAME" VARCHAR(50) NOT NULL , 
+		  "STATUS" VARCHAR(2) NOT NULL , 
+		  "LAST_LOGIN_AT" BIGINT , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."DB_USER"
+
+ALTER TABLE "DB2INST1"."DB_USER" 
+	ADD CONSTRAINT "PK_ID" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."DB_USER"
+
+CREATE UNIQUE INDEX "DB2INST1"."UK_USERNAME" ON "DB2INST1"."DB_USER" 
+		("USERNAME" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+ALTER TABLE "DB2INST1"."DB_USER" ALTER COLUMN "ID" RESTART WITH 740;
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."DB_USER_ROLE_RELATION"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."DB_USER_ROLE_RELATION"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "USER_ID" BIGINT NOT NULL , 
+		  "ROLE_ID" BIGINT NOT NULL , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."DB_USER_ROLE_RELATION"
+
+ALTER TABLE "DB2INST1"."DB_USER_ROLE_RELATION" 
+	ADD PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."DB_USER_ROLE_RELATION"
+
+CREATE INDEX "DB2INST1"."INDEX_DB_USER_ROLE_RELATION_ROLE_ID" ON "DB2INST1"."DB_USER_ROLE_RELATION" 
+		("ROLE_ID" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."DB_USER_ROLE_RELATION"
+
+CREATE INDEX "DB2INST1"."INDEX_DB_USER_ROLE_RELATION_USER_ID" ON "DB2INST1"."DB_USER_ROLE_RELATION" 
+		("USER_ID" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+ALTER TABLE "DB2INST1"."DB_USER_ROLE_RELATION" ALTER COLUMN "ID" RESTART WITH 700;
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."GRID_IMAGE"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."GRID_IMAGE"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "GRID_CODE" VARCHAR(20) , 
+		  "ORIGINAL_NAME" VARCHAR(200) , 
+		  "SYSTEM_NAME" VARCHAR(150) , 
+		  "PATH" VARCHAR(255) , 
+		  "USER_ID" BIGINT , 
+		  "TYPE" VARCHAR(10) , 
+		  "STATUS" VARCHAR(10) NOT NULL WITH DEFAULT '0' , 
+		  "DELETE_PATH" VARCHAR(255) , 
+		  "DELETE_TIME" BIGINT , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL , 
+		  "COMMENT" VARCHAR(255) , 
+		  "IMAGE_NUM" VARCHAR(40) )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."GRID_IMAGE"
+
+ALTER TABLE "DB2INST1"."GRID_IMAGE" 
+	ADD PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."GRID_IMAGE"
+
+CREATE INDEX "DB2INST1"."INDEX_GRID_IMAGE_GRID_CODE" ON "DB2INST1"."GRID_IMAGE" 
+		("GRID_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."GRID_INFO"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."GRID_INFO"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "GRID_CODE" VARCHAR(100) , 
+		  "GRID_NAME" VARCHAR(200) , 
+		  "ORG_CODE" VARCHAR(20) , 
+		  "GRID_TYPE" VARCHAR(5) , 
+		  "DESCRIPTION" VARCHAR(255) , 
+		  "USER_ID" BIGINT NOT NULL , 
+		  "ASSIST_MANAGER" VARCHAR(50) , 
+		  "SUPERVISE_MANAGER" VARCHAR(50) , 
+		  "QR_CODE" VARCHAR(255) , 
+		  "GRID_MAP" VARCHAR(255) , 
+		  "CREATED_AT" BIGINT , 
+		  "UPDATED_AT" BIGINT , 
+		  "STATUS" VARCHAR(10) NOT NULL WITH DEFAULT '1' , 
+		  "TOWNSHIP" VARCHAR(100) , 
+		  "VILLAGE" VARCHAR(100) , 
+		  "GROUP" VARCHAR(100) )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."GRID_INFO"
+
+ALTER TABLE "DB2INST1"."GRID_INFO" 
+	ADD PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."GRID_INFO"
+
+CREATE INDEX "DB2INST1"."INDEX_GRID_INFO_ORG_CODE" ON "DB2INST1"."GRID_INFO" 
+		("ORG_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."GRID_INFO"
+
+CREATE INDEX "DB2INST1"."INDEX_GRID_INFO_USER_ID" ON "DB2INST1"."GRID_INFO" 
+		("USER_ID" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."GRID_INFO"
+
+CREATE UNIQUE INDEX "DB2INST1"."UK_GRID_INFO_GRID_CODE" ON "DB2INST1"."GRID_INFO" 
+		("GRID_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+ALTER TABLE "DB2INST1"."GRID_INFO" ALTER COLUMN "ID" RESTART WITH 3340;
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."GRID_REVIEW"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."GRID_REVIEW"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "GRID_CODE" VARCHAR(100) , 
+		  "GRID_NAME" VARCHAR(200) , 
+		  "PHONE" VARCHAR(20) , 
+		  "GRID_REVIEW_NAME" VARCHAR(100) , 
+		  "ID_NUMBER" VARCHAR(20) , 
+		  "DUTIES" VARCHAR(20) , 
+		  "DESCRIPTION" VARCHAR(255) , 
+		  "ADDRESS" VARCHAR(255) , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL , 
+		  "TYPE" VARCHAR(10) , 
+		  "STATUS" VARCHAR(5) WITH DEFAULT '1' )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."GRID_REVIEW"
+
+ALTER TABLE "DB2INST1"."GRID_REVIEW" 
+	ADD PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."GRID_REVIEW"
+
+CREATE INDEX "DB2INST1"."INDEX_GRID_REVIEW_GRID_CODE" ON "DB2INST1"."GRID_REVIEW" 
+		("GRID_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."GRID_REVIEW"
+
+CREATE INDEX "DB2INST1"."INDEX_GRID_REVIEW_GRID_REVIEW_NAME" ON "DB2INST1"."GRID_REVIEW" 
+		("GRID_REVIEW_NAME" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."INTERVIEW_FILE"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."INTERVIEW_FILE"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "CUSTOMER_NAME" VARCHAR(40) , 
+		  "ID_NUMBER" VARCHAR(20) , 
+		  "CUSTOMER_ID" BIGINT , 
+		  "INTERVIEW_ID" BIGINT , 
+		  "SYSTEM_NAME" VARCHAR(200) , 
+		  "PATH" VARCHAR(200) , 
+		  "USER_NAME" VARCHAR(40) , 
+		  "USER_ID" BIGINT , 
+		  "TYPE" VARCHAR(5) , 
+		  "STATUS" VARCHAR(5) , 
+		  "DELETE_PATH" VARCHAR(200) , 
+		  "DELETE_TIME" BIGINT , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."INTERVIEW_FILE"
+
+ALTER TABLE "DB2INST1"."INTERVIEW_FILE" 
+	ADD CONSTRAINT "INTERVIEW_FILE_PK" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."INTERVIEW_FILE"
+
+CREATE INDEX "DB2INST1"."INDEX_INTERVIEW_FILE_ID_NUMBER" ON "DB2INST1"."INTERVIEW_FILE" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."INTERVIEW_FILE"
+
+CREATE INDEX "DB2INST1"."INDEX_INTERVIEW_FILE_INTERVIEW_ID" ON "DB2INST1"."INTERVIEW_FILE" 
+		("INTERVIEW_ID" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."USER_CONCLUSION"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."USER_CONCLUSION"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "NAME" VARCHAR(50) , 
+		  "ID_NUMBER" VARCHAR(18) NOT NULL , 
+		  "HOUSEHOLD_ID" VARCHAR(20) , 
+		  "IS_FAMILIAR" VARCHAR(4) , 
+		  "NEGATIVE_REASON" VARCHAR(80) , 
+		  "REMARK" VARCHAR(900) , 
+		  "OUT_WORK" VARCHAR(300) , 
+		  "HOUSE_VALUE" VARCHAR(20) , 
+		  "CAR_VALUE" VARCHAR(20) , 
+		  "MAIN_BUSINESS" VARCHAR(100) , 
+		  "SCALE" VARCHAR(100) , 
+		  "INCOME" VARCHAR(20) , 
+		  "PAYOUT" VARCHAR(20) , 
+		  "CREDIT_AMOUNT" VARCHAR(20) , 
+		  "BORROWER" VARCHAR(20) , 
+		  "SURVEY_TYPE" VARCHAR(20) , 
+		  "USER_ID" BIGINT , 
+		  "IS_VALID" VARCHAR(4) , 
+		  "DATE" VARCHAR(20) , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL , 
+		  "USER_NAME" VARCHAR(60) )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."USER_CONCLUSION"
+
+ALTER TABLE "DB2INST1"."USER_CONCLUSION" 
+	ADD PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."USER_CONCLUSION"
+
+CREATE INDEX "DB2INST1"."INDEX_USER_CONCLUSION_HOUSEHOLD_ID" ON "DB2INST1"."USER_CONCLUSION" 
+		("HOUSEHOLD_ID" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."USER_CONCLUSION"
+
+CREATE INDEX "DB2INST1"."INDEX_USER_CONCLUSION_ID_NUMBER" ON "DB2INST1"."USER_CONCLUSION" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."USER_CUSTOMER"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."USER_CUSTOMER"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "CREDIT_ID" VARCHAR(20) , 
+		  "NAME" VARCHAR(40) NOT NULL , 
+		  "TYPE" VARCHAR(20) NOT NULL , 
+		  "ID_TYPE" VARCHAR(20) NOT NULL , 
+		  "ID_NUMBER" VARCHAR(18) NOT NULL , 
+		  "SIGN_ORG" VARCHAR(40) , 
+		  "IS_LONG_TERM" VARCHAR(4) , 
+		  "SIGN_DATE" VARCHAR(20) , 
+		  "DUE_DATE" VARCHAR(20) , 
+		  "DISTRICT_ADDRESS" VARCHAR(200) , 
+		  "BIRTHDAY" VARCHAR(20) , 
+		  "GENDER" VARCHAR(4) , 
+		  "DETAIL_ADDRESS" VARCHAR(200) , 
+		  "POSTCODE" VARCHAR(20) , 
+		  "NATIVE_ADDRESS" VARCHAR(200) , 
+		  "PHONE_NUMBER" VARCHAR(50) , 
+		  "NATIONALITY" VARCHAR(10) , 
+		  "NATION" VARCHAR(10) , 
+		  "POLITICS_STATUS" VARCHAR(10) , 
+		  "EDUCATION_BACKGROUND" VARCHAR(10) , 
+		  "PHYSICAL_CONDITION" VARCHAR(10) , 
+		  "MARITAL_STATUS" VARCHAR(10) , 
+		  "SPOUSE_NAME" VARCHAR(40) , 
+		  "SPOUSE_ID_NUMBER" VARCHAR(18) , 
+		  "SPOUSE_PHONE_NUMBER" VARCHAR(50) , 
+		  "SPOUSE_COMPANY_NAME" VARCHAR(100) , 
+		  "CAREER_TYPE" VARCHAR(10) , 
+		  "TAX_TYPE" VARCHAR(40) , 
+		  "MAIN_BUSINESS" VARCHAR(100) , 
+		  "INDUSTRY_TYPE" VARCHAR(60) , 
+		  "IS_STAFF" VARCHAR(4) , 
+		  "IS_STOCKHOLDER" VARCHAR(4) , 
+		  "IS_CIVIL_SERVANT" VARCHAR(4) , 
+		  "IS_HOUSE_OWNER" VARCHAR(4) , 
+		  "HOUSEHOLD_ID" VARCHAR(20) , 
+		  "COMPANY_NAME" VARCHAR(100) , 
+		  "WORK_YEAR" VARCHAR(2) , 
+		  "COMPANY_ADDRESS" VARCHAR(200) , 
+		  "IS_FARMER" VARCHAR(4) , 
+		  "IS_BUY_HOME" VARCHAR(4) , 
+		  "CELL_NAME" VARCHAR(100) , 
+		  "CELL_ADDRESS" VARCHAR(200) , 
+		  "LIVING_CONDITION" VARCHAR(40) , 
+		  "IS_BUSINESS_OWNER" VARCHAR(4) , 
+		  "IS_BORROWER" VARCHAR(4) , 
+		  "GRID_CODE" VARCHAR(20) , 
+		  "CUSTOMER_MANAGER" VARCHAR(40) , 
+		  "SUPPORT_MANAGER" VARCHAR(40) , 
+		  "MAIN_ORG_NAME" VARCHAR(200) , 
+		  "REGISTER_PERSON" VARCHAR(40) , 
+		  "LAST_MODIFY_PERSON" VARCHAR(40) , 
+		  "STATUS" VARCHAR(2) NOT NULL , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL , 
+		  "INTERVIEW_ID" BIGINT , 
+		  "AMOUNT" VARCHAR(18) , 
+		  "VALID_TIME" INTEGER WITH DEFAULT 0 , 
+		  "IS_CONCLUDED" VARCHAR(4) , 
+		  "RELATIONSHIP" VARCHAR(50) , 
+		  "AGE" INTEGER , 
+		  "OUT_ENSURE_AMOUNT" DECIMAL(18,2) WITH DEFAULT 0 )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."USER_CUSTOMER"
+
+ALTER TABLE "DB2INST1"."USER_CUSTOMER" 
+	ADD CONSTRAINT "PK_ID" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."USER_CUSTOMER"
+
+CREATE INDEX "DB2INST1"."INDEX_USER_CUSTOMER_GRID_CODE" ON "DB2INST1"."USER_CUSTOMER" 
+		("GRID_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."USER_CUSTOMER"
+
+CREATE INDEX "DB2INST1"."INDEX_USER_CUSTOMER_HOUSEHOLD_ID" ON "DB2INST1"."USER_CUSTOMER" 
+		("HOUSEHOLD_ID" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."USER_CUSTOMER"
+
+CREATE UNIQUE INDEX "DB2INST1"."UK_ID_NUMBER" ON "DB2INST1"."USER_CUSTOMER" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+ALTER TABLE "DB2INST1"."USER_CUSTOMER" ALTER COLUMN "ID" RESTART WITH 6787200;
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."USER_RESIDENT"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."USER_RESIDENT"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "NAME" VARCHAR(50) , 
+		  "ID_NUMBER" VARCHAR(20) NOT NULL , 
+		  "CONTACT" VARCHAR(40) , 
+		  "COUNTY" VARCHAR(100) , 
+		  "TOWNSHIP" VARCHAR(100) , 
+		  "VILLAGE" VARCHAR(150) , 
+		  "GROUP" VARCHAR(150) , 
+		  "HOUSEHOLD_ID" VARCHAR(20) , 
+		  "RELATIONSHIP" VARCHAR(60) , 
+		  "IS_IN_LIST" VARCHAR(20) , 
+		  "REMARK" VARCHAR(500) , 
+		  "USER_ID" BIGINT , 
+		  "USER_NAME" VARCHAR(50) , 
+		  "ORG_NAME" VARCHAR(200) , 
+		  "GRID_CODE" VARCHAR(40) , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."USER_RESIDENT"
+
+ALTER TABLE "DB2INST1"."USER_RESIDENT" 
+	ADD PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."USER_RESIDENT"
+
+CREATE INDEX "DB2INST1"."INDEX_USER_RESIDENT_GRID_CODE" ON "DB2INST1"."USER_RESIDENT" 
+		("GRID_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."USER_RESIDENT"
+
+CREATE INDEX "DB2INST1"."INDEX_USER_RESIDENT_HOUSEHOLD_ID" ON "DB2INST1"."USER_RESIDENT" 
+		("HOUSEHOLD_ID" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+-- DDL Statements for unique constraints on Table "DB2INST1"."USER_RESIDENT"
+
+
+ALTER TABLE "DB2INST1"."USER_RESIDENT" 
+	ADD UNIQUE
+		("ID_NUMBER");
+
+ALTER TABLE "DB2INST1"."USER_RESIDENT" ALTER COLUMN "ID" RESTART WITH 4516480;
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."USER_SURVEY"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."USER_SURVEY"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "NAME" VARCHAR(20) , 
+		  "ID_NUMBER" VARCHAR(18) NOT NULL , 
+		  "HOUSEHOLD_ID" VARCHAR(20) , 
+		  "IS_FAMILIAR" VARCHAR(4) , 
+		  "NEGATIVE_REASON" VARCHAR(80) , 
+		  "REMARK" VARCHAR(300) , 
+		  "OUT_WORK" VARCHAR(100) , 
+		  "HOUSE_VALUE" VARCHAR(20) , 
+		  "CAR_VALUE" VARCHAR(20) , 
+		  "MAIN_BUSINESS" VARCHAR(100) , 
+		  "SCALE" VARCHAR(100) , 
+		  "INCOME" VARCHAR(20) , 
+		  "PAYOUT" VARCHAR(20) , 
+		  "CREDIT_AMOUNT" VARCHAR(20) , 
+		  "BORROWER" VARCHAR(40) , 
+		  "SURVEY_TYPE" VARCHAR(20) , 
+		  "SENATOR" VARCHAR(20) , 
+		  "IS_VALID" VARCHAR(4) , 
+		  "DATE" VARCHAR(20) , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL )   
+		 IN "GRIDDATASPACE1" INDEX IN "GRIDINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."USER_SURVEY"
+
+ALTER TABLE "DB2INST1"."USER_SURVEY" 
+	ADD PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."USER_SURVEY"
+
+CREATE INDEX "DB2INST1"."INDEX_USER_RESIDENT_ID_NUMBER" ON "DB2INST1"."USER_SURVEY" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_POVERTY"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_POVERTY"  (
+		  "XIAN" VARCHAR(100) , 
+		  "NAME" VARCHAR(100) , 
+		  "CERTCODE" VARCHAR(100) , 
+		  "GX" VARCHAR(100) , 
+		  "OVERCOME" VARCHAR(100) , 
+		  "POVERTY" VARCHAR(100) , 
+		  "SOURCE" VARCHAR(100) , 
+		  "ORGCODE" VARCHAR(100) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."CUSTOMER_POVERTY"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."CUSTOMER_POVERTY"  (
+		  "ID" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (  
+		    START WITH +1  
+		    INCREMENT BY +1  
+		    MINVALUE +1  
+		    MAXVALUE +9223372036854775807  
+		    NO CYCLE  
+		    CACHE 20  
+		    NO ORDER ) , 
+		  "CUSTOMER_ID" BIGINT , 
+		  "CUSTOMER_NAME" VARCHAR(100) , 
+		  "HOUSEHOLD_ID" VARCHAR(60) , 
+		  "ID_NUMBER" VARCHAR(20) , 
+		  "REASON" VARCHAR(150) , 
+		  "PHONE" VARCHAR(20) , 
+		  "GRID_CODE" VARCHAR(100) , 
+		  "GRID_NAME" VARCHAR(200) , 
+		  "ORG_CODE" VARCHAR(100) , 
+		  "ORG_NAME" VARCHAR(200) , 
+		  "USER_ID" BIGINT , 
+		  "USER_NAME" VARCHAR(100) , 
+		  "STATUS" VARCHAR(5) , 
+		  "CREATED_AT" BIGINT NOT NULL , 
+		  "UPDATED_AT" BIGINT NOT NULL , 
+		  "COUNTY" VARCHAR(200) , 
+		  "RELATION" VARCHAR(200) , 
+		  "OVERCOME" VARCHAR(300) , 
+		  "POVERTY" VARCHAR(300) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+-- DDL Statements for primary key on Table "DB2INST1"."CUSTOMER_POVERTY"
+
+ALTER TABLE "DB2INST1"."CUSTOMER_POVERTY" 
+	ADD CONSTRAINT "CUSTOMER_POVERTY_PK" PRIMARY KEY
+		("ID");
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_POVERTY"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_POVERTY_ID_NUMBER" ON "DB2INST1"."CUSTOMER_POVERTY" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+-- DDL Statements for indexes on Table "DB2INST1"."CUSTOMER_POVERTY"
+
+CREATE INDEX "DB2INST1"."INDEX_CUSTOMER_POVERTY_ORG_CODE" ON "DB2INST1"."CUSTOMER_POVERTY" 
+		("ORG_CODE" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+ALTER TABLE "DB2INST1"."CUSTOMER_POVERTY" ALTER COLUMN "ID" RESTART WITH 245480;
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."S02_KKH_GRXX_LAST"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."S02_KKH_GRXX_LAST"  (
+		  "RANKNUM" BIGINT NOT NULL , 
+		  "KHH" VARCHAR(96) , 
+		  "KHNM" VARCHAR(180) , 
+		  "KHMC" VARCHAR(180) , 
+		  "ZJHM" VARCHAR(90) , 
+		  "SFCQ" VARCHAR(6) , 
+		  "PQDZ" VARCHAR(60) , 
+		  "HJDZ" VARCHAR(600) , 
+		  "ZZMM" VARCHAR(30) , 
+		  "JKZK" VARCHAR(30) , 
+		  "POXM" VARCHAR(90) , 
+		  "POSFZH" VARCHAR(90) , 
+		  "PODH" VARCHAR(60) , 
+		  "POGZDW" VARCHAR(150) , 
+		  "ZY" VARCHAR(60) , 
+		  "ZYYW" VARCHAR(762) , 
+		  "SSHY" VARCHAR(30) , 
+		  "SFBHZG" VARCHAR(6) , 
+		  "SFGD" VARCHAR(6) , 
+		  "SFGJGZRY" VARCHAR(6) , 
+		  "SFHZ" VARCHAR(6) , 
+		  "ZBJG" VARCHAR(60) , 
+		  "SXED" VARCHAR(30) , 
+		  "SXKSRQ" VARCHAR(20) , 
+		  "SXJZRQ" VARCHAR(20) , 
+		  "DBSXED" VARCHAR(30) , 
+		  "DBSXKSRQ" VARCHAR(20) , 
+		  "DBSXJZRQ" VARCHAR(20) , 
+		  "FFNSXED" VARCHAR(30) , 
+		  "FFNSXKSRQ" VARCHAR(20) , 
+		  "FFNSXJZRQ" VARCHAR(20) , 
+		  "GHJL" VARCHAR(90) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."S02_KKH_GRXX_LAST"
+
+CREATE INDEX "DB2INST1"."INDEX_ODS_S02_KKH_GRXX_LAST_KHH" ON "DB2INST1"."S02_KKH_GRXX_LAST" 
+		("KHH" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_CUSTOMER_INFO"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_CUSTOMER_INFO"  (
+		  "CREDIT_ID" VARCHAR(32) , 
+		  "NAME" VARCHAR(186) , 
+		  "TYPE" VARCHAR(2) NOT NULL , 
+		  "ID_NUMBER" VARCHAR(80) , 
+		  "SIGN_ORG" VARCHAR(150) , 
+		  "IS_LONG_TERM" VARCHAR(6) , 
+		  "SIGN_DATE" VARCHAR(254) , 
+		  "DUE_DATE" VARCHAR(254) , 
+		  "DISTRICT_ADDRESS" VARCHAR(60) , 
+		  "BIRTHDAY" VARCHAR(254) , 
+		  "GENDER" VARCHAR(1) NOT NULL , 
+		  "DETAIL_ADDRESS" VARCHAR(150) , 
+		  "POSTCODE" VARCHAR(18) , 
+		  "NATIVE_ADDRESS" VARCHAR(600) , 
+		  "PHONE_NUMBER" VARCHAR(60) , 
+		  "NATIONALITY" VARCHAR(2) NOT NULL , 
+		  "NATION" VARCHAR(2) NOT NULL , 
+		  "POLITICS_STATUS" VARCHAR(30) , 
+		  "EDUCATION_BACKGROUND" VARCHAR(2) NOT NULL , 
+		  "PHYSICAL_CONDITION" VARCHAR(30) , 
+		  "MARITAL_STATUS" VARCHAR(2) NOT NULL , 
+		  "SPOUSE_NAME" VARCHAR(90) , 
+		  "SPOUSE_ID_NUMBER" VARCHAR(90) , 
+		  "SPOUSE_PHONE_NUMBER" VARCHAR(60) , 
+		  "SPOUSE_COMPANY_NAME" VARCHAR(150) , 
+		  "CAREER_TYPE" VARCHAR(60) , 
+		  "TAX_TYPE" VARCHAR(1) NOT NULL , 
+		  "MAIN_BUSINESS" VARCHAR(762) , 
+		  "INDUSTRY_TYPE" VARCHAR(30) , 
+		  "IS_STAFF" VARCHAR(6) , 
+		  "IS_STOCKHOLDER" VARCHAR(6) , 
+		  "IS_CIVIL_SERVANT" VARCHAR(6) , 
+		  "IS_HOUSE_OWNER" VARCHAR(6) , 
+		  "CUST_MANAGER_ID" VARCHAR(90) , 
+		  "ORG_ID" VARCHAR(60) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."ODS_CUSTOMER_INFO"
+
+CREATE INDEX "DB2INST1"."INDEX_ODS_CUSTOMER_INFO_ID_NUMBER" ON "DB2INST1"."ODS_CUSTOMER_INFO" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_CUSTOMER_DEPOSIT"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_CUSTOMER_DEPOSIT"  (
+		  "CREDIT_ID" VARCHAR(32) , 
+		  "NAME" VARCHAR(186) , 
+		  "ID_NUMBER" VARCHAR(80) , 
+		  "ACCOUNT" VARCHAR(60) , 
+		  "DEPOSIT_TYPE" VARCHAR(5) , 
+		  "BALANCE" VARCHAR(20) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_CUSTOMER_DEPOSIT_SUM"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_CUSTOMER_DEPOSIT_SUM"  (
+		  "CREDIT_ID" VARCHAR(32) , 
+		  "NAME" VARCHAR(186) , 
+		  "ID_NUMBER" VARCHAR(80) , 
+		  "DEPOSIT_TYPE" VARCHAR(5) , 
+		  "BALANCE_SUM" DECIMAL(31,2) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."ODS_CUSTOMER_DEPOSIT_SUM"
+
+CREATE INDEX "DB2INST1"."INDEX_ODS_CUSTOMER_DEPOSIT_SUM_ID_NUMBER" ON "DB2INST1"."ODS_CUSTOMER_DEPOSIT_SUM" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_CUSTOMER_LOAN"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_CUSTOMER_LOAN"  (
+		  "CREDIT_ID" VARCHAR(32) , 
+		  "NAME" VARCHAR(186) , 
+		  "ID_NUMBER" VARCHAR(80) , 
+		  "ACCOUNT" VARCHAR(66) , 
+		  "LOAN_TYPE" VARCHAR(6) , 
+		  "CONT_NO" VARCHAR(72) , 
+		  "BILL_NO" VARCHAR(72) , 
+		  "AMOUNT" VARCHAR(30) , 
+		  "BALANCE" DECIMAL(31,2) , 
+		  "ORGNO" VARCHAR(18) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."ODS_CUSTOMER_LOAN"
+
+CREATE INDEX "DB2INST1"."INDEX_ODS_CUSTOMER_LOAN_ID_NUMBER" ON "DB2INST1"."ODS_CUSTOMER_LOAN" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_CUSTOMER_LOAN_SUM"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_CUSTOMER_LOAN_SUM"  (
+		  "CREDIT_ID" VARCHAR(32) , 
+		  "NAME" VARCHAR(186) , 
+		  "ID_NUMBER" VARCHAR(80) , 
+		  "LOAN_TYPE" VARCHAR(6) , 
+		  "AMOUNTSUM" DECIMAL(31,2) , 
+		  "BALANCESUM" DECIMAL(31,2) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."ODS_CUSTOMER_LOAN_SUM"
+
+CREATE INDEX "DB2INST1"."INDEX_ODS_CUSTOMER_LOAN_SUM_ID_NUMBER" ON "DB2INST1"."ODS_CUSTOMER_LOAN_SUM" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_CUSTOMER_ASSURE"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_CUSTOMER_ASSURE"  (
+		  "CREDIT_ID" VARCHAR(96) , 
+		  "NAME" VARCHAR(180) , 
+		  "ID_NUMBER" VARCHAR(90) , 
+		  "ASSURE_TYPE" VARCHAR(60) , 
+		  "ASSURE_ID" VARCHAR(90) , 
+		  "CONT_ID" VARCHAR(90) , 
+		  "SUM_BALANCE" DECIMAL(31,2) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."ODS_CUSTOMER_ASSURE"
+
+CREATE INDEX "DB2INST1"."INDEX_ODS_CUSTOMER_ASSURE_ID_NUMBER" ON "DB2INST1"."ODS_CUSTOMER_ASSURE" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_CUSTOMER_LIMIT_THREE"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_CUSTOMER_LIMIT_THREE"  (
+		  "CREDIT_ID" VARCHAR(96) , 
+		  "NAME" VARCHAR(180) , 
+		  "ID_NUMBER" VARCHAR(90) , 
+		  "LMT_AMOUNT" VARCHAR(30) , 
+		  "START_DATE" VARCHAR(20) , 
+		  "END_DATE" VARCHAR(20) , 
+		  "ORG_ID" VARCHAR(60) , 
+		  "CUST_MANAGER_ID" VARCHAR(90) , 
+		  "LMT_TYPE" VARCHAR(1) NOT NULL )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."ODS_CUSTOMER_LIMIT_THREE"
+
+CREATE INDEX "DB2INST1"."INDEX_ODS_CUSTOMER_LIMIT_THREE_ID_NUMBER" ON "DB2INST1"."ODS_CUSTOMER_LIMIT_THREE" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_CUSTOMER_LIMIT"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_CUSTOMER_LIMIT"  (
+		  "CREDIT_ID" VARCHAR(96) , 
+		  "NAME" VARCHAR(180) , 
+		  "ID_NUMBER" VARCHAR(90) , 
+		  "LMT_AMOUNT" VARCHAR(30) , 
+		  "START_DATE" VARCHAR(20) , 
+		  "END_DATE" VARCHAR(20) , 
+		  "LMT_TYPE" VARCHAR(1) NOT NULL )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."ODS_CUSTOMER_LIMIT"
+
+CREATE INDEX "DB2INST1"."INDEX_ODS_CUSTOMER_LIMIT_ID_NUMBER" ON "DB2INST1"."ODS_CUSTOMER_LIMIT" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+------------------------------------------------
+-- DDL Statements for table "DB2INST1"."ODS_CUSTOMER_BLUE"
+------------------------------------------------
+ 
+
+CREATE TABLE "DB2INST1"."ODS_CUSTOMER_BLUE"  (
+		  "CREDIT_ID" VARCHAR(96) , 
+		  "NAME" VARCHAR(186) , 
+		  "ID_NUMBER" VARCHAR(90) , 
+		  "AMOUNT_SUM" DECIMAL(31,2) NOT NULL , 
+		  "BALANCE_SUM" DECIMAL(31,2) NOT NULL , 
+		  "START_DATE" VARCHAR(20) , 
+		  "END_DATE" VARCHAR(20) , 
+		  "LMT_AMOUNT" DECIMAL(24,2) NOT NULL , 
+		  "CUST_MANAGER_ID" VARCHAR(90) , 
+		  "ORG_ID" VARCHAR(60) )   
+		 IN "ODSDATASPACE1" INDEX IN "ODSINDEXSPACE1" ; 
+
+
+
+
+
+
+-- DDL Statements for indexes on Table "DB2INST1"."ODS_CUSTOMER_BLUE"
+
+CREATE INDEX "DB2INST1"."INDEX_ODS_CUSTOMER_BLUE_ID_NUMBER" ON "DB2INST1"."ODS_CUSTOMER_BLUE" 
+		("ID_NUMBER" ASC)
+		
+		COMPRESS NO ALLOW REVERSE SCANS;
+
+
+
+
+
+----------------------------
+
+-- DDL Statements for Views
+
+----------------------------
+SET CURRENT SCHEMA = "DB2INST1";
+SET CURRENT PATH = "SYSIBM","SYSFUN","SYSPROC","SYSIBMADM","DB2INST1";
+create view ODS_CUSTOMER_INFO_LAST as
+select *
+from (
+       select rank() over (partition by ID_NUMBER order by CUST_MANAGER_ID desc) as ranknum, ods_customer_info.*
+       from ods_customer_info)
+where ranknum = 1;
+
+SET CURRENT SCHEMA = "DB2INST1";
+SET CURRENT PATH = "SYSIBM","SYSFUN","SYSPROC","SYSIBMADM","DB2INST1";
+create view ODS_RESIDENT_last as
+select distinct *
+from (
+       select rank() over (partition by certcode order by czh, XM, ZRC, HH, GX desc) as ranknum, ODS_RESIDENT.*
+       from ODS_RESIDENT)
+where ranknum = 1;
+
+
+
+
+COMMIT WORK;
+
+CONNECT RESET;
+
+TERMINATE;
+

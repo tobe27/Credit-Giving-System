@@ -227,6 +227,7 @@ public class GridInfoServiceImpl implements GridInfoService {
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public Map<String, Object> getGridData(String gridCode) throws Exception {
 		if("".equals(gridCode)||gridCode==null) {

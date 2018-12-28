@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.service.customer.CustomerDO;
 import com.example.service.customer.CustomerDOMapper;
@@ -59,6 +60,7 @@ public class CustomerInterviewDOServiceImpl implements CustomerInterviewDOServic
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public boolean insertSelective(CustomerInterviewDO record) throws Exception {
 		if(record.getIdNumber()==null||"".equals(record.getCustomerName())) {
@@ -145,6 +147,7 @@ public class CustomerInterviewDOServiceImpl implements CustomerInterviewDOServic
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public List<CustomerInterviewDO> getList(Map<String, Object> map) throws Exception {
 		if(!map.containsKey("roleId") || map.get("roleId")==null) {

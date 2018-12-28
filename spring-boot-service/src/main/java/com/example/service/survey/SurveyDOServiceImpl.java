@@ -6,7 +6,6 @@ import com.example.common.util.StringUtil;
 import com.example.service.conclusion.ConclusionDO;
 import com.example.service.customer.CustomerDO;
 import com.example.service.customer.CustomerDOMapper;
-import com.example.service.customer.CustomerDOService;
 import com.example.service.exception.ServiceException;
 import com.example.service.grey.CustomerGreyDO;
 import com.example.service.grey.CustomerGreyDOService;
@@ -134,6 +133,9 @@ public class SurveyDOServiceImpl implements SurveyDOService {
                 logger.info("累加行数：" + i);
 
             }
+            if (surveyDO == null) {
+                continue;
+            }
             surveyDOList.add(surveyDO);
         }
 
@@ -205,17 +207,19 @@ public class SurveyDOServiceImpl implements SurveyDOService {
                 }
 
                 // 如果有效，客户调查有效次数＋1
-                if ("是".equals(surveyDO.getIsValid())) {
-                    try {
-                        customerDOMapper.updateByPrimaryKeySelective(new CustomerDO()
-                                .setId(customerDO.getId())
-                                .setValidTime(customerDO.getValidTime() + 1));
+                // 有效次数,根据身份证和是有效来获取有效调查次数
+                int validTime = surveyDOMapper.countValidTimeByIdNumberAndIsValid(surveyDO);
 
-                    } catch (Exception e) {
-                        logger.info("客户有效调查次数更新异常:" + e.getMessage());
-                        throw new ServiceException("客户有效调查次数更新异常");
-                    }
+                try {
+                    customerDOMapper.updateByPrimaryKeySelective(new CustomerDO()
+                            .setId(customerDO.getId())
+                            .setValidTime(validTime));
+
+                } catch (Exception e) {
+                    logger.info("客户有效调查次数更新异常:" + e.getMessage());
+                    throw new ServiceException("客户有效调查次数更新异常");
                 }
+
             }
 
         }
@@ -229,6 +233,9 @@ public class SurveyDOServiceImpl implements SurveyDOService {
      */
     private SurveyDO getSurveyDOFromExcel(SurveyDO surveyDO, Row iRow) {
         String no = ExcelUtil.getCellValue(iRow.getCell(0));
+        if (StringUtil.isBlank(no)) {
+            return null;
+        }
         String householdId = ExcelUtil.getCellValue(iRow.getCell(3));
         if (StringUtil.isNotLength(householdId, 1, 20)) {
             throw new ServiceException("序号:" + no + ",户号错误：最长20位");

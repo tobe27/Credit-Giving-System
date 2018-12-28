@@ -169,7 +169,7 @@ public class FileController {
     }
 
     /**
-     * 根据网格号下载整村授信批量授信审批表
+     * 根据网格号下载整村授信评议预授信表
      * @param gridCode
      * @param response
      * @throws Exception

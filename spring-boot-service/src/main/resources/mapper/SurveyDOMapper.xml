@@ -39,6 +39,11 @@
     where ID_NUMBER = #{idNumber} and SENATOR = #{senator}
   </select>
 
+  <!--有效次数-->
+  <select id="countValidTimeByIdNumberAndIsValid" parameterType="com.example.service.survey.SurveyDO" resultType="Integer">
+    select count(*) from user_survey where id_number = #{idNumber} and is_valid = '是'
+  </select>
+
   <select id="listByIdNumberAndIsValid" parameterType="com.example.service.survey.SurveyDO" resultMap="BaseResultMap">
     select *
     from USER_SURVEY

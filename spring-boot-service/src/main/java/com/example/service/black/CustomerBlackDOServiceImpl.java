@@ -58,6 +58,7 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
      * @return
      * @throws Exception
     */
+	@Transactional
 	@Override
 	public boolean deleteByPrimaryKey(Long id) throws Exception {
 		//删除客户标签中的黑名单
@@ -77,9 +78,13 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public boolean insertSelective(CustomerBlackDO record) throws Exception {
-		//校验是否已存在相同身份证号的贫困户
+		if (StringUtil.isNotIdNumber(record.getIdNumber())) {
+            throw new ServiceException("不是有效的中国居民身份证号！");
+        }
+		//校验是否已存在相同身份证号的黑名单
 		Map<String,Object> checkMap=new HashMap<>();
 		checkMap.put("idNumber", record.getIdNumber());
 		List<CustomerBlackDO> cpoList=customerBlackDOMapper.getByIdNumber(checkMap);
@@ -129,6 +134,7 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public CustomerBlackDO selectByPrimaryKey(Long id) throws Exception {
 		try {
@@ -163,6 +169,7 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public List<CustomerBlackDO> getList(Map<String, Object> map) throws Exception {
 		if(!map.containsKey("roleId") || !map.containsKey("orgCode")||!map.containsKey("pageNum")||!map.containsKey("pageSize")) {
@@ -195,6 +202,7 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public Map<String,Object> importFromExcel(List<Map<String, Object>> list,Map<String,Object> paramMap) throws Exception {
     //遍历数据，取出身份证号
@@ -213,15 +221,20 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
 				throw new ServiceException("文件中存在重复身份证号:"+idNumber);
 			}
 			
-			if (idNumber.length()!=18) {
+			if (StringUtil.isNotIdNumber(idNumber)) {
 	            throw new ServiceException("身份证号:"+idNumber+"不是有效的中国居民身份证号！");
 	        }
 			if(map.get("1")==null||"".equals(map.get("1").toString())) {
 				 throw new ServiceException("身份证号:"+idNumber+"的姓名为空");
+			}else if(map.get("1").toString().length()>10) {
+				 throw new ServiceException("身份证号:"+idNumber+"的姓名长度超过了10位");
 			}
 			String reason="";
             if(map.get("3")!=null) {
             	reason=map.get("3").toString();
+            	if(reason.length()>20) {
+            		 throw new ServiceException("身份证号:"+idNumber+"的未授信原因长度超过了20位");
+            	}
             }
 			idNumberList.add(idNumber);
 			CustomerBlackDO customerPovertyDO=new CustomerBlackDO();
@@ -247,11 +260,21 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
 			toList.add(new CustomerTagRelationDO().setIdNumber(bovrrtyDOList.get(i).getIdNumber()).setTagId((long)1));
 			 saveReList.add(bovrrtyDOList.get(i));
 			 if(saveReList.size()>=200) {
-	               asyncTaskBlackSave.executeAsyncTask(saveReList,customerBlackDOMapper);
+	               try {
+					asyncTaskBlackSave.executeAsyncTask(saveReList,customerBlackDOMapper);
+				} catch (Exception e) {
+					logger.info("批量导入黑名单异常" + e.getMessage());
+					throw new ServiceException("批量导入黑名单异常！");
+				}
 	               saveReList=new ArrayList<>();
 	            }
 	            if(i==bovrrtyDOList.size()-1) {
-	              asyncTaskBlackSave.executeAsyncTask(saveReList, customerBlackDOMapper);
+	              try {
+					asyncTaskBlackSave.executeAsyncTask(saveReList, customerBlackDOMapper);
+				} catch (Exception e) {
+					logger.info("批量导入黑名单异常" + e.getMessage());
+					throw new ServiceException("批量导入黑名单异常！");
+				}
 	            }
 		}
 		//删除相关的白名单和标签

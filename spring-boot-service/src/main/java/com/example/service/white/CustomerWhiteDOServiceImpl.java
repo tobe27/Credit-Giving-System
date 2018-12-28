@@ -73,6 +73,7 @@ public class CustomerWhiteDOServiceImpl implements CustomerWhiteDOService {
 	 * @throws Exception
 	 */
 	@Override
+	@Transactional
 	public boolean deleteByPrimaryKey(long id) throws Exception {
 		//删除客户标签中的白名单
 		CustomerWhiteDO record=customerWhiteDOMapper.selectByPrimaryKey(id);
@@ -187,6 +188,7 @@ public class CustomerWhiteDOServiceImpl implements CustomerWhiteDOService {
 	 * @return
 	 * @throws Exception
 	 */
+	@Transactional
 	@Override
 	public List<CustomerWhiteDO> getList(Map<String, Object> map) throws Exception {
 		if(!map.containsKey("roleId") || !map.containsKey("userId")|| !map.containsKey("orgCode")||!map.containsKey("pageNum")||!map.containsKey("pageSize")) {
@@ -232,6 +234,7 @@ public class CustomerWhiteDOServiceImpl implements CustomerWhiteDOService {
      * @return
      * @throws Exception
      */
+	@Transactional
 	@Override
 	public List<CustomerWhiteDO> export2Excel(Map<String, Object> map,HttpServletResponse response) throws Exception {
 		if(!map.containsKey("gridCode")||"".equals(map.get("gridCode").toString()) ||!map.containsKey("gridName")||"".equals(map.get("gridName").toString())) {
@@ -388,6 +391,7 @@ public class CustomerWhiteDOServiceImpl implements CustomerWhiteDOService {
      * @throws Exception
      */
 	@Override
+	@Transactional
 	public List<CustomerWhiteDO> exportToExcel(Map<String, Object> map,HttpServletResponse response) throws Exception {
 		long now =System.currentTimeMillis();
 		if(null==map.get("gridCode")||"".equals(map.get("gridCode").toString()) ||null==map.get("gridName")||"".equals(map.get("gridName").toString())) {
@@ -496,7 +500,7 @@ public class CustomerWhiteDOServiceImpl implements CustomerWhiteDOService {
          Row titleRow = sheet.createRow(0);
          Cell titleCol = titleRow.createCell(0);
          titleCol.setCellStyle(titleCellStyle);
-         titleCol.setCellValue("整村授信评议调查表");
+         titleCol.setCellValue("整村授信评议预授信表");
          
          Row unitRow = sheet.createRow(1);
          Cell townshipCol = unitRow.createCell(0);
@@ -557,7 +561,7 @@ public class CustomerWhiteDOServiceImpl implements CustomerWhiteDOService {
         	 }
         	 dataMap.put(cwo.getIdNumber(), SList);
          }
-         System.out.println("====="+dataMap.toString());
+       
          int start=4;
          int rowNum=4;
          for(int i=0;i<whiteList.size();i++) {
