@@ -1,5 +1,6 @@
 package com.example.service.business;
 
+import com.example.service.customer.CustomerDOMapper;
 import com.example.service.exception.ServiceException;
 import com.example.service.org.OrgDOMapper;
 import com.github.pagehelper.PageHelper;
@@ -18,11 +19,13 @@ public class ODSLoanDOServiceImpl implements ODSLoanDOService {
 
     private final ODSLoanDOMapper odsLoanDOMapper;
     private final OrgDOMapper orgDOMapper;
+    private final CustomerDOMapper customerDOMapper;
 
     @Autowired
-    public ODSLoanDOServiceImpl(ODSLoanDOMapper odsLoanDOMapper, OrgDOMapper orgDOMapper) {
+    public ODSLoanDOServiceImpl(ODSLoanDOMapper odsLoanDOMapper, OrgDOMapper orgDOMapper, CustomerDOMapper customerDOMapper) {
         this.odsLoanDOMapper = odsLoanDOMapper;
         this.orgDOMapper = orgDOMapper;
+        this.customerDOMapper = customerDOMapper;
     }
 
     private static Logger logger = LoggerFactory.getLogger(ODSLoanDOServiceImpl.class);
@@ -38,20 +41,24 @@ public class ODSLoanDOServiceImpl implements ODSLoanDOService {
      */
     @Override
     public List<ODSLoanDO> listLoan(ODSLoanDO record, Integer pageNum, Integer pageSize) throws Exception {
-        if (record.getRoleId() != 1) {
-            try {
-                record.setOrgCodeList(orgDOMapper.listStringOrgCodes(record.getOrgCode()));
-            } catch (Exception e) {
-                logger.info("查询下级机构异常:" + e.getMessage());
-                throw new ServiceException("查询下级机构异常");
+        if ("Y".equals(customerDOMapper.getODSIsYes())) {
+            if (record.getRoleId() != 1) {
+                try {
+                    record.setOrgCodeList(orgDOMapper.listStringOrgCodes(record.getOrgCode()));
+                } catch (Exception e) {
+                    logger.info("查询下级机构异常:" + e.getMessage());
+                    throw new ServiceException("查询下级机构异常");
+                }
             }
-        }
-        try {
-            PageHelper.startPage(pageNum, pageSize);
-            return odsLoanDOMapper.listLoan(record);
-        } catch (Exception e) {
-            logger.info("用信检测查询异常:" + e.getMessage());
-            throw new ServiceException("用信检测查询异常");
+            try {
+                PageHelper.startPage(pageNum, pageSize);
+                return odsLoanDOMapper.listLoan(record);
+            } catch (Exception e) {
+                logger.info("用信检测查询异常:" + e.getMessage());
+                throw new ServiceException("用信检测查询异常");
+            }
+        } else {
+            throw new ServiceException("数据更新中，请稍后再试");
         }
     }
 }

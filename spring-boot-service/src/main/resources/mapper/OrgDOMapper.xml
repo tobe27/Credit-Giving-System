@@ -6,6 +6,7 @@
     <result column="ORG_CODE" jdbcType="VARCHAR" property="orgCode" />
     <result column="CORE_ORG_CODE" jdbcType="VARCHAR" property="coreOrgCode" />
     <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+    <result column="SHORT_NAME" jdbcType="VARCHAR" property="shortName" />
     <result column="PARENT_ORG_CODE" jdbcType="VARCHAR" property="parentOrgCode" />
     <result column="CORP_ORG_CODE" jdbcType="VARCHAR" property="corpOrgCode" />
     <result column="LEVEL" jdbcType="VARCHAR" property="level" />
@@ -90,6 +91,15 @@
     where parent_org_code = #{orgCode}
   </select>
 
+
+  <select id="getParentOrgByOrgCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from DB_ORG
+    where org_code = (select parent_org_code
+    from DB_ORG
+    where org_code = #{orgCode})
+  </select>
+
+
   <insert id="insertSelective" parameterType="com.example.service.org.OrgDO">
     insert into DB_ORG
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -104,6 +114,9 @@
       </if>
       <if test="orgName != null">
         ORG_NAME,
+      </if>
+      <if test="shortName != null">
+        SHORT_NAME,
       </if>
       <if test="parentOrgCode != null">
         PARENT_ORG_CODE,
@@ -139,6 +152,9 @@
       </if>
       <if test="orgName != null">
         #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="shortName != null">
+        #{shortName,jdbcType=VARCHAR},
       </if>
       <if test="parentOrgCode != null">
         #{parentOrgCode,jdbcType=VARCHAR},
@@ -176,6 +192,9 @@
       <if test="orgName != null">
         ORG_NAME = #{orgName,jdbcType=VARCHAR},
       </if>
+      <if test="shortName != null">
+        SHORT_NAME = #{shortName,jdbcType=VARCHAR},
+      </if>
       <if test="parentOrgCode != null">
         PARENT_ORG_CODE = #{parentOrgCode,jdbcType=VARCHAR},
       </if>
@@ -200,4 +219,26 @@
     </set>
     where ID = #{id,jdbcType=BIGINT}
   </update>
+  <!--  更具身份证号查询灰名单或蓝名单所在的法人机构-->
+  <select id="selectByIdNumberInGreyAndBlue" resultMap="BaseResultMap">
+    select ORG_CODE,ORG_NAME from DB_ORG
+    where ORG_CODE = (
+      select PARENT_ORG_CODE from DB_ORG where ORG_CODE = (
+        select ORG_CODE from
+        <if test="tagId == 2">CUSTOMER_GREY</if>
+        <if test="tagId == 4">CUSTOMER_BLUE</if>
+        where ID_NUMBER = #{idNUmber}
+      )
+    )
+  </select>
+  <!--  更具身份证号查询黑名单或贫困户所在的法人机构 -->
+  <select id="selectByIdNumberInBlackAndPoverty" resultMap="BaseResultMap">
+    select ORG_CODE,ORG_NAME from DB_ORG
+    where ORG_CODE = (
+      select ORG_CODE from
+      <if test="tagId == 1">CUSTOMER_BLACK</if>
+      <if test="tagId == 3">CUSTOMER_POVERTY</if>
+      where ID_NUMBER = #{idNUmber}
+    )
+  </select>
 </mapper>

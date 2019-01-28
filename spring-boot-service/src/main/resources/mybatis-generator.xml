@@ -12,7 +12,7 @@
         </commentGenerator>
         <!--项目初始化时配置-数据库-->
         <jdbcConnection driverClass="com.ibm.db2.jcc.DB2Driver"
-                        connectionURL="jdbc:db2://192.168.1.101:50000/db2grid"
+                        connectionURL="jdbc:db2://192.168.1.100:50000/db2grid"
                         userId="db2admin"
                         password="1"/>
 
@@ -35,7 +35,7 @@
 
         <!--###############只需要修改表名和类名即可###############################################-->
         <!--生成对应表及类名-->
-        <table tableName="customer_image" domainObjectName="CustomerImageDO" enableCountByExample="false" enableUpdateByExample="false"
+        <table tableName="system_param" domainObjectName="SystemParamDO" enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
             <columnOverride column="LONG_VARCHAR_FIELD" javaType="java.lang.String" jdbcType="VARCHAR" />
         </table>

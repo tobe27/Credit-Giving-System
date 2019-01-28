@@ -1,10 +1,12 @@
 package com.example.service.approval;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.service.customer.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.common.util.StringUtil;
 import com.example.service.black.CustomerBlackDO;
 import com.example.service.black.CustomerBlackDOMapper;
-import com.example.service.customer.CustomerDOMapper;
-import com.example.service.customer.CustomerDOService;
-import com.example.service.customer.CustomerTagRelationDO;
-import com.example.service.customer.CustomerTagRelationDOMapper;
 import com.example.service.exception.ServiceException;
 import com.example.service.interview.CustomerInterviewDO;
 import com.example.service.interview.CustomerInterviewDOMapper;
@@ -48,7 +46,7 @@ public class CustomerApprovalDOServiceImpl implements CustomerApprovalDOService 
 	private static Logger logger = LoggerFactory.getLogger(CustomerApprovalDOServiceImpl.class);
 	 /**
      * 新增
-     * @param record
+     * @param
      * @return
      * @throws Exception
      */
@@ -99,12 +97,12 @@ public class CustomerApprovalDOServiceImpl implements CustomerApprovalDOService 
 		//开始进行审核操作，如果是客户经理进行的提交
 		if(1==recordList.get(0).getApprovalRoleId()) {
 			for(CustomerInterviewDO io:list) {
-				if("1".equals(io.getStatus())) {
-					throw new ServiceException("客户："+io.getCustomerName()+"未完善面签面谈信息，请先编辑保存再提交");
-				}
-				if(io.getAttachFlag().startsWith("0")) {
-					throw new ServiceException("客户："+io.getCustomerName()+"未上传授信申请表，请先上传再提交");
-				}
+//				if("1".equals(io.getStatus())) {
+//					throw new ServiceException("客户："+io.getCustomerName()+"未完善面签面谈信息，请先编辑保存再提交");
+//				}
+//				if(io.getAttachFlag().startsWith("0")) {
+//					throw new ServiceException("客户："+io.getCustomerName()+"未上传授信申请表，请先上传再提交");
+//				}
 				if(!"0".equals(io.getApprovalStatus())&&!"5".equals(io.getApprovalStatus())) {
 					throw new ServiceException("客户："+io.getCustomerName()+"不是待办理的面谈面签，请确认后再操作，或咨询管理员");
 				}
@@ -118,12 +116,12 @@ public class CustomerApprovalDOServiceImpl implements CustomerApprovalDOService 
 		if(2==recordList.get(0).getApprovalRoleId()) {
 			for(CustomerInterviewDO io:list) {
 				listString.add(io.getIdNumber());
-				if("1".equals(io.getStatus())) {
-					throw new ServiceException("客户："+io.getCustomerName()+"未完善面签面谈信息，请先编辑保存再提交");
-				}
-				if(io.getAttachFlag().startsWith("0")) {
-					throw new ServiceException("客户："+io.getCustomerName()+"未上传授信申请表，请先上传再提交");
-				}
+//				if("1".equals(io.getStatus())) {
+//					throw new ServiceException("客户："+io.getCustomerName()+"未完善面签面谈信息，请先编辑保存再提交");
+//				}
+//				if(io.getAttachFlag().startsWith("0")) {
+//					throw new ServiceException("客户："+io.getCustomerName()+"未上传授信申请表，请先上传再提交");
+//				}
 				if(!"1".equals(io.getApprovalStatus())) {
 					throw new ServiceException("客户："+io.getCustomerName()+"不是审核中的面谈面签，请确认后再操作，或咨询管理员");
 				}
@@ -131,6 +129,16 @@ public class CustomerApprovalDOServiceImpl implements CustomerApprovalDOService 
 			//更新面签面谈记录的审批状态
 			if("0".equals(recordList.get(0).getApprovalResult())) {
 				status="2";
+				// 如果是审批通过，则更新客户列表中的授信额度
+				for(CustomerInterviewDO customerInterviewDO : list) {
+					logger.info("面签信息：" + customerInterviewDO);
+					CustomerDO customerDO = new CustomerDO();
+					customerDO.setId(customerInterviewDO.getCustomerId())
+							.setInterviewId(customerInterviewDO.getId())
+							.setAmount(new BigDecimal(customerInterviewDO.getAppliedSum()));
+
+					customerDOMapper.updateByPrimaryKeySelective(customerDO);
+				}
 			}else if("1".equals(recordList.get(0).getApprovalResult())) {
 				status="5";
 			}else {
@@ -164,27 +172,27 @@ public class CustomerApprovalDOServiceImpl implements CustomerApprovalDOService 
 					.setTagId((long)1);
 					customerTagRelationDOMapper.insertSelective(ctrd);
 				}
-				
-			
-				
-				
 			}
 		}
+
 		if(!"".equals(status)) {
 			for(int i=0;i<recordList.size();i++) {
+				CustomerInterviewDO customerInterviewDO = list.get(i);
+
 				recordList.get(i).setCreatedAt(now).setUpdatedAt(now);
 				//插入审批记录表
 				customerApprovalDOMapper.insertSelective(recordList.get(i));
-				list.get(i).setApprovalStatus(status).setUpdatedAt(now);
+
+				customerInterviewDO.setApprovalStatus(status).setUpdatedAt(now);
 				//更新面谈面签
-				customerInterviewDOMapper.updateByPrimaryKeySelective(list.get(i));
+				customerInterviewDOMapper.updateByPrimaryKeySelective(customerInterviewDO);
 			}
 		}
 		return recordList.size();
 	}
 	/**
      * 查询某条面谈面签数据的审批记录
-     * @param record
+     * @param
      * @return
      * @throws Exception
      */

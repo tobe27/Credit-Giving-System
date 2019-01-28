@@ -1,5 +1,6 @@
 package com.example.service.ods;
 
+import com.example.service.customer.CustomerDOMapper;
 import com.example.service.exception.ServiceException;
 import com.example.service.org.OrgDOMapper;
 import com.github.pagehelper.PageHelper;
@@ -17,11 +18,13 @@ import java.util.List;
 public class ODSLimitDOServiceImpl implements ODSLimitDOService {
     private final ODSLimitDOMapper odsLimitDOMapper;
     private final OrgDOMapper orgDOMapper;
+    private final CustomerDOMapper customerDOMapper;
 
     @Autowired
-    public ODSLimitDOServiceImpl(ODSLimitDOMapper odsLimitDOMapper, OrgDOMapper orgDOMapper) {
+    public ODSLimitDOServiceImpl(ODSLimitDOMapper odsLimitDOMapper, OrgDOMapper orgDOMapper, CustomerDOMapper customerDOMapper) {
         this.odsLimitDOMapper = odsLimitDOMapper;
         this.orgDOMapper = orgDOMapper;
+        this.customerDOMapper = customerDOMapper;
     }
 
     private static Logger logger = LoggerFactory.getLogger(ODSLimitDOServiceImpl.class);
@@ -36,20 +39,24 @@ public class ODSLimitDOServiceImpl implements ODSLimitDOService {
      */
     @Override
     public List<ODSLimitDO> listGivings(ODSLimitDO record, Integer pageNum, Integer pageSize) throws Exception {
-        if (record.getRoleId() != 1) {
-            try {
-                record.setOrgCodeList(orgDOMapper.listStringOrgCodes(record.getOrgCode()));
-            } catch (Exception e) {
-                logger.info("查询下级机构异常:" + e.getMessage());
-                throw new ServiceException("查询下级机构异常");
+        if ("Y".equals(customerDOMapper.getODSIsYes())) {
+            if (record.getRoleId() != 1) {
+                try {
+                    record.setOrgCodeList(orgDOMapper.listStringOrgCodes(record.getOrgCode()));
+                } catch (Exception e) {
+                    logger.info("查询下级机构异常:" + e.getMessage());
+                    throw new ServiceException("查询下级机构异常");
+                }
             }
-        }
-        try {
-            PageHelper.startPage(pageNum, pageSize);
-            return odsLimitDOMapper.listGivings(record);
-        } catch (Exception e) {
-            logger.info("授信检测查询异常:" + e.getMessage());
-            throw new ServiceException("授信检测查询异常");
+            try {
+                PageHelper.startPage(pageNum, pageSize);
+                return odsLimitDOMapper.listGivings(record);
+            } catch (Exception e) {
+                logger.info("授信检测查询异常:" + e.getMessage());
+                throw new ServiceException("授信检测查询异常");
+            }
+        } else {
+            throw new ServiceException("数据更新中，请稍后再试");
         }
     }
 }

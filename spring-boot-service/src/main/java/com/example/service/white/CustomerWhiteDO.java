@@ -58,5 +58,6 @@ public class CustomerWhiteDO implements Serializable{
     private String householdId;
     private String address;
 
-   
+   // 变更借款主体使用
+    private String oldIdNumber;
 }

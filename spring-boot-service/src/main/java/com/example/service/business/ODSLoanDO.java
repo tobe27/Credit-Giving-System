@@ -23,13 +23,15 @@ public class ODSLoanDO {
 
     private String billNo;
 
-    private String amount;
+    private BigDecimal amount;
 
     private BigDecimal balance;
 
     private String orgno;
 
     // 关联使用
+    private String startDate;
+    private String endDate;
     private String gridCode;
     private String gridName;
     private Long tagId;

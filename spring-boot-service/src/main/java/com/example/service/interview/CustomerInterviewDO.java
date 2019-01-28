@@ -81,5 +81,10 @@ public class CustomerInterviewDO implements Serializable{
     private String householdId;
     private String photo;
 
+    // 变更借款主体使用
+    private Long oldCustomerId; // 客户信息
+    private String oldIdNumber; // 白名单
+    private String oldCustomerName; // 白名单
+    private Integer option; // 作废时选择要进入的名单，1-黑， 2-灰， 3-贫困户， 4-蓝名单
 
 }

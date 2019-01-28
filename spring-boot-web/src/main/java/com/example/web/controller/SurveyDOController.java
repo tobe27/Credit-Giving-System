@@ -41,6 +41,6 @@ public class SurveyDOController {
      */
     @RequestMapping(value = "/survey/list", method = RequestMethod.GET)
     public ResultBean list(SurveyDO surveyDO) throws Exception {
-        return new ResultBean().success(surveyDOService.listByIdNumberAndIsValid(surveyDO));
+        return new ResultBean().success(surveyDOService.listByHouseholdIdAndIsValid(surveyDO));
     }
 }

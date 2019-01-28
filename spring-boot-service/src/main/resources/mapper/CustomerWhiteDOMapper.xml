@@ -20,10 +20,12 @@
     <result column="HOUSEHOLD_ID" jdbcType="VARCHAR" property="householdId" />
      <result column="ADDRESS" jdbcType="VARCHAR" property="address" />
   </resultMap>
+
   <sql id="Base_Column_List">
     ID, CUSTOMER_ID, CUSTOMER_NAME, ID_NUMBER, LIMIT, PHONE, GRID_CODE, GRID_NAME, ORG_CODE, 
     ORG_NAME, USER_ID, USER_NAME, STATUS, CREATED_AT, UPDATED_AT, HOUSEHOLD_ID
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -32,17 +34,19 @@
   </select>
   
   <select id="getByIdNumber" parameterType="java.util.Map" resultMap="BaseResultMap">
-  select * from CUSTOMER_WHITE where  ID_NUMBER  = #{idNumber}
+    select * from CUSTOMER_WHITE where  ID_NUMBER  = #{idNumber}
   </select>
+
   <select id="getListByIdNumbers" parameterType="java.util.Map" resultMap="BaseResultMap">
-  select * from CUSTOMER_WHITE where  ID_NUMBER  in  
+    select * from CUSTOMER_WHITE where  ID_NUMBER  in
    <foreach item="item" index="index" collection="idNumberList" 
                          open="(" separator="," close=")">
                         #{item}
                 </foreach>
   </select>
+
   <delete id="deleteByIdNumbers" parameterType="java.util.Map" >
-  delete  from CUSTOMER_WHITE where  ID_NUMBER  in  
+    delete  from CUSTOMER_WHITE where  ID_NUMBER  in
    <foreach item="item" index="index" collection="idNumberList" 
                          open="(" separator="," close=")">
                         #{item}
@@ -50,27 +54,17 @@
   </delete>
   
   <select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
-     select cw.* from CUSTOMER_WHITE cw     left join  GRID_INFO  gi on cw.grid_code=gi.grid_code 
-       where 1=1 and cw.org_code  like #{orgCode}||'%'
-          <if test="userId != null">
-     and   gi.USER_ID  = #{userId}
-      </if>
-       <if test="gridCode != null">
-     and  cw.GRID_CODE  = #{gridCode}
-      </if>
-       <if test="someOrgCode != null">
-     and  cw.org_code  = #{someOrgCode}
-      </if>
-      
-      <if test="idNumber != null">
-     and   cw.ID_NUMBER  like '%'||#{idNumber}||'%'
-      </if>
-       <if test="customerName != null">
-     and   cw.CUSTOMER_NAME  like '%'||#{customerName}||'%'
-      </if>
-    
-      order by cw.created_at desc
+     select cw.* from CUSTOMER_WHITE cw
+     where 1=1
+     <if test="idNumber != null">
+       and  UPPER(cw.ID_NUMBER)  = #{idNumber}
+     </if>
+     <if test="customerName != null">
+      and   cw.CUSTOMER_NAME  like '%'||#{customerName}||'%'
+     </if>
+      order by cw.CREATED_AT desc
   </select>
+
   <select id="getListByGrdiCode" parameterType="java.util.Map" resultMap="BaseResultMap">
    select cw.id,cw.CUSTOMER_ID,cw.CUSTOMER_NAME,cw.ID_NUMBER,cw.LIMIT,cw.GRID_CODE,cw.GRID_NAME,cw.ORG_CODE,cw.ORG_NAME,cw.USER_ID,
    cw.USER_NAME,cw.HOUSEHOLD_ID,cw.CREATED_AT,cw.UPDATED_AT,ucu.PHONE_NUMBER as PHONE,ucu.NATIVE_ADDRESS AS ADDRESS
@@ -82,6 +76,13 @@
     delete from CUSTOMER_WHITE
     where ID = #{id,jdbcType=BIGINT}
   </delete>
+
+  <!--根据身份证删除-->
+  <delete id="deleteByIdNumber" parameterType="java.lang.String">
+    delete from CUSTOMER_WHITE
+    where ID_NUMBER = #{idNumber}
+  </delete>
+
   <insert id="insert" parameterType="com.example.service.white.CustomerWhiteDO">
     insert into CUSTOMER_WHITE (ID, CUSTOMER_ID, CUSTOMER_NAME, 
       ID_NUMBER, LIMIT, PHONE, 
@@ -250,6 +251,60 @@
     </set>
     where ID = #{id,jdbcType=BIGINT}
   </update>
+
+  <!--根据旧身份证，变更姓名和身份证号-->
+  <update id="updateByOldIdNumberSelective" parameterType="com.example.service.white.CustomerWhiteDO">
+    update CUSTOMER_WHITE
+    <set>
+      <if test="customerId != null">
+        CUSTOMER_ID = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="customerName != null">
+        CUSTOMER_NAME = #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="limit != null">
+        LIMIT = #{limit,jdbcType=DECIMAL},
+      </if>
+      <if test="phone != null">
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gridName != null">
+        GRID_NAME = #{gridName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null">
+        ORG_CODE = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        ORG_NAME = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID_NUMBER = #{oldIdNumber}
+  </update>
+
   <update id="updateByPrimaryKey" parameterType="com.example.service.white.CustomerWhiteDO">
     update CUSTOMER_WHITE
     set CUSTOMER_ID = #{customerId,jdbcType=BIGINT},

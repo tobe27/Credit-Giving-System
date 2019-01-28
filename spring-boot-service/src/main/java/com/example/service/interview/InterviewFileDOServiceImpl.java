@@ -3,6 +3,8 @@ package com.example.service.interview;
 import com.example.common.util.Base64Util;
 import com.example.common.util.PoiUtil;
 import com.example.service.exception.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,8 @@ public class InterviewFileDOServiceImpl implements InterviewFileDOService {
 		this.customerInterviewDOMapper=customerInterviewDOMapper;
 
 	}
+
+	private static Logger logger = LoggerFactory.getLogger(InterviewFileDOServiceImpl.class);
 	/**
 	 * 删除
 	 * @param id

@@ -1,10 +1,10 @@
 package com.example.service.grid;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 @Mapper
 @Repository
@@ -20,6 +20,6 @@ public interface GridImageDOMapper {
     int updateByPrimaryKeySelective(GridImageDO record);
 
     int updateByPrimaryKey(GridImageDO record);
-    
+
     List<GridImageDO> getList(Map<String,Object> map);
 }

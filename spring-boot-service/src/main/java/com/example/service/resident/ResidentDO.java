@@ -75,5 +75,7 @@ public class ResidentDO {
     private String oldHouseholdId;
     private String oldName;
     private String borrower;
+    private String isConcluded;
+    private Integer validTime;
 
 }

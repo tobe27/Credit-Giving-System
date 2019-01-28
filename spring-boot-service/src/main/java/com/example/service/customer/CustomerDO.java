@@ -3,6 +3,7 @@ package com.example.service.customer;
 import com.example.common.util.StringUtil;
 import com.example.common.validation.DraftGroup;
 import com.example.common.validation.InsertGroup;
+import com.example.service.survey.SurveyDO;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -55,7 +56,7 @@ public class CustomerDO {
     private String detailAddress;
 
     @NotBlank(message = "请输入邮政编码！", groups = {InsertGroup.class})
-    @Pattern(regexp = StringUtil.NUMERIC, message = "邮政编码只能是数字！", groups = {InsertGroup.class, DraftGroup.class})
+    @Pattern(regexp = StringUtil.ALPHABET_NUMERIC, message = "邮政编码只能是数字！", groups = {InsertGroup.class, DraftGroup.class})
     @Size(min = 6, max = 6, message = "邮政编码为6位数字！", groups = {InsertGroup.class, DraftGroup.class})
     private String postcode;
 
@@ -177,7 +178,7 @@ public class CustomerDO {
     // 面谈面签
     private Long interviewId;
 
-    private String amount;
+    private BigDecimal amount;
 
     private Long createdAt;
 
@@ -200,6 +201,9 @@ public class CustomerDO {
     private Long userId;
     private String orgCode;
     private List<CustomerTagRelationDO> tags;
+    private List<SurveyDO> surveyDOList;
     private List<String> orgCodeList;
     private Long tagId;
+    private Integer calType;
+    private String senator;
 }

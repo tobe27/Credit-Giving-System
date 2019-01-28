@@ -30,14 +30,14 @@ public class CustomerGreyDOController {
 	 }
 	 /**
 	     * 删除
-	     * @param id
+	     * @param map
 	     * @return
 	     * @throws Exception
 	     */
-	  @RequestMapping(value = "/grey/{id}", method = RequestMethod.DELETE)
-	    public ResultBean delete(@RequestBody @PathVariable Long id) throws Exception {
-		  customerGreyDOService.deleteByPrimaryKey(id);
-	        return new ResultBean().success();
+	  @RequestMapping(value = "/grey/delete", method = RequestMethod.DELETE)
+	    public ResultBean delete(@RequestParam Map<String,String> map) throws Exception {
+		  customerGreyDOService.deleteGrey(map);
+		  return new ResultBean().success();
 	    }
 	  /**
 	     * 修改

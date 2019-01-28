@@ -191,20 +191,12 @@ public class CustomerWhiteDOServiceImpl implements CustomerWhiteDOService {
 	@Transactional
 	@Override
 	public List<CustomerWhiteDO> getList(Map<String, Object> map) throws Exception {
-		if(!map.containsKey("roleId") || !map.containsKey("userId")|| !map.containsKey("orgCode")||!map.containsKey("pageNum")||!map.containsKey("pageSize")) {
+		if(!map.containsKey("pageNum")||!map.containsKey("pageSize")) {
 			throw new ServiceException("查询参数异常！");
 		}
-
-		//如果不是客户经理登录的
-		if(Long.parseLong(map.get("roleId").toString())!=1) {
-			map.remove("userId");
-			String orgCode=map.get("orgCode").toString();
-			if(orgCode.length()==9) {
-			orgCode=orgCode.substring(0, 6);
-			map.put("orgCode", orgCode);
-			}
+		if (map.containsKey("idNumber")){
+			map.put("idNumber", map.get("idNumber").toString().toUpperCase());
 		}
-
 		PageHelper.startPage(Integer.parseInt(map.get("pageNum").toString()), Integer.parseInt(map.get("pageSize").toString()));
 		try {
 			return customerWhiteDOMapper.getList(map);

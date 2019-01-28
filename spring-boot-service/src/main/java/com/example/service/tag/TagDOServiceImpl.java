@@ -39,8 +39,8 @@ public class TagDOServiceImpl implements TagDOService {
     @Transactional
     public boolean deleteByPrimaryKey(Long id) throws Exception {
         // 如果是系统标签则不能删除
-        // 系统标签 1- 黑名单， 2- 贫困户， 3- 灰名单， 4- 蓝名单， 5- 白名单
-        if ( id == 1 || id == 2 || id == 3 || id == 4 || id == 5) {
+        // 系统标签 1- 黑名单， 2- 贫困户， 3- 灰名单， 4- 蓝名单， 5- 白名单, 6- 年龄不符
+        if ( id == 1 || id == 2 || id == 3 || id == 4 || id == 5 || id == 6) {
             throw new ServiceException("系统级标签不能删除！");
         }
 
@@ -135,7 +135,7 @@ public class TagDOServiceImpl implements TagDOService {
     @Override
     public boolean updateByPrimaryKeySelective(TagDO record) throws Exception {
         // 系统标签不可编辑
-        if ( record.getId() == 1 || record.getId() == 2 || record.getId() == 3 || record.getId() == 4 || record.getId() == 5) {
+        if ( record.getId() == 1 || record.getId() == 2 || record.getId() == 3 || record.getId() == 4 || record.getId() == 5|| record.getId() == 6) {
             throw new ServiceException("系统级标签不可编辑！");
         }
 

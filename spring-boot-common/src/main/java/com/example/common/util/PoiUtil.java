@@ -1,52 +1,39 @@
 package com.example.common.util;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import javax.servlet.http.HttpServletRequest;
+
+import com.example.common.exception.CommonException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.common.exception.CommonException;
-import com.lowagie.text.Document;
-import com.lowagie.text.Image;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfWriter;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+/**
+ * POI工具类
+ *
+ * **/
+public class PoiUtil {
+
+	private static Logger logger = LoggerFactory.getLogger(PoiUtil.class);
 
 	/**
-	 * POI工具类
 	 *
-	 * **/
-	public class PoiUtil {
-
-	    private static Logger logger = LoggerFactory.getLogger(PoiUtil.class);
-
-	    /**
-	     *
-	     * @param imagePath
-	     *            图片文件地址
-	     * @param pdfPath
-	     *            PDF文件保存地址包包含文件名和后缀
-	     *
-	     */
+	 * @param imagePath
+	 *            图片文件地址
+	 * @param pdfPath
+	 *            PDF文件保存地址包包含文件名和后缀
+	 *
+	 */
 
 	   /* public static boolean imageToPdf(String imagePath, String pdfPath) {
 	        try {// 输出流
@@ -79,332 +66,338 @@ import com.lowagie.text.pdf.PdfWriter;
 	    }*/
 
 
-	    /**
-	     * 检查文件是否是图片类型
-	     * @param  file
-	     * @return boolean
-	     */
-	   public static boolean isImage(MultipartFile file) {
-	        String type=null;// 文件类型
-	        String fileName=file.getOriginalFilename();// 文件原名称
-	        // 判断文件类型
-	        type= fileName.contains(".") ?fileName.substring(fileName.lastIndexOf(".")+1):null;
-	        if (type!=null) {// 判断文件类型是否为空
-	            return "JPEG".equals(type.toUpperCase()) || "PNG".equals(type.toUpperCase()) || "JPG".equals(type.toUpperCase());
-	        }
-	        return false;
-	    }
+	/**
+	 * 检查文件是否是图片类型
+	 * @param  file
+	 * @return boolean
+	 */
+	public static boolean isImage(MultipartFile file) {
+		String type=null;// 文件类型
+		String fileName=file.getOriginalFilename();// 文件原名称
+		// 判断文件类型
+		type= fileName.contains(".") ?fileName.substring(fileName.lastIndexOf(".")+1):null;
+		if (type!=null) {// 判断文件类型是否为空
+			return "JPEG".equals(type.toUpperCase()) || "PNG".equals(type.toUpperCase()) || "JPG".equals(type.toUpperCase());
+		}
+		return false;
+	}
 
-	    /**
-	     * 上传图片
-	     * @param
-	     * @return map
-	     * @throws IOException
-	     * @throws IllegalStateException
-	     * @throws Exception
-	     */
-	   public static Map<String,Object> saveImage(MultipartFile file,String type,String fileName,String idNumber) throws Exception{
-	        if(file==null) {
-	            return null;
-	        }
-	        String pathType="";
-	        switch (type) {
-	            case "1":
-	                pathType="basicInfo";
-	                break;
-	            case "1.1":
-	                pathType="basicInfo";
-	                break;
-	            case "1.2":
-	                pathType="basicInfo";
-	                break;
-	            case "2":
-	                pathType="propertyInfo";
-	                break;
-	            case "3":
-	                pathType="manageInfo";
-	                break;
-	            case "4":
-	                pathType="loanInfo";
-	                break;
+	/**
+	 * 上传图片
+	 * @param
+	 * @return map
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws Exception
+	 */
+	public static Map<String,Object> saveImage(MultipartFile file,String type,String fileName,String idNumber) throws Exception{
+		if(file==null) {
+			return null;
+		}
+		String pathType="";
+		switch (type) {
+			case "1":
+				pathType="basicInfo";
+				break;
+			case "1.1":
+				pathType="basicInfo";
+				break;
+			case "1.2":
+				pathType="basicInfo";
+				break;
+			case "1.3":
+				pathType="basicInfo";
+				break;
+			case "1.4":
+				pathType="basicInfo";
+				break;
+			case "2":
+				pathType="propertyInfo";
+				break;
+			case "3":
+				pathType="manageInfo";
+				break;
+			case "4":
+				pathType="loanInfo";
+				break;
 	            /*case "4.1":
 	                pathType="loanInfo";
 	                break;
 	            case "4.2":
 	                pathType="loanInfo";
 	                break;*/
-	            case "5":
-	                pathType="pledgeInfo";
-	                break;
-	            case "6":
-	                pathType="otherInfo";
-	                break;
+			case "5":
+				pathType="pledgeInfo";
+				break;
+			case "6":
+				pathType="otherInfo";
+				break;
 
-	        }
-	        String path="";
-	        File tempFile = null;
-	        String saveFile="";
-	        if(isOSLinux()) {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+"image/"+pathType+"/"+idNumber;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
-	                tempFile.mkdirs();
-	            }
-	            saveFile=path+"/"+fileName+file.getOriginalFilename();
-	        }else {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+"image\\"+pathType+"\\"+idNumber;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.mkdirs();
-	            }
-	            saveFile=path+"\\"+fileName+file.getOriginalFilename();
-	        }
-	        File storeFile = new File(saveFile);
-	        file.transferTo(storeFile);
-	        Map<String,Object> map=new HashMap<>();
-	        map.put("path", saveFile);
-	        return map;
-	    }
+		}
+		String path="";
+		File tempFile = null;
+		String saveFile="";
+		if(isOSLinux()) {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+"image/"+pathType+"/"+idNumber;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
+				tempFile.mkdirs();
+			}
+			saveFile=path+"/"+fileName+file.getOriginalFilename();
+		}else {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+"image\\"+pathType+"\\"+idNumber;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.mkdirs();
+			}
+			saveFile=path+"\\"+fileName+file.getOriginalFilename();
+		}
+		File storeFile = new File(saveFile);
+		file.transferTo(storeFile);
+		Map<String,Object> map=new HashMap<>();
+		map.put("path", saveFile);
+		return map;
+	}
 
-	   /**
-	     * 上传图片
-	     * @param
-	     * @return map
-	     * @throws IOException
-	     * @throws IllegalStateException
-	     * @throws Exception
-	     */
-	   public static Map<String,Object> saveFile(MultipartFile file,String type,String fileName,String idNumber) throws Exception{
-	        if(file==null) {
-	            return null;
-	        }
-	       
-	        String path="";
-	        File tempFile = null;
-	        String saveFile="";
-	        if(isOSLinux()) {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+"image/"+type+"/"+idNumber;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
-	                tempFile.mkdirs();
-	            }
-	            saveFile=path+"/"+fileName+file.getOriginalFilename();
-	        }else {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+"image\\"+type+"\\"+idNumber;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.mkdirs();
-	            }
-	            saveFile=path+"\\"+fileName+file.getOriginalFilename();
-	        }
-	        File storeFile = new File(saveFile);
-	        file.transferTo(storeFile);
-	        Map<String,Object> map=new HashMap<>();
-	        map.put("path", saveFile);
-	        return map;
-	    }
+	/**
+	 * 上传图片
+	 * @param
+	 * @return map
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws Exception
+	 */
+	public static Map<String,Object> saveFile(MultipartFile file,String type,String fileName,String idNumber) throws Exception{
+		if(file==null) {
+			return null;
+		}
 
-	   /**
-	     * 上传图片
-	     * @param
-	     * @return map
-	     * @throws IOException
-	     * @throws IllegalStateException
-	     * @throws Exception
-	     */
-	   public static Map<String,Object> saveGridImage(MultipartFile file,String fileName,String gridCode) throws Exception{
-	        if(file==null) {
-	            return null;
-	        }
-	        
-	      
-	        String path="";
-	        File tempFile = null;
-	        String saveFile="";
-	        if(isOSLinux()) {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+"grid/image"+"/"+gridCode;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
-	                tempFile.mkdirs();
-	            }
-	            saveFile=path+"/"+fileName+file.getOriginalFilename();
-	        }else {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+"grid\\image"+"\\"+gridCode;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.mkdirs();
-	            }
-	            saveFile=path+"\\"+fileName+file.getOriginalFilename();
-	        }
-	        File storeFile = new File(saveFile);
-	        file.transferTo(storeFile);
-	        Map<String,Object> map=new HashMap<>();
-	        map.put("path", saveFile);
-	        return map;
-	    }
-	    /**
-	     * 将文件移至回收站
-	     * @param
-	     * @return map
-	     * @throws Exception
-	     */
-	    public static Map<String,Object> moveFileToRecycle(String filePath,String fileType){
+		String path="";
+		File tempFile = null;
+		String saveFile="";
+		if(isOSLinux()) {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+"image/"+type+"/"+idNumber;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
+				tempFile.mkdirs();
+			}
+			saveFile=path+"/"+fileName+file.getOriginalFilename();
+		}else {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+"image\\"+type+"\\"+idNumber;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.mkdirs();
+			}
+			saveFile=path+"\\"+fileName+file.getOriginalFilename();
+		}
+		File storeFile = new File(saveFile);
+		file.transferTo(storeFile);
+		Map<String,Object> map=new HashMap<>();
+		map.put("path", saveFile);
+		return map;
+	}
 
-	        File file = new File(filePath);
-	        String path="";
-	        File tempFile;
-	        String destinationFile ="";
-	        if(isOSLinux()) {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+"recycle/"+fileType;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
-	                tempFile.mkdirs();
-	            }
-	            destinationFile = tempFile+"/"+file.getName();
-	            file.renameTo(new File(destinationFile));
+	/**
+	 * 上传图片
+	 * @param
+	 * @return map
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws Exception
+	 */
+	public static Map<String,Object> saveGridImage(MultipartFile file,String fileName,String gridCode) throws Exception{
+		if(file==null) {
+			return null;
+		}
 
-	        }else {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+"recycle\\"+fileType;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.mkdirs();
-	            }
-	            destinationFile = tempFile+"\\"+file.getName();
-	            file.renameTo(new File(destinationFile));
-	        }
 
-	        Map<String,Object> map=new HashMap<>();
-	        map.put("path", destinationFile);
+		String path="";
+		File tempFile = null;
+		String saveFile="";
+		if(isOSLinux()) {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+"grid/image"+"/"+gridCode;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
+				tempFile.mkdirs();
+			}
+			saveFile=path+"/"+fileName+file.getOriginalFilename();
+		}else {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+"grid\\image"+"\\"+gridCode;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.mkdirs();
+			}
+			saveFile=path+"\\"+fileName+file.getOriginalFilename();
+		}
+		File storeFile = new File(saveFile);
+		file.transferTo(storeFile);
+		Map<String,Object> map=new HashMap<>();
+		map.put("path", saveFile);
+		return map;
+	}
+	/**
+	 * 将文件移至回收站
+	 * @param
+	 * @return map
+	 * @throws Exception
+	 */
+	public static Map<String,Object> moveFileToRecycle(String filePath,String fileType){
 
-	        return map;
+		File file = new File(filePath);
+		String path="";
+		File tempFile;
+		String destinationFile ="";
+		if(isOSLinux()) {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+"recycle/"+fileType;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
+				tempFile.mkdirs();
+			}
+			destinationFile = tempFile+"/"+file.getName();
+			file.renameTo(new File(destinationFile));
 
-	    }
+		}else {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+"recycle\\"+fileType;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.mkdirs();
+			}
+			destinationFile = tempFile+"\\"+file.getName();
+			file.renameTo(new File(destinationFile));
+		}
 
-	    /**
-	     * 上传文件
-	     * @param request
-	     * @return map
-	     * @throws Exception
-	     */
-	    public static Map<String,Object> uploadFile(HttpServletRequest request,String pathType) throws Exception {
-	        String path="";
-	        Map<String,Object> map=new HashMap<>();
-	        boolean flag=false;
-	        if(request==null ) {
-	            map.put("flag", flag);
-	            map.put("msg", "参数有误");
-	            return map;
-	        }
-	        Date date = new Date();
-	        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-	        String dateNowStr = sdf.format(date);
-	        File tempFile = null;
-	        //如果是linux系统
-	        if(isOSLinux()) {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+pathType+"/"+dateNowStr;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
-	                tempFile.mkdirs();
-	            }
-	        }else {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+pathType+"\\"+dateNowStr;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.mkdirs();
-	            }
-	        }
-	        String fileName="";//上传后的文件名
-	        try{
-	            DiskFileItemFactory factory = new DiskFileItemFactory();
-	            factory.setRepository(tempFile);
-	            ServletFileUpload upload = new ServletFileUpload(factory);
-	            upload.setHeaderEncoding("utf-8");
-	            List<FileItem> list = upload.parseRequest(request);
-	            for(int i=0;i<list.size();i++){
-	                FileItem item=list.get(i);
-	                if(!item.isFormField()){
-	                    if(item.getName().length() > 0){
-	                        fileName = item.getName();
-	                        int num = (int) (Math.random() * 9000 + 1000);
-	                        fileName=num+"-"+fileName;
-	                        tempFile=new File(path+File.separator+fileName);
-	                        item.write(tempFile);
-	                        map.put("path", path);
-	                        map.put("fileName", fileName);
-	                        map.put("flag", true);
-	                    }
-	                }else {
-	                    map.put(item.getFieldName(), item.getString());
-	                }
-	            }
+		Map<String,Object> map=new HashMap<>();
+		map.put("path", destinationFile);
 
-	        }catch(Exception e){
-	            logger.info("上传附件异常："+e.getMessage());
-	            throw new CommonException("上传附件异常");
-	        }
-	        return map;
-	    }
+		return map;
 
-	    /**
-	     * 上传文件
-	     * @param request
-	     * @return map
-	     * @throws Exception
-	     */
-	    public static Map<String,Object> uploadMultipartFile(MultipartFile file,String pathType) throws Exception {
-	        String path="";
-	        Map<String,Object> map=new HashMap<>();
-	        boolean flag=false;
-	        if(file==null ) {
-	            map.put("flag", flag);
-	            map.put("msg", "文件有误");
-	            return map;
-	        }
-	        Date date = new Date();
-	        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-	        String dateNowStr = sdf.format(date);
-	        File tempFile = null;
-	        String saveFile="";
-	        //如果是linux系统
-	        if(isOSLinux()) {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+pathType+"/"+dateNowStr;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
-	                tempFile.mkdirs();
-	            }
-	            saveFile=path+"/"+file.getOriginalFilename();
-	        }else {
-	            path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+pathType+"\\"+dateNowStr;
-	            tempFile =new File(path);
-	            if(!tempFile.exists()) {
-	                tempFile.mkdirs();
-	            }
-	            saveFile=path+"\\"+System.currentTimeMillis()+file.getOriginalFilename();
-	        }
-	        File storeFile = new File(saveFile);
-	        String fileName=path+file.getOriginalFilename();//上传后的文件名
-	        file.transferTo(storeFile);
-	        map.put("path", saveFile);
-	        map.put("flag", true);
-	        return map;
-	    }
+	}
 
-	    /**
-	     * 解析excel获取客户信息
-	     * @param path
-	     * @param status
-	     * @param gridCode
-	     * @param gridName
-	     * @param registrant
-	     * @param registerOrg
-	     * @return
-	     */
+	/**
+	 * 上传文件
+	 * @param request
+	 * @return map
+	 * @throws Exception
+	 */
+	public static Map<String,Object> uploadFile(HttpServletRequest request,String pathType) throws Exception {
+		String path="";
+		Map<String,Object> map=new HashMap<>();
+		boolean flag=false;
+		if(request==null ) {
+			map.put("flag", flag);
+			map.put("msg", "参数有误");
+			return map;
+		}
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(date);
+		File tempFile = null;
+		//如果是linux系统
+		if(isOSLinux()) {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+pathType+"/"+dateNowStr;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
+				tempFile.mkdirs();
+			}
+		}else {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+pathType+"\\"+dateNowStr;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.mkdirs();
+			}
+		}
+		String fileName="";//上传后的文件名
+		try{
+			DiskFileItemFactory factory = new DiskFileItemFactory();
+			factory.setRepository(tempFile);
+			ServletFileUpload upload = new ServletFileUpload(factory);
+			upload.setHeaderEncoding("utf-8");
+			List<FileItem> list = upload.parseRequest(request);
+			for(int i=0;i<list.size();i++){
+				FileItem item=list.get(i);
+				if(!item.isFormField()){
+					if(item.getName().length() > 0){
+						fileName = item.getName();
+						int num = (int) (Math.random() * 9000 + 1000);
+						fileName=num+"-"+fileName;
+						tempFile=new File(path+File.separator+fileName);
+						item.write(tempFile);
+						map.put("path", path);
+						map.put("fileName", fileName);
+						map.put("flag", true);
+					}
+				}else {
+					map.put(item.getFieldName(), item.getString());
+				}
+			}
+
+		}catch(Exception e){
+			logger.info("上传附件异常："+e.getMessage());
+			throw new CommonException("上传附件异常");
+		}
+		return map;
+	}
+
+	/**
+	 * 上传文件
+	 * @param request
+	 * @return map
+	 * @throws Exception
+	 */
+	public static Map<String,Object> uploadMultipartFile(MultipartFile file,String pathType) throws Exception {
+		String path="";
+		Map<String,Object> map=new HashMap<>();
+		boolean flag=false;
+		if(file==null ) {
+			map.put("flag", flag);
+			map.put("msg", "文件有误");
+			return map;
+		}
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(date);
+		File tempFile = null;
+		String saveFile="";
+		//如果是linux系统
+		if(isOSLinux()) {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForLinux")+pathType+"/"+dateNowStr;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.setWritable(true, false);    //设置写权限，windows下不用此语句
+				tempFile.mkdirs();
+			}
+			saveFile=path+"/"+file.getOriginalFilename();
+		}else {
+			path=PropertiesUtil.getPropertyForString("dataSource.upLoadPathForWindows")+pathType+"\\"+dateNowStr;
+			tempFile =new File(path);
+			if(!tempFile.exists()) {
+				tempFile.mkdirs();
+			}
+			saveFile=path+"\\"+System.currentTimeMillis()+file.getOriginalFilename();
+		}
+		File storeFile = new File(saveFile);
+		String fileName=path+file.getOriginalFilename();//上传后的文件名
+		file.transferTo(storeFile);
+		map.put("path", saveFile);
+		map.put("flag", true);
+		return map;
+	}
+
+	/**
+	 * 解析excel获取客户信息
+	 * @param path
+	 * @param status
+	 * @param gridCode
+	 * @param gridName
+	 * @param registrant
+	 * @param registerOrg
+	 * @return
+	 */
 	    /*public static List<CustomerInfo> getCustomerInfoByExcel(String path, Integer status, String gridCode,
 	                                                            String gridName, String registrant, String registerOrg) {
 	        List<CustomerInfo> customerInfoList = new ArrayList<>();
@@ -521,12 +514,12 @@ import com.lowagie.text.pdf.PdfWriter;
 	    }*/
 
 
-	    /**
-	     * 解析excel获取户籍信息
-	     * @param path
-	     * @return map
-	     * @throws Exception
-	     */
+	/**
+	 * 解析excel获取户籍信息
+	 * @param path
+	 * @return map
+	 * @throws Exception
+	 */
 	   /* public static List<ResidentInfo> getExcel(String path, String gridCode) {
 	        List<ResidentInfo> result=new ArrayList<>();
 	        try {
@@ -590,141 +583,142 @@ import com.lowagie.text.pdf.PdfWriter;
 	        return result;
 	    }*/
 
-	    /**
-	     * 解析excel的某些列的数据 
-	     * @param path,column
-	     * @return map
-	     * @throws Exception
-	     */
-	    public static List<Map<String,Object>> getExcelByColumnNums(String path,int num) throws Exception{
-	        List<Map<String,Object>> listMap=new ArrayList<>();
-	        Workbook workbook = ExcelUtil.getWorkbook(path);
-	        Sheet sheet = workbook.getSheetAt(0);
-	        // 为跳过第一行目录设置count
-	        int count = 0;
-	        // DecimalFormat decimalFormat = new DecimalFormat("##0");
-	        for (Row row : sheet) {
-	            // 跳过第一和第二行的目录
-	            if(count < 1 ) {
-	                count++;
-	                continue;
-	            }
-	            if(row.getCell(0)==null||"".equals(row.getCell(0).toString())){
-	                return listMap;
-	            }
-	            Map<String,Object> map=new HashMap<>();
-	            for(int i=0;i<num;i++) {
-	                map.put(i+"", ExcelUtil.getValue(row.getCell(i)));
-	            }
-	            listMap.add(map);
-	        }
-	        return listMap;
-	    }
+	/**
+	 * 解析excel的某些列的数据
+	 * @param path,column
+	 * @return map
+	 * @throws Exception
+	 */
+	public static List<Map<String,Object>> getExcelByColumnNums(String path,int num) throws Exception{
+		List<Map<String,Object>> listMap=new ArrayList<>();
+		Workbook workbook = ExcelUtil.getWorkbook(path);
+		Sheet sheet = workbook.getSheetAt(0);
+		// 为跳过第一行目录设置count
+		int count = 0;
+		// DecimalFormat decimalFormat = new DecimalFormat("##0");
+		for (Row row : sheet) {
+			// 跳过第一和第二行的目录
+			if(count < 1 ) {
+				count++;
+				continue;
+			}
+			if(row.getCell(0)==null||"".equals(row.getCell(0).toString())){
+				return listMap;
+			}
+			Map<String,Object> map=new HashMap<>();
+			for(int i=0;i<num;i++) {
+				map.put(i+"", ExcelUtil.getValue(row.getCell(i)));
+			}
+			listMap.add(map);
+		}
+		return listMap;
+	}
 
 
-	    /**
-	     * 从第*行开始解析*列的数据
-	     * @param path,列数：column，读取起始行:rowNum,读取的sheet页数: sheetNum
-	     * @return map
-	     * @throws Exception
-	     */
-	    public static List<Map<String,Object>> getExcelByColumnNumsAndRowNum(String path,int column,int rowNum,int sheetNum) throws Exception{
-	        List<Map<String,Object>> listMap=new ArrayList<>();
-	        Workbook workbook = ExcelUtil.getWorkbook(path);
-	        Sheet sheet = workbook.getSheetAt(sheetNum-1);
-	        // 为跳过第一行目录设置count
-	        int count = 0;
-	        // DecimalFormat decimalFormat = new DecimalFormat("##0");
+	/**
+	 * 从第*行开始解析*列的数据
+	 * @param path,列数：column，读取起始行:rowNum,读取的sheet页数: sheetNum
+	 * @return map
+	 * @throws Exception
+	 */
+	public static List<Map<String,Object>> getExcelByColumnNumsAndRowNum(String path,int column,int rowNum,int sheetNum) throws Exception{
+		List<Map<String,Object>> listMap=new ArrayList<>();
+		Workbook workbook = ExcelUtil.getWorkbook(path);
+		Sheet sheet = workbook.getSheetAt(sheetNum-1);
+		// 为跳过第一行目录设置count
+		int count = 0;
+		// DecimalFormat decimalFormat = new DecimalFormat("##0");
 
-	        for (Row row : sheet) {
-	            // 跳过第一和第二行的目录
-	            if(count < rowNum-1 ) {
-	                count++;
-	                continue;
-	            }
+		for (Row row : sheet) {
+			// 跳过第一和第二行的目录
+			if(count < rowNum-1 ) {
+				count++;
+				continue;
+			}
 
-	            Map<String,Object> map=new HashMap<>();
-	            boolean flag=true;
-	            for(int i=0;i<column;i++) {
-	                Cell cellCode =row.getCell(i);
-	                //cellCode.setCellType(CellType.STRING);
-	                if( ExcelUtil.getValue(cellCode) !=null) {
-	                	cellCode.setCellType(CellType.STRING);
-	                }
-	                if((i==0)&&(null== ExcelUtil.getValue(cellCode) ||"".equals( ExcelUtil.getValue(cellCode)))) {
-	                	flag=false;
-	                }
-	                map.put(i+"", ExcelUtil.getValue(cellCode));
-	            }
-	            if(flag==false) {
-	            	 continue;
-	            }
-	            listMap.add(map);
-	        }
+			Map<String,Object> map=new HashMap<>();
+			boolean flag=true;
+			for(int i=0;i<column;i++) {
+				Cell cellCode =row.getCell(i);
+				//cellCode.setCellType(CellType.STRING);
+				if( ExcelUtil.getValue(cellCode) !=null) {
+					cellCode.setCellType(CellType.STRING);
+				}
+				if((i==0)&&(null== ExcelUtil.getValue(cellCode) ||"".equals( ExcelUtil.getValue(cellCode)))) {
+					flag=false;
+				}
+				map.put(i+"", ExcelUtil.getValue(cellCode));
+			}
+			if(!flag) {
+				continue;
+			}
+			listMap.add(map);
+		}
 
-	        return listMap;
-	    }
+		return listMap;
+	}
 
 
-	    public static boolean isOSLinux() {
-	        Properties prop = System.getProperties();
-	        String os = prop.getProperty("os.name");
-	        return os != null && os.toLowerCase().contains("linux");
-	    }
-	    public static boolean isValidLong(String str){
-	        try{
-	            long _v = Long.parseLong(str);
-	            return true;
-	        }catch(NumberFormatException e){
-	            return false;
-	        }
-	    }
+	public static boolean isOSLinux() {
+		Properties prop = System.getProperties();
+		String os = prop.getProperty("os.name");
+		return os != null && os.toLowerCase().contains("linux");
+	}
 
-	    /**
-	     * 将pdf文件转换成txt文件
-	     * @param pdfPath pdf路径    txtPath 保存的txt路径
-	     * **/
-	    public static void  pdfToTxt(String pdfPath,String txtPath) {
-	    	try {
-	            // 是否排序
-	            boolean sort = false;
-	            // 开始提取页数
-	            int startPage = 1;
-	            // 结束提取页数
-	            int endPage = Integer.MAX_VALUE;
-	            String content = null;
-	            PrintWriter writer = null;
-	            //pdf文本路径
-	          //  String path = "E:\\test3\\征信.pdf";
-	            //输出txt文本路径
-	           // String target="E:\\test3\\test.txt";
-	            PDDocument document = PDDocument.load(new File(pdfPath));
-	            PDFTextStripper pts = new PDFTextStripper();
-	            endPage = document.getNumberOfPages();
-	            System.out.println("Total Page: " + endPage);
-	            pts.setStartPage(startPage);
-	            pts.setEndPage(endPage);
-	            try {
-	                //content就是从pdf中解析出来的文本
-	                content = pts.getText(document);
-	                writer = new PrintWriter(new FileOutputStream(txtPath));
-	                writer.write(content);// 写入文件内容
-	                writer.flush();
-	                writer.close();
-	            } catch (Exception e) {
-	                throw e;
-	            }finally {
-	                if (null != document)
-	                    document.close();
-	            }
-	            //System.out.println("Get PDF Content ...");
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
+	public static boolean isValidLong(String str){
+		try{
+			long _v = Long.parseLong(str);
+			return true;
+		}catch(NumberFormatException e){
+			return false;
+		}
+	}
 
-	
+	/**
+	 * 将pdf文件转换成txt文件
+	 * @param pdfPath pdf路径    txtPath 保存的txt路径
+	 * **/
+	public static void  pdfToTxt(String pdfPath,String txtPath) {
+		try {
+			// 是否排序
+			boolean sort = false;
+			// 开始提取页数
+			int startPage = 1;
+			// 结束提取页数
+			int endPage = Integer.MAX_VALUE;
+			String content = null;
+			PrintWriter writer = null;
+			//pdf文本路径
+			//  String path = "E:\\test3\\征信.pdf";
+			//输出txt文本路径
+			// String target="E:\\test3\\test.txt";
+			PDDocument document = PDDocument.load(new File(pdfPath));
+			PDFTextStripper pts = new PDFTextStripper();
+			endPage = document.getNumberOfPages();
+			System.out.println("Total Page: " + endPage);
+			pts.setStartPage(startPage);
+			pts.setEndPage(endPage);
+			try {
+				//content就是从pdf中解析出来的文本
+				content = pts.getText(document);
+				writer = new PrintWriter(new FileOutputStream(txtPath));
+				writer.write(content);// 写入文件内容
+				writer.flush();
+				writer.close();
+			} catch (Exception e) {
+				throw e;
+			}finally {
+				if (null != document)
+					document.close();
+			}
+			//System.out.println("Get PDF Content ...");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-	
+
+
+
 
 }

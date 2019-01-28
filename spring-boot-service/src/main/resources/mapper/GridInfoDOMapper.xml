@@ -6,11 +6,11 @@
     <result column="GRID_CODE" jdbcType="VARCHAR" property="gridCode" />
     <result column="GRID_NAME" jdbcType="VARCHAR" property="gridName" />
     <result column="ORG_CODE" jdbcType="VARCHAR" property="orgCode" />
-     <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+    <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
     <result column="GRID_TYPE" jdbcType="VARCHAR" property="gridType" />
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
     <result column="USER_ID" jdbcType="BIGINT" property="userId" />
-     <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
     <result column="ASSIST_MANAGER" jdbcType="VARCHAR" property="assistManager" />
     <result column="SUPERVISE_MANAGER" jdbcType="VARCHAR" property="superviseManager" />
     <result column="QR_CODE" jdbcType="VARCHAR" property="qrCode" />
@@ -18,11 +18,14 @@
     <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
     <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
     <result column="STATUS" jdbcType="VARCHAR" property="status" />
-     <result column="TOWNSHIP" jdbcType="VARCHAR" property="township" />
-      <result column="VILLAGE" jdbcType="VARCHAR" property="village" />
-       <result column="GROUP" jdbcType="VARCHAR" property="group" />
-      <collection property="listReview" column="grid_code"   ofType="com.example.service.grid.GridReviewDO" select="getGridReviews" >
-      </collection>
+    <result column="TOWNSHIP" jdbcType="VARCHAR" property="township" />
+    <result column="VILLAGE" jdbcType="VARCHAR" property="village" />
+    <result column="GROUP" jdbcType="VARCHAR" property="group" />
+    <result column="CAL_TYPE" jdbcType="INTEGER" property="calType" />
+    <result column="MAX_CREAT_MONEY" jdbcType="DECIMAL" property="maxCreatMoney" />
+
+    <collection property="listReview" column="grid_code"   ofType="com.example.service.grid.GridReviewDO" select="getGridReviews" >
+    </collection>
   </resultMap>
   <resultMap id="GridReviewResultMap" type="com.example.service.grid.GridReviewDO">
     <id column="id" jdbcType="BIGINT" property="id" />
@@ -33,15 +36,25 @@
     <result column="duties" jdbcType="VARCHAR" property="duties" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="address" jdbcType="VARCHAR" property="address" />
-     <result column="phone" jdbcType="VARCHAR" property="phone" />
-     <result column="type" jdbcType="VARCHAR" property="type" />
-      <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="created_at" jdbcType="BIGINT" property="createdAt" />
     <result column="updated_at" jdbcType="BIGINT" property="updatedAt" />
+
+
   </resultMap>
 
   <select id="checkExistByGridCode" parameterType="String" resultType="String">
     select grid_code from grid_info where grid_code = #{gridCode}
+  </select>
+
+  <select id="getCalTypeByGridCode" parameterType="String" resultType="Integer">
+    select cal_type from grid_info where grid_code = #{gridCode}
+  </select>
+
+  <select id="getMaxCreatMoneyByGridCode" parameterType="String" resultType="BigDecimal">
+    select MAX_CREAT_MONEY from grid_info where grid_code = #{gridCode}
   </select>
 
   <select id="getGridReviews" parameterType="java.lang.String" resultMap="GridReviewResultMap">
@@ -49,21 +62,31 @@
     from grid_review gr
     where  gr.grid_code = #{grid_code}
   </select>
-  
+
+  <select id="listGridReviewName" parameterType="java.lang.String" resultType="String">
+    select gr.grid_review_name
+    from grid_review gr
+    where  gr.grid_code = #{grid_code}
+  </select>
+
   <sql id="Base_Column_List">
     ID, GRID_CODE, GRID_NAME, ORG_CODE, GRID_TYPE, DESCRIPTION, USER_ID, ASSIST_MANAGER, 
-    SUPERVISE_MANAGER, QR_CODE, GRID_MAP, CREATED_AT, UPDATED_AT, STATUS,TOWNSHIP VILLAGE,GROUP
+    SUPERVISE_MANAGER, QR_CODE, GRID_MAP, CREATED_AT, UPDATED_AT, STATUS,TOWNSHIP VILLAGE,GROUP,CAL_TYPE,MAX_CREAT_MONEY
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    gi.*,DO.ORG_NAME AS ORG_NAME, DU.NAME AS USER_NAME
-    from GRID_INFO gi  left join DB_ORG DO  ON  gi.ORG_CODE=DO.ORG_CODE   left join DB_USER DU ON  gi.USER_ID=DU.ID
+    select gi.*,DO.ORG_NAME AS ORG_NAME, DU.NAME AS USER_NAME
+    from GRID_INFO gi
+    left join DB_ORG DO  ON  gi.ORG_CODE=DO.ORG_CODE
+    left join DB_USER DU ON  gi.USER_ID=DU.ID
     where gi.ID = #{id,jdbcType=BIGINT}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from GRID_INFO
     where ID = #{id,jdbcType=BIGINT}
   </delete>
+
   <insert id="insert" parameterType="com.example.service.grid.GridInfoDO">
     insert into GRID_INFO (ID, GRID_CODE, GRID_NAME, 
       ORG_CODE, GRID_TYPE, DESCRIPTION, 
@@ -76,46 +99,49 @@
       #{qrCode,jdbcType=VARCHAR}, #{gridMap,jdbcType=VARCHAR}, #{createdAt,jdbcType=BIGINT}, 
       #{updatedAt,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR})
   </insert>
-  
+
   <select id="checkSameGridCode"  parameterType="com.example.service.grid.GridInfoDO"  resultMap="BaseResultMap">
-        select *
-        from GRID_INFO
-        where GRID_CODE = #{gridCode}
-        <if test="id !=null">
-        and id !=#{id}
-        </if>
+    select *
+    from GRID_INFO
+    where GRID_CODE = #{gridCode}
+    <if test="id !=null">
+      and id !=#{id}
+    </if>
   </select>
+
   <select id="getList"  parameterType="java.util.Map" resultMap="BaseResultMap">
-  select grid.*, org.ORG_NAME AS  ORG_NAME  from GRID_INFO grid left join db_user user on  grid.user_id=user.id 
-   left join DB_ORG org  on grid.ORG_CODE=org.ORG_CODE
-   where 1=1
-   <if test="userId != null">
-       and grid.USER_ID = #{userId}
-      </if>
-      <if test="orgCodeList != null">
-       and grid.ORG_CODE in   
-       <foreach item="item" index="index" collection="orgCodeList" 
-                         open="(" separator="," close=")">
-                        #{item}
-                </foreach>
-      </if>
-      <if test="gridName != null">
-        and grid.GRID_NAME  like '%'||#{gridName}||'%'
-      </if>
-       <if test="gridCode != null">
-       and  grid.GRID_CODE= #{gridCode}  
-      </if>
-     
-      <if test="gridType != null">
+    select grid.*, org.ORG_NAME AS  ORG_NAME
+    from GRID_INFO grid
+    left join db_user user on  grid.user_id=user.id
+    left join DB_ORG org  on grid.ORG_CODE=org.ORG_CODE
+    where 1=1
+    <if test="userId != null">
+      and grid.USER_ID = #{userId}
+    </if>
+    <if test="orgCodeList != null">
+      and grid.ORG_CODE in
+      <foreach item="item" index="index" collection="orgCodeList"
+               open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="gridName != null">
+      and grid.GRID_NAME  like '%'||#{gridName}||'%'
+    </if>
+    <if test="gridCode != null">
+      and  grid.GRID_CODE= #{gridCode}
+    </if>
+
+    <if test="gridType != null">
       and  grid.GRID_TYPE= #{gridType}
-      </if>
-      
-       <if test="realName != null">
-     and   user.name  like '%'||#{realName}||'%'
-      </if>
-      
+    </if>
+
+    <if test="realName != null">
+      and   user.name  like '%'||#{realName}||'%'
+    </if>
+
   </select>
-  
+
   <insert id="insertSelective" parameterType="com.example.service.grid.GridInfoDO">
     insert into GRID_INFO
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -127,6 +153,12 @@
       </if>
       <if test="gridName != null">
         GRID_NAME,
+      </if>
+      <if test="calType != null">
+        CAL_TYPE,
+      </if>
+      <if test="maxCreatMoney != null">
+        MAX_CREAT_MONEY,
       </if>
       <if test="orgCode != null">
         ORG_CODE,
@@ -181,6 +213,12 @@
       <if test="gridName != null">
         #{gridName,jdbcType=VARCHAR},
       </if>
+      <if test="calType != null">
+        #{calType},
+      </if>
+      <if test="maxCreatMoney != null">
+        #{maxCreatMoney},
+      </if>
       <if test="orgCode != null">
         #{orgCode,jdbcType=VARCHAR},
       </if>
@@ -225,6 +263,14 @@
       </if>
     </trim>
   </insert>
+
+  <!--根据用户ID更新userId为0-->
+  <update id="updateByUserIdSelective" parameterType="com.example.service.grid.GridInfoDO">
+    update GRID_INFO
+    set user_id = 0
+    where USER_ID = #{userId,jdbcType=BIGINT}
+  </update>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.example.service.grid.GridInfoDO">
     update GRID_INFO
     <set>
@@ -233,6 +279,12 @@
       </if>
       <if test="gridName != null">
         GRID_NAME = #{gridName,jdbcType=VARCHAR},
+      </if>
+      <if test="calType != null">
+        CAL_TYPE = #{calType},
+      </if>
+      <if test="maxCreatMoney != null">
+        MAX_CREAT_MONEY = #{maxCreatMoney},
       </if>
       <if test="orgCode != null">
         ORG_CODE = #{orgCode,jdbcType=VARCHAR},
@@ -267,18 +319,19 @@
       <if test="status != null">
         STATUS = #{status,jdbcType=VARCHAR},
       </if>
-       <if test="township != null">
+      <if test="township != null">
         TOWNSHIP= #{township,jdbcType=VARCHAR},
       </if>
-       <if test="village != null">
+      <if test="village != null">
         VILLAGE= #{village,jdbcType=VARCHAR},
       </if>
-       <if test="group != null">
+      <if test="group != null">
         GROUP = #{group,jdbcType=VARCHAR},
       </if>
     </set>
     where ID = #{id,jdbcType=BIGINT}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.example.service.grid.GridInfoDO">
     update GRID_INFO
     set GRID_CODE = #{gridCode,jdbcType=VARCHAR},
@@ -296,41 +349,42 @@
       STATUS = #{status,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=BIGINT}
   </update>
+
   <select id="getResidentFamliyCount" parameterType="java.util.Map" resultType="java.lang.String">
   select count(1) as residentFamliyCount from (select distinct  HOUSEHOLD_ID from USER_RESIDENT where GRID_CODE =#{gridCode})
   </select>
-  
-   <select id="getResidentPeopleCount" parameterType="java.util.Map" resultType="java.lang.String">
+
+  <select id="getResidentPeopleCount" parameterType="java.util.Map" resultType="java.lang.String">
   select count(1) as residentPeopleCount from (select distinct  id_number from USER_RESIDENT where GRID_CODE=#{gridCode})
   </select>
-  
-   <select id="getBlackFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
+
+  <select id="getBlackFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
   select COUNT(1) as blackFamilyCount from (select distinct ur.household_id from USER_RESIDENT  ur     right join CUSTOMER_BLACK  cb    on   ur.ID_NUMBER = cb.ID_NUMBER where ur.GRID_CODE=#{gridCode})
   </select>
-  
-   <select id="getPovertyFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
+
+  <select id="getPovertyFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
   select COUNT(1) as povertyFamilyCount   from (select distinct ur.household_id from USER_RESIDENT  ur     right join CUSTOMER_POVERTY cp    on   ur.ID_NUMBER = cp.ID_NUMBER where ur.GRID_CODE=#{gridCode})
   </select>
-   <select id="getGreyFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
+  <select id="getGreyFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
   select COUNT(1) as greyFamilyCount from (select distinct household_id  from CUSTOMER_GREY where GRID_CODE=#{gridCode})
   </select>
-  
+
   <select id="getWhiteFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
   select COUNT(1) as whiteFamilyCount from (select distinct household_id  from CUSTOMER_WHITE where GRID_CODE=#{gridCode})
   </select>
-  
+
   <select id="getCreditedFamilyCount" parameterType="java.util.Map" resultType="java.lang.String">
     SELECT COUNT(1) as creditedFamilyCount FROM (select distinct UR.HOUSEHOLD_ID  from ODS_CUSTOMER_LIMIT OCL    LEFT JOIN  USER_RESIDENT  UR  ON OCL.ID_NUMBER = UR.ID_NUMBER  where GRID_CODE=#{gridCode} )
   </select>
-  
+
   <select id="getCreditLimit" parameterType="java.util.Map" resultType="java.lang.String">
     SELECT SUM(cast(char(OCL.LMT_AMOUNT) as decimal(24,2))) as creditLimit FROM  ODS_CUSTOMER_LIMIT OCL LEFT JOIN USER_RESIDENT  UR ON OCL.ID_NUMBER = UR.ID_NUMBER  where UR.GRID_CODE=#{gridCode}
   </select>
-   <select id="getUsedCreditLimit" parameterType="java.util.Map" resultType="java.lang.String">
+  <select id="getUsedCreditLimit" parameterType="java.util.Map" resultType="java.lang.String">
   SELECT SUM(OCL.BALANCE) as usedCreditLimit  FROM  ODS_CUSTOMER_LOAN OCL LEFT JOIN USER_RESIDENT  UR ON OCL.ID_NUMBER = UR.ID_NUMBER  where UR.GRID_CODE=#{gridCode}
 
   </select>
-  
-  
-  
+
+
+
 </mapper>

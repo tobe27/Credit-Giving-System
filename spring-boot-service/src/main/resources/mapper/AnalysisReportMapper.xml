@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.service.grid.AnalysisReportMapper">
+  <resultMap id="BaseResultMap" type="com.example.service.grid.AnalysisReport">
+    <result column="TASKDATE" jdbcType="VARCHAR" property="taskdate" />
+    <result column="GRID_CODE" jdbcType="VARCHAR" property="gridCode" />
+    <result column="A" jdbcType="VARCHAR" property="a" />
+    <result column="B" jdbcType="INTEGER" property="b" />
+    <result column="C" jdbcType="INTEGER" property="c" />
+    <result column="D" jdbcType="INTEGER" property="d" />
+    <result column="E" jdbcType="INTEGER" property="e" />
+    <result column="F" jdbcType="INTEGER" property="f" />
+    <result column="G" jdbcType="INTEGER" property="g" />
+    <result column="H" jdbcType="INTEGER" property="h" />
+    <result column="I" jdbcType="INTEGER" property="i" />
+    <result column="J" jdbcType="INTEGER" property="j" />
+    <result column="K" jdbcType="INTEGER" property="k" />
+    <result column="L" jdbcType="INTEGER" property="l" />
+    <result column="M" jdbcType="INTEGER" property="m" />
+    <result column="N" jdbcType="INTEGER" property="n" />
+    <result column="O" jdbcType="INTEGER" property="o" />
+    <result column="P" jdbcType="INTEGER" property="p" />
+    <result column="Q" jdbcType="DECIMAL" property="q" />
+
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="ORG_NAME" jdbcType="VARCHAR" property="orgName" />
+    <result column="FR_ORG_NAME" jdbcType="VARCHAR" property="frOrgName" />
+
+  </resultMap>
+
+  <!--1-1 客户经理按网格，网格数据覆盖明细-->
+  <select id="listCreditDetailAnalysisByGrid" parameterType="com.example.service.grid.AnalysisReport" resultMap="BaseResultMap">
+    select grid.GRID_NAME A, st.*, user.name USER_NAME, org.ORG_NAME, porg.ORG_NAME FR_ORG_NAME
+    from ANALYSIS_REPORT_01 st
+    left join GRID_INFO grid on st.GRID_CODE = grid.GRID_CODE
+    left join DB_USER user on user.id = grid.USER_ID
+    left join DB_ORG org on org.ORG_CODE = grid.ORG_CODE
+    left join DB_ORG porg on porg.ORG_CODE = org.PARENT_ORG_CODE
+    where st.taskdate = #{taskdate}
+
+    <if test="gridCode != null">
+      and grid.GRID_CODE = #{gridCode}
+    </if>
+    <if test="roleId == 1">
+      and grid.USER_ID = #{userId}
+    </if>
+    <if test="roleId != 1">
+      and grid.ORG_CODE in
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    order by porg.ORG_CODE, org.ORG_CODE, grid.USER_ID
+  </select>
+
+  <!--1-2 支行的按客户经理，网格数据覆盖汇总明细-->
+  <select id="listCreditSumAnalysisByUserId" parameterType="com.example.service.grid.AnalysisReport" resultMap="BaseResultMap">
+    select a.*, user.name user_name
+    from (
+    select sum(st.B) b,sum(st.C) c,sum(st.D) d,sum(st.E) e,sum(st.F) f,sum(st.G) g,sum(st.H) h,sum(st.I) i,
+    sum(st.J) j,sum(st.K) k,sum(st.L) l,sum(st.M) m,sum(st.N) n,sum(st.O) o,sum(st.P) p,sum(st.Q) q, grid.USER_ID
+    from ANALYSIS_REPORT_01 st
+    left join GRID_INFO grid on st.GRID_CODE = grid.GRID_CODE
+    where grid.ORG_CODE = #{orgCode}
+    and st.taskdate = #{taskdate}
+    <if test="roleId == 1">
+      and grid.USER_ID = #{userId}
+    </if>
+    group by grid.USER_ID) a
+    left join DB_USER user on a.USER_ID = user.ID
+  </select>
+
+  <!--1-3 法人的按支行，网格数据覆盖汇总明细-->
+  <select id="listCreditSumAnalysisByBranch" parameterType="com.example.service.grid.AnalysisReport" resultMap="BaseResultMap">
+    select a.*, org.ORG_NAME
+    from (
+    select sum(st.B) b,sum(st.C) c,sum(st.D) d,sum(st.E) e,sum(st.F) f,sum(st.G) g,sum(st.H) h,sum(st.I) i,
+    sum(st.J) j,sum(st.K) k,sum(st.L) l,sum(st.M) m,sum(st.N) n,sum(st.O) o,sum(st.P) p,sum(st.Q) q, grid.ORG_CODE
+    from ANALYSIS_REPORT_01 st
+    left join GRID_INFO grid on st.GRID_CODE = grid.GRID_CODE
+    where  st.taskdate = #{taskdate}
+    <if test="roleId == 2 or roleId == 3">
+      and grid.ORG_CODE = #{orgCode}
+    </if>
+    <if test="roleId == 4 or roleId == 5 or roleId == 6">
+      and grid.ORG_CODE in
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    group by grid.ORG_CODE
+    ) a
+    left join DB_ORG org on org.ORG_CODE = a.ORG_CODE
+  </select>
+
+  <!--1-4 管理员的按法人（总行），网格数据覆盖汇总明细-->
+  <select id="listCreditSumAnalysisByFrOrg" parameterType="com.example.service.grid.AnalysisReport" resultMap="BaseResultMap">
+    select a.*,org.ORG_NAME FR_ORG_NAME
+    from (
+    select sum(st.B) b,sum(st.C) c,sum(st.D) d,sum(st.E) e,sum(st.F) f,sum(st.G) g,sum(st.H) h,sum(st.I) i,
+    sum(st.J) j,sum(st.K) k,sum(st.L) l,sum(st.M) m,sum(st.N) n,sum(st.O) o,sum(st.P) p,sum(st.Q) q,
+    org.PARENT_ORG_CODE orgCode
+    from ANALYSIS_REPORT_01 st
+    left join GRID_INFO grid on st.GRID_CODE = grid.GRID_CODE
+    left join DB_ORG org on org.ORG_CODE = grid.ORG_CODE
+    where st.taskdate = #{taskdate}
+    <if test="roleId == 4 or roleId == 5 or roleId == 6">
+      and org.PARENT_ORG_CODE = #{orgCode}
+    </if>
+    group by org.PARENT_ORG_CODE
+    ) a
+    left join DB_ORG org on org.ORG_CODE = a.orgCode
+  </select>
+
+  <!--1-5 超级管理员汇总全部，网格数据覆盖汇总明细-->
+  <select id="listCreditSumAnalysisBySuper" parameterType="com.example.service.grid.AnalysisReport" resultMap="BaseResultMap">
+        select sum(st.B) b,sum(st.C) c,sum(st.D) d,sum(st.E) e,sum(st.F) f,sum(st.G) g,sum(st.H) h,sum(st.I) i,
+        sum(st.J) j,sum(st.K) k,sum(st.L) l,sum(st.M) m,sum(st.N) n,sum(st.O) o,sum(st.P) p,sum(st.Q) q
+        from ANALYSIS_REPORT_01 st
+  </select>
+
+  <!--2-1 网格数据覆盖率明细-->
+  <select id="listCreditRateDetailAnalysisByGrid" parameterType="com.example.service.grid.AnalysisReport" resultMap="BaseResultMap">
+    select st.*, grid.GRID_NAME A, user.name USER_NAME, org.ORG_NAME, porg.ORG_NAME FR_ORG_NAME
+    from ANALYSIS_REPORT_02 st
+    left join GRID_INFO grid on st.GRID_CODE = grid.GRID_CODE
+    left join DB_USER user on user.id = grid.USER_ID
+    left join DB_ORG org on org.ORG_CODE = grid.ORG_CODE
+    left join DB_ORG porg on porg.ORG_CODE = org.PARENT_ORG_CODE
+    where st.taskdate = #{taskdate}
+
+    <if test="gridCode != null">
+      and grid.GRID_CODE = #{gridCode}
+    </if>
+    <if test="roleId == 1">
+      and grid.USER_ID = #{userId}
+    </if>
+    <if test="roleId != 1">
+      and grid.ORG_CODE in
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    order by porg.ORG_CODE,org.ORG_CODE,grid.USER_ID
+  </select>
+
+  <insert id="insertSelective" parameterType="com.example.service.grid.AnalysisReport">
+    insert into ANALYSIS_REPORT_01
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskdate != null">
+        TASKDATE,
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE,
+      </if>
+      <if test="a != null">
+        A,
+      </if>
+      <if test="b != null">
+        B,
+      </if>
+      <if test="c != null">
+        C,
+      </if>
+      <if test="d != null">
+        D,
+      </if>
+      <if test="e != null">
+        E,
+      </if>
+      <if test="f != null">
+        F,
+      </if>
+      <if test="g != null">
+        G,
+      </if>
+      <if test="h != null">
+        H,
+      </if>
+      <if test="i != null">
+        I,
+      </if>
+      <if test="j != null">
+        J,
+      </if>
+      <if test="k != null">
+        K,
+      </if>
+      <if test="l != null">
+        L,
+      </if>
+      <if test="m != null">
+        M,
+      </if>
+      <if test="n != null">
+        N,
+      </if>
+      <if test="o != null">
+        O,
+      </if>
+      <if test="p != null">
+        P,
+      </if>
+      <if test="q != null">
+        Q,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="taskdate != null">
+        #{taskdate,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="a != null">
+        #{a,jdbcType=VARCHAR},
+      </if>
+      <if test="b != null">
+        #{b,jdbcType=INTEGER},
+      </if>
+      <if test="c != null">
+        #{c,jdbcType=INTEGER},
+      </if>
+      <if test="d != null">
+        #{d,jdbcType=INTEGER},
+      </if>
+      <if test="e != null">
+        #{e,jdbcType=INTEGER},
+      </if>
+      <if test="f != null">
+        #{f,jdbcType=INTEGER},
+      </if>
+      <if test="g != null">
+        #{g,jdbcType=INTEGER},
+      </if>
+      <if test="h != null">
+        #{h,jdbcType=INTEGER},
+      </if>
+      <if test="i != null">
+        #{i,jdbcType=INTEGER},
+      </if>
+      <if test="j != null">
+        #{j,jdbcType=INTEGER},
+      </if>
+      <if test="k != null">
+        #{k,jdbcType=INTEGER},
+      </if>
+      <if test="l != null">
+        #{l,jdbcType=INTEGER},
+      </if>
+      <if test="m != null">
+        #{m,jdbcType=INTEGER},
+      </if>
+      <if test="n != null">
+        #{n,jdbcType=INTEGER},
+      </if>
+      <if test="o != null">
+        #{o,jdbcType=INTEGER},
+      </if>
+      <if test="p != null">
+        #{p,jdbcType=INTEGER},
+      </if>
+      <if test="q != null">
+        #{q,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+</mapper>

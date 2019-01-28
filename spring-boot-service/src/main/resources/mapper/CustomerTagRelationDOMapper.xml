@@ -31,12 +31,24 @@
     left join USER_CUSTOMER customer on ctr.id_number = customer.id_number
     where customer.HOUSEHOLD_ID = #{householdId}
   </select>
+
   <select id="listCustomerTagRelationsByHouseholdId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select ctr.tag_id, ctr.id_number
     from db_tag tag
     left join DB_CUSTOMER_TAG_RELATION ctr on tag.id = ctr.tag_id
     left join USER_CUSTOMER customer on ctr.id_number = customer.id_number
     where customer.HOUSEHOLD_ID = #{householdId}
+  </select>
+
+  <select id="listCustomerTagRelationsByHouseholdIdAndIfNNTagId" parameterType="com.example.service.customer.CustomerTagRelationDO" resultMap="BaseResultMap">
+    select ctr.tag_id, ctr.id_number
+    from db_tag tag
+    left join DB_CUSTOMER_TAG_RELATION ctr on tag.id = ctr.tag_id
+    left join USER_CUSTOMER customer on ctr.id_number = customer.id_number
+    where customer.HOUSEHOLD_ID = #{householdId}
+    <if test="tagId != null">
+      and tag.id = #{tagId}
+    </if>
   </select>
   
   <insert id="batchSave" >
@@ -102,4 +114,18 @@
       </if>
     </trim>
   </insert>
+
+  <!--根据旧身份证变更为新身份证-->
+  <update id="updateByOldIdNumberSelective" parameterType="com.example.service.customer.CustomerTagRelationDO">
+    update DB_CUSTOMER_TAG_RELATION
+    <set>
+      <if test="tagId != null">
+        tag_id = #{tagId,jdbcType=BIGINT},
+      </if>
+      <if test="idNumber != null">
+        id_number = #{idNumber,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where ID_NUMBER = #{oldIdNumber,jdbcType=BIGINT}
+  </update>
 </mapper>

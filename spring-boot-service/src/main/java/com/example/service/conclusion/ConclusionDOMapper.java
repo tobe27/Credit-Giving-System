@@ -16,5 +16,7 @@ public interface ConclusionDOMapper {
 
     List<ConclusionDO> listByHouseholdId(String householdId);
 
+    int updateByHouseholdIdSelective(ConclusionDO record);
+
     int updateByPrimaryKeySelective(ConclusionDO record);
 }

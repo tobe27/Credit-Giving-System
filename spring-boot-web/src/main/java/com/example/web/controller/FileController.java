@@ -1,5 +1,6 @@
 package com.example.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.example.common.util.ExcelUtil;
 import com.example.common.util.PoiUtil;
 import com.example.common.util.StringUtil;
@@ -7,6 +8,10 @@ import com.example.service.black.CustomerBlackDOService;
 import com.example.service.conclusion.ConclusionDO;
 import com.example.service.customer.CustomerDO;
 import com.example.service.customer.CustomerDOService;
+import com.example.service.grid.*;
+import com.example.service.interview.CustomerInterviewDO;
+import com.example.service.interview.CustomerInterviewDOMapper;
+import com.example.service.interview.CustomerInterviewDOService;
 import com.example.service.poverty.CustomerPovertyDOService;
 import com.example.service.resident.ResidentDOService;
 import com.example.service.survey.SurveyDOService;
@@ -37,14 +42,21 @@ public class FileController {
     private final CustomerBlackDOService customerBlackDOService;
     private final SurveyDOService surveyDOService;
     private final CustomerWhiteDOService customerWhiteDOService;
+    private final GridInfoService gridInfoService;
+    private final CustomerInterviewDOService customerInterviewDOService;
+    private final AnalysisReportService analysisReportService;
+
     @Autowired
-    public FileController(CustomerDOService customerDOService, ResidentDOService residentDOService, CustomerPovertyDOService customerPovertyDOService, CustomerBlackDOService customerBlackDOService, SurveyDOService surveyDOService,CustomerWhiteDOService customerWhiteDOService) {
+    public FileController(CustomerDOService customerDOService, ResidentDOService residentDOService, CustomerPovertyDOService customerPovertyDOService, CustomerBlackDOService customerBlackDOService, SurveyDOService surveyDOService, CustomerWhiteDOService customerWhiteDOService, GridInfoDOMapper gridInfoDOMapper, GridInfoService gridInfoService, CustomerInterviewDOMapper customerInterviewDOMapper, CustomerInterviewDOService customerInterviewDOService, AnalysisReportService analysisReportService) {
         this.customerDOService = customerDOService;
         this.residentDOService=residentDOService;
         this.customerPovertyDOService=customerPovertyDOService;
         this.customerBlackDOService=customerBlackDOService;
         this.surveyDOService = surveyDOService;
         this.customerWhiteDOService=customerWhiteDOService;
+        this.gridInfoService = gridInfoService;
+        this.customerInterviewDOService = customerInterviewDOService;
+        this.analysisReportService = analysisReportService;
     }
 
     /**
@@ -59,6 +71,109 @@ public class FileController {
         List<Map<String, Object>> mapList = customerDOService.listMapList(customerDO);
         ExcelUtil.output2Excel(excelName, "调查信息", mapList, response);
     }
+
+    /**
+     * 借款人调查表导出
+     * @param customerDO
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/survey/borrower", method = RequestMethod.GET)
+    public void outputSurveyExcel(CustomerDO customerDO,HttpServletResponse response) throws Exception {
+        String excelName = customerDO.getName() + "-运城市农村信用社农户基本情况调查表.xls";
+        Map<String, Object> dataMap = customerDOService.borrowerSurveyList(customerDO);
+        ExcelUtil.outputSurvey2Excel(excelName, "调查信息", dataMap, response);
+    }
+
+    /**
+     * 不可授信客户导出
+     * @param customerDO
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/outreview", method = RequestMethod.GET)
+    public void outputOutCreditExcel(CustomerDO customerDO,HttpServletResponse response) throws Exception {
+        String excelName = (StringUtil.isBlank(customerDO.getGridCode()) ? "全部" : customerDO.getGridCode()) + "网格" + "不可授信客户.xls";
+        List<Map<String, Object>> mapList = customerDOService.listHaveTagCustomersByGridCodeAndRelationshipAndTagIdAndNameAndIdNumber(customerDO);
+        ExcelUtil.outputOutCredit2Excel(excelName, "不可授信客户", mapList, response);
+    }
+
+
+    /**
+     * 导出预授信到excel
+     * @param customerDO
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/credit", method = RequestMethod.GET)
+    public void outputCreditExcel(CustomerDO customerDO, HttpServletResponse response) throws Exception {
+        int calType = gridInfoService.getCalTypeByGridCode(customerDO.getGridCode());
+        List<String> senatorList = gridInfoService.listGridReviewName(customerDO.getGridCode());
+        String excelName = (StringUtil.isBlank(customerDO.getGridCode()) ? "全部" : customerDO.getGridCode()) + "网格" + "整村授信评议预授信表.xls";
+        List<Map<String, Object>> mapList = customerDOService.listSurveyCustomersByGridCodeAndRelationshipAndUserId(customerDO, senatorList, calType);
+        ExcelUtil.outputCredit2Excel(excelName, "预授信客户", mapList, senatorList, calType, response);
+    }
+
+    /**
+     * 导出面签明细表
+     * @param map
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/interview", method = RequestMethod.GET)
+    public void outputInterview2Excel(@RequestParam Map<String, Object> map, HttpServletResponse response) throws Exception {
+        String excelName = map.get("gridCode") + "网格" + "-面签客户明细表.xls";
+        ExcelUtil.outputInterview2Excel(excelName, "面签客户", customerInterviewDOService.getListNoPage(map), response);
+    }
+
+    /**
+     * 导出覆盖明细（一）--明细
+     * @param
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/grid/statistics/one/detail", method = RequestMethod.GET)
+    public void outputGridStatisticsOne2Excel(AnalysisReport analysisReport, HttpServletResponse response) throws Exception {
+        String excelName = "整村授信覆盖情况统计表（一）.xls";
+        ExcelUtil.outputGridStatisticsOne2Excel(excelName, "授信明细", analysisReportService.listCreditDetailAnalysis(analysisReport), response);
+    }
+
+    /**
+     * 导出覆盖明细（一） -- 汇总
+     * @param
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/grid/statistics/one/sum", method = RequestMethod.GET)
+    public void outputGridStatisticsOneSum2Excel(AnalysisReport analysisReport, HttpServletResponse response) throws Exception {
+        String excelName = "整村授信覆盖情况统计表（一）.xls";
+        ExcelUtil.outputGridStatisticsOne2Excel(excelName, "授信汇总", analysisReportService.listCreditSumAnalysis(analysisReport), response);
+    }
+
+    /**
+     * 导出覆盖明细（二）-- 明细
+     * @param
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/grid/statistics/two/detail", method = RequestMethod.GET)
+    public void outputGridStatisticsTwo2Excel(AnalysisReport analysisReport, HttpServletResponse response) throws Exception {
+        String excelName = "整村授信覆盖情况统计表（二）.xls";
+        ExcelUtil.outputGridStatisticsTwo2Excel(excelName, "授信率明细", analysisReportService.listCreditRateDetailAnalysis(analysisReport), response);
+    }
+
+    /**
+     * 导出覆盖明细（二）-- 汇总
+     * @param
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/grid/statistics/two/sum", method = RequestMethod.GET)
+    public void outputGridStatisticsTwoSum2Excel(AnalysisReport analysisReport, HttpServletResponse response) throws Exception {
+        String excelName = "整村授信覆盖情况统计表（二）.xls";
+        ExcelUtil.outputGridStatisticsTwo2Excel(excelName, "授信率汇总", analysisReportService.listCreditRateSumAnalysis(analysisReport), response);
+    }
+
 
     /**
      * 导入调查表信息

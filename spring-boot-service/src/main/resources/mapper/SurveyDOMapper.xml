@@ -32,26 +32,26 @@
     where ID = #{id,jdbcType=BIGINT}
   </select>
 
-  <!--根据身份证号和评议员获取数据-->
-  <select id="listByIdNumberAndSenator" parameterType="com.example.service.survey.SurveyDO" resultMap="BaseResultMap">
+  <!--根据户号和评议员获取数据-->
+  <select id="listByHouseholdIdAndSenator" parameterType="com.example.service.survey.SurveyDO" resultMap="BaseResultMap">
     select *
     from USER_SURVEY
-    where ID_NUMBER = #{idNumber} and SENATOR = #{senator}
+    where household_id = #{householdId} and SENATOR = #{senator} and is_valid != '0'
   </select>
 
   <!--有效次数-->
-  <select id="countValidTimeByIdNumberAndIsValid" parameterType="com.example.service.survey.SurveyDO" resultType="Integer">
-    select count(*) from user_survey where id_number = #{idNumber} and is_valid = '是'
+  <select id="countValidTimeByHouseholdIdAndIsValid" parameterType="com.example.service.survey.SurveyDO" resultType="Integer">
+    select count(*) from user_survey where household_id = #{householdId} and is_valid = '是'
   </select>
 
-  <select id="listByIdNumberAndIsValid" parameterType="com.example.service.survey.SurveyDO" resultMap="BaseResultMap">
+  <select id="listByHouseholdIdAndIsValid" parameterType="com.example.service.survey.SurveyDO" resultMap="BaseResultMap">
     select *
     from USER_SURVEY
     where 1=1
     <if test="isValid != null">
       and IS_VALID = #{isValid}
     </if>
-     and ID_NUMBER = #{idNumber}
+    and household_id = #{householdId}
     ORDER BY created_at DESC
   </select>
 
@@ -61,12 +61,12 @@
     where 1=1
     and IS_VALID = '是'
     and ID_NUMBER  in
-     
-     <foreach item="item" index="index" collection="idNumberList" 
-                         open="(" separator="," close=")">
-                        #{item}
-                </foreach>
-     
+
+    <foreach item="item" index="index" collection="idNumberList"
+             open="(" separator="," close=")">
+      #{item}
+    </foreach>
+
     ORDER BY created_at DESC
   </select>
 
@@ -215,6 +215,90 @@
       </if>
     </trim>
   </insert>
+
+  <!--网格评议员停用时-->
+  <update id="updateIsValidByBanSenatorAndGridCode" parameterType="com.example.service.survey.SurveyDO">
+     update USER_SURVEY set
+     IS_VALID = '0'
+     where SENATOR = #{senator}
+     and HOUSEHOLD_ID  in
+     (
+      select DISTINCT HOUSEHOLD_ID from USER_SURVEY
+      where  not exists (select USER_CONCLUSION.HOUSEHOLD_ID from USER_CONCLUSION where USER_SURVEY.HOUSEHOLD_ID = USER_CONCLUSION.HOUSEHOLD_ID and USER_CONCLUSION.IS_VALID = '是')
+      and exists(select HOUSEHOLD_ID  from USER_CUSTOMER where USER_SURVEY.HOUSEHOLD_ID = USER_CUSTOMER.HOUSEHOLD_ID and USER_CUSTOMER.GRID_CODE = #{gridCode})
+      )
+  </update>
+
+  <!--根据户号变更-->
+  <update id="updateByHouseholdIdSelective" parameterType="com.example.service.survey.SurveyDO">
+    update USER_SURVEY
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="isFamiliar != null">
+        IS_FAMILIAR = #{isFamiliar,jdbcType=VARCHAR},
+      </if>
+      <if test="negativeReason != null">
+        NEGATIVE_REASON = #{negativeReason,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="outWork != null">
+        OUT_WORK = #{outWork,jdbcType=VARCHAR},
+      </if>
+      <if test="houseValue != null">
+        HOUSE_VALUE = #{houseValue,jdbcType=VARCHAR},
+      </if>
+      <if test="carValue != null">
+        CAR_VALUE = #{carValue,jdbcType=VARCHAR},
+      </if>
+      <if test="mainBusiness != null">
+        MAIN_BUSINESS = #{mainBusiness,jdbcType=VARCHAR},
+      </if>
+      <if test="scale != null">
+        SCALE = #{scale,jdbcType=VARCHAR},
+      </if>
+      <if test="income != null">
+        INCOME = #{income,jdbcType=VARCHAR},
+      </if>
+      <if test="payout != null">
+        PAYOUT = #{payout,jdbcType=VARCHAR},
+      </if>
+      <if test="creditAmount != null">
+        CREDIT_AMOUNT = #{creditAmount,jdbcType=VARCHAR},
+      </if>
+      <if test="borrower != null">
+        BORROWER = #{borrower,jdbcType=VARCHAR},
+      </if>
+      <if test="surveyType != null">
+        SURVEY_TYPE = #{surveyType,jdbcType=VARCHAR},
+      </if>
+      <if test="senator != null">
+        SENATOR = #{senator,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null">
+        IS_VALID = #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null">
+        DATE = #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    where HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR}
+  </update>
 
   <update id="updateByPrimaryKeySelective" parameterType="com.example.service.survey.SurveyDO">
     update USER_SURVEY

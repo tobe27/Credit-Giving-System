@@ -1,6 +1,7 @@
 package com.example.service.grid;
 import java.io.Serializable;
 import java.util.List;
+import java.math.BigDecimal;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -56,5 +57,10 @@ public class GridInfoDO implements Serializable{
     
     private List<GridReviewDO> listReview;
 
+    private Integer calType; // 下结论时授信额度计算方式，1-平均值，2-最小值
+
+    private BigDecimal maxCreatMoney;
+
+    private Integer isChange; // 是否变更了计算方式，0-未变，1-变更
 
 }

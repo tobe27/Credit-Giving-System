@@ -26,6 +26,10 @@ public class OrgDO {
     @Size(max = 30, message = "机构名称最长30位！")
     private String orgName;
 
+    @NotBlank(message = "机构简称名称不能为空！")
+    @Size(max = 10, message = "机构简称名称最长10位！")
+    private String shortName;
+
     @NotBlank(message = "上级机构代码不能为空！")
     @Size(max = 20, message = "上级机构代码最长20位！")
     private String parentOrgCode;

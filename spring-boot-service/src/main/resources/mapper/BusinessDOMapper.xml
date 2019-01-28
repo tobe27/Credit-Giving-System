@@ -22,7 +22,7 @@
         <result column="ASSURE_TYPE" jdbcType="VARCHAR" property="assureType" />
         <result column="ASSURE_ID" jdbcType="VARCHAR" property="assureId" />
         <result column="CONT_ID" jdbcType="VARCHAR" property="contId" />
-        <result column="SUM_BALANCE" jdbcType="DECIMAL" property="sumBalance" />
+        <result column="LOAN_BALANCE" jdbcType="DECIMAL" property="sumBalance" />
     </resultMap>
 
     <resultMap id="DepositResultMap" type="com.example.service.business.ODSDepositDO">
@@ -42,9 +42,11 @@
         <result column="LOAN_TYPE" jdbcType="VARCHAR" property="loanType" />
         <result column="CONT_NO" jdbcType="VARCHAR" property="contNo" />
         <result column="BILL_NO" jdbcType="VARCHAR" property="billNo" />
-        <result column="AMOUNT" jdbcType="VARCHAR" property="amount" />
+        <result column="AMOUNT" jdbcType="DECIMAL" property="amount" />
         <result column="BALANCE" jdbcType="DECIMAL" property="balance" />
         <result column="ORGNO" jdbcType="VARCHAR" property="orgno" />
+        <result column="START_DATE" jdbcType="VARCHAR" property="startDate" />
+        <result column="END_DATE" jdbcType="VARCHAR" property="endDate" />
     </resultMap>
 
     <select id="getBusinessByIdNumber" parameterType="String" resultMap="BusinessResultMap">
@@ -56,25 +58,22 @@
     <select id="listAssureByIdNumber" parameterType="String" resultMap="AssureResultMap">
         select *
         from ods_customer_assure
-        where (select accessable from task_status) = 'Y'
-        and id_number
-        in  (select id_number from user_customer where household_id = #{householdId})
+        where exists (select id_number from user_customer
+          where user_customer.id_number = ods_customer_assure.id_number and user_customer.household_id = #{householdId})
     </select>
 
     <select id="listDepositByIdNumber" parameterType="String" resultMap="DepositResultMap">
         select *
         from ods_customer_deposit_sum
-        where (select accessable from task_status) = 'Y'
-        and id_number
-        in  (select id_number from user_customer where household_id = #{householdId})
+        where exists (select id_number from user_customer
+          where user_customer.id_number = ods_customer_deposit_sum.id_number and user_customer.household_id = #{householdId})
     </select>
 
     <select id="listLoanByIdNumber" parameterType="String" resultMap="LoanResultMap">
         select *
         from ods_customer_loan
-        where (select accessable from task_status) = 'Y' and
-        id_number
-        in  (select id_number from user_customer where household_id = #{householdId})
+        where exists  (select id_number from user_customer
+          where user_customer.id_number = ods_customer_loan.id_number and user_customer.household_id = #{householdId})
     </select>
 
 

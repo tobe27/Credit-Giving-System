@@ -9,7 +9,9 @@ import java.util.List;
 @Repository
 public interface BlueDOMapper {
 
-    List<BlueDO> listBlueByUserOrOrgCode(BlueDO record);
+    List<BlueDO> getList(BlueDO record);
 
     int insertSelective(BlueDO record);
+
+    int deleteByIdNumber(String idNumber);
 }

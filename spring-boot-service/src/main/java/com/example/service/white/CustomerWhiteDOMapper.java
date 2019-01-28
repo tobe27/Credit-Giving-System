@@ -12,6 +12,8 @@ import com.example.service.white.CustomerWhiteDO;
 public interface CustomerWhiteDOMapper {
     int deleteByPrimaryKey(long id);
 
+    int deleteByIdNumber(String idNumber);
+
     int insert(CustomerWhiteDO record);
 
     int insertSelective(CustomerWhiteDO record);
@@ -21,6 +23,9 @@ public interface CustomerWhiteDOMapper {
     int updateByPrimaryKeySelective(CustomerWhiteDO record);
 
     int updateByPrimaryKey(CustomerWhiteDO record);
+
+    int updateByOldIdNumberSelective(CustomerWhiteDO record);
+
     List<CustomerWhiteDO> getList(Map<String,Object> map);
     List<CustomerWhiteDO> getByIdNumber(Map<String,Object> map);
     List<CustomerWhiteDO> getListByIdNumbers(Map<String,Object> map);

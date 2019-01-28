@@ -30,6 +30,18 @@ public class CustomerDOController {
      * @return
      * @throws Exception
      */
+    @RequestMapping(value = "/info/{id}", method = RequestMethod.DELETE)
+    public ResultBean delete(CustomerDO customerDO) throws Exception {
+        customerDOService.deleteNotBorrowerByIdAndIdNumber(customerDO);
+        return new ResultBean().success();
+    }
+
+    /**
+     * 新建
+     * @param customerDO
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     public ResultBean insert(@RequestBody @Validated(InsertGroup.class) CustomerDO customerDO) throws Exception {
         customerDOService.insertSelective(customerDO);
@@ -46,6 +58,19 @@ public class CustomerDOController {
     public ResultBean insertDraft(@RequestBody @Validated(DraftGroup.class) CustomerDO customerDO) throws Exception {
         customerDOService.insertDraftSelective(customerDO);
         return new ResultBean().success(customerDO.getId());
+    }
+
+
+    /**
+     * 编辑客户和户籍的与户主关系
+     * @param customerDO
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/info/idnumber", method = RequestMethod.PUT)
+    public ResultBean updateRelationship(@RequestBody CustomerDO customerDO) throws Exception {
+        customerDOService.updateRelationshipByIdNumberSelective(customerDO);
+        return new ResultBean().success();
     }
 
     /**
@@ -107,6 +132,17 @@ public class CustomerDOController {
     }
 
     /**
+     * 面签通过客户的调查表信息
+     * @param customerDO
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/borrower", method = RequestMethod.GET)
+    public ResultBean get(CustomerDO customerDO) throws Exception {
+        return new ResultBean().success(customerDOService.borrowerSurveyList(customerDO));
+    }
+
+    /**
      * 分页
      * @param customerDO
      * @param pageNum
@@ -117,6 +153,61 @@ public class CustomerDOController {
     @RequestMapping(value = "/info/list", method = RequestMethod.GET)
     public ResultBean listPage(CustomerDO customerDO, Integer pageNum, Integer pageSize) throws Exception {
         PageInfo<CustomerDO> pageInfo = new PageInfo<>(customerDOService.listCustomers(customerDO, pageNum, pageSize));
+        return new ResultBean().success(pageInfo.getTotal(), pageInfo.getList());
+    }
+
+    /**
+     * 分页查询无标签客户
+     * 角色 == 1， 客户经理， 只能查看自己网格的客户
+     * 角色 ！= 1， 非客户经理， 可以查看本机构及子机构所有客户
+     * 查询条件：
+     * 角色ID，用户ID， 机构代码
+     * @param customerDO
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/toreview/list", method = RequestMethod.GET)
+    public ResultBean listToReviewByPage(CustomerDO customerDO, Integer pageNum, Integer pageSize) throws Exception {
+        PageInfo<CustomerDO> pageInfo = new PageInfo<>(customerDOService.listNoTagCustomersByGridCodeAndRelationshipAndValidTimeAndNameAndIdNumber(customerDO, pageNum, pageSize));
+        return new ResultBean().success(pageInfo.getTotal(), pageInfo.getList());
+    }
+
+    /**
+     * 分页查询有标签客户
+     * 角色 == 1， 客户经理， 只能查看自己网格的客户
+     * 角色 ！= 1， 非客户经理， 可以查看本机构及子机构所有客户
+     * 查询条件：
+     * 角色ID，用户ID， 机构代码
+     * @param customerDO
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/outreview/list", method = RequestMethod.GET)
+    public ResultBean listOutReviewByPage(CustomerDO customerDO, Integer pageNum, Integer pageSize) throws Exception {
+        PageInfo<CustomerDO> pageInfo = new PageInfo<>(customerDOService.listHaveTagCustomersByGridCodeAndRelationshipAndTagIdAndNameAndIdNumber(customerDO, pageNum, pageSize));
+        return new ResultBean().success(pageInfo.getTotal(), pageInfo.getList());
+    }
+
+
+    /**
+     * 分页查询已评议客户，包括白名单客户
+     * 角色 == 1， 客户经理， 只能查看自己网格的客户
+     * 角色 ！= 1， 非客户经理， 可以查看本机构及子机构所有客户
+     * 查询条件：
+     * 角色ID，用户ID， 机构代码
+     * @param customerDO
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/yetreview/list", method = RequestMethod.GET)
+    public ResultBean listYetReviewByPage(CustomerDO customerDO, Integer pageNum, Integer pageSize) throws Exception {
+        PageInfo<CustomerDO> pageInfo = new PageInfo<>(customerDOService.listYetReviewCustomersByGridCodeAndRelationshipAndValidTimeAndNameAndIdNumber(customerDO, pageNum, pageSize));
         return new ResultBean().success(pageInfo.getTotal(), pageInfo.getList());
     }
 

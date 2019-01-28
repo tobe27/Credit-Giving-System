@@ -39,7 +39,7 @@
 
     <!--获取ODS数据最新时间-->
     <select id="getTaskDate" resultType="String">
-        select taskdate from task_status
+        select to_char(to_date(taskdate, 'yyyyMMdd') -1 days , 'yyyyMMdd')  from task_status
     </select>
 
     <select id="getUserDO" parameterType="java.lang.Long" resultMap="userRoleRelationResultMap">
@@ -97,6 +97,9 @@
         </if>
         <if test="username != null and username != ''">
             and user.username = #{username}
+        </if>
+        <if test="status != null">
+            and user.status = #{status}
         </if>
         <if test="idNumber != null">
             and user.id_number like '%'||#{idNumber}||'%'

@@ -19,33 +19,65 @@
     <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
     <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
   </resultMap>
+
   <sql id="Base_Column_List">
     ID, CUSTOMER_ID, CUSTOMER_NAME, HOUSEHOLD_ID, ID_NUMBER, REASON, PHONE, GRID_CODE, 
     GRID_NAME, ORG_CODE, ORG_NAME, USER_ID, USER_NAME, STATUS, CREATED_AT, UPDATED_AT
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from CUSTOMER_GREY
     where ID = #{id,jdbcType=BIGINT}
   </select>
-   <select id="getByIdNumber" parameterType="java.util.Map" resultMap="BaseResultMap">
-  select * from CUSTOMER_GREY where  ID_NUMBER  = #{idNumber}
+
+  <select id="getByIdNumber" parameterType="java.util.Map" resultMap="BaseResultMap">
+  select * from CUSTOMER_GREY where  UPPER(ID_NUMBER)  = #{idNumber}
   </select>
+
+  <select id="listByGridCode" parameterType="String" resultMap="BaseResultMap">
+  select * from CUSTOMER_GREY where grid_code = #{gridCode}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from CUSTOMER_GREY
     where ID = #{id,jdbcType=BIGINT}
   </delete>
-  
+
+  <delete id="deleteByIdNumber" parameterType="java.lang.String">
+    delete from CUSTOMER_GREY
+    where UPPER(ID_NUMBER) = #{idNumber}
+  </delete>
+
   <select id="getByIdNumbers" parameterType="java.util.Map" resultMap="BaseResultMap">
     select *
     from CUSTOMER_GREY
-    where ID_NUMBER in   <foreach item="item" index="index" collection="idNumberList" 
-                         open="(" separator="," close=")">
-                        #{item}
-                </foreach>
+    where ID_NUMBER in   <foreach item="item" index="index" collection="idNumberList"
+                                  open="(" separator="," close=")">
+    #{item}
+  </foreach>
   </select>
-  
+
+  <!--批量导入灰名单库-->
+  <insert id="batchSave" parameterType="java.util.List">
+    INSERT INTO CUSTOMER_GREY (CUSTOMER_NAME,HOUSEHOLD_ID,
+    ID_NUMBER,REASON,PHONE,
+    GRID_CODE,GRID_NAME,
+    USER_ID,USER_NAME,
+    ORG_CODE,ORG_NAME,
+    CREATED_AT, UPDATED_AT)
+    VALUES
+    <foreach  collection="list" item="item" separator=",">
+      (#{item.customerName},#{item.householdId},
+      #{item.idNumber}, #{item.reason}, #{item.phone}
+      #{item.gridCode}, #{item.gridName},
+      #{item.userId},#{item.userName},
+      #{item.orgCode}, #{item.orgName},
+      #{item.createdAt},#{item.updatedAt})
+    </foreach>
+  </insert>
+
   <insert id="insert" parameterType="com.example.service.grey.CustomerGreyDO">
     insert into CUSTOMER_GREY (ID, CUSTOMER_ID, CUSTOMER_NAME, 
       HOUSEHOLD_ID, ID_NUMBER, REASON, 
@@ -214,32 +246,20 @@
     </set>
     where ID = #{id,jdbcType=BIGINT}
   </update>
-  
+
   <select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
-     select cg.* from CUSTOMER_GREY cg  left join  GRID_INFO  gi on cg.grid_code=gi.grid_code 
-     
-     where 1=1 and cg.org_code  like #{orgCode}||'%'
-          <if test="userId != null">
-     and   gi.USER_ID  = #{userId}
-      </if>
-       <if test="gridCode != null">
-     and  cg.GRID_CODE  = #{gridCode}
-      </if>
-       <if test="someOrgCode != null">
-     and  cg.org_code  = #{someOrgCode}
-      </if>
-      
-      <if test="idNumber != null">
-     and   cg.ID_NUMBER  like '%'||#{idNumber}||'%'
-      </if>
-       <if test="customerName != null">
-     and   cg.CUSTOMER_NAME  like '%'||#{customerName}||'%'
-      </if>
-    
-      order by cg.created_at desc
+    select cg.* from CUSTOMER_GREY cg
+    where 1=1
+    <if test="idNumber != null">
+      and  UPPER(cg.ID_NUMBER) = #{idNumber}
+    </if>
+    <if test="customerName != null">
+      and cg.CUSTOMER_NAME  like '%'||#{customerName}||'%'
+    </if>
+    order by cg.CREATED_AT desc
   </select>
-  
-  
+
+
   <update id="updateByPrimaryKey" parameterType="com.example.service.grey.CustomerGreyDO">
     update CUSTOMER_GREY
     set CUSTOMER_ID = #{customerId,jdbcType=BIGINT},

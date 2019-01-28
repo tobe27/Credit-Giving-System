@@ -32,7 +32,7 @@
     where ID = #{id,jdbcType=BIGINT}
   </delete>
    <select id="getImageListByIdNumberAndType" parameterType="com.example.service.customer.CustomerImageDO"  resultMap="BaseResultMap">
-    select * from CUSTOMER_IMAGE where id_number = #{idNumber} and type = #{type}
+    select * from CUSTOMER_IMAGE where id_number = #{idNumber} and type = #{type} order by CREATED_AT desc
     </select>
     
   

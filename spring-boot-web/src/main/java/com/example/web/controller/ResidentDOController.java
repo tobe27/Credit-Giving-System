@@ -42,8 +42,7 @@ public class ResidentDOController {
      */
     @RequestMapping(value = "/resident", method = RequestMethod.POST)
     public ResultBean insert(@RequestBody @Validated ResidentDO residentDO) throws Exception {
-        residentDOService.insertSelective(residentDO);
-        return new ResultBean().success();
+        return new ResultBean().success(residentDOService.insertSelective(residentDO));
     }
 
     /**

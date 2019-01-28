@@ -1,6 +1,7 @@
 package com.example.service.org;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public interface OrgDOMapper {
 
     OrgDO getByorgCode(String orgCode);
 
+    OrgDO getParentOrgByOrgCode(String orgCode);
+
     List<OrgDO> getByParentorgCode(String orgCode);
 
     List<OrgDO> listAllByStatus(OrgDO record);
@@ -29,4 +32,19 @@ public interface OrgDOMapper {
 
     int updateByPrimaryKeySelective(OrgDO record);
     List<OrgDO> getAll();
+
+    /**
+     * 更具身份证号查询灰名单或蓝名单所在的法人机构
+     * @param idNUmber
+     * @param tagId
+     * @return
+     */
+    OrgDO selectByIdNumberInGreyAndBlue(@Param("idNUmber") String idNUmber, @Param("tagId")int tagId);
+    /**
+     * 更具身份证号查询黑名单或贫困户所在的法人机构
+     * @param idNUmber
+     * @param tagId
+     * @return
+     */
+    OrgDO selectByIdNumberInBlackAndPoverty(@Param("idNUmber") String idNUmber, @Param("tagId")int tagId);
 }

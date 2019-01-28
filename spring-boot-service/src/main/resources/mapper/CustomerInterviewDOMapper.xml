@@ -45,16 +45,26 @@
     ORG_NAME, GRID_NAME, GRID_CODE, COMMENT, APPROVAL_STATUS, STATUS, ATTACH_FLAG, CREATED_AT, 
     UPDATED_AT, PURPOSE, HOUSEHOLD_ID
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from CUSTOMER_INTERVIEW
     where ID = #{id,jdbcType=BIGINT}
   </select>
+
+  <select id="selectByIdNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from CUSTOMER_INTERVIEW
+    where ID_NUMBER = #{idNumber,jdbcType=VARCHAR}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from CUSTOMER_INTERVIEW
     where ID = #{id,jdbcType=BIGINT}
   </delete>
+
   <insert id="insert" parameterType="com.example.service.interview.CustomerInterviewDO">
     insert into CUSTOMER_INTERVIEW (ID, CUSTOMER_ID, CUSTOMER_NAME, 
       ID_NUMBER, SEX, IS_MARRIED, 
@@ -81,6 +91,215 @@
       #{createdAt,jdbcType=BIGINT}, #{updatedAt,jdbcType=BIGINT}, #{purpose,jdbcType=VARCHAR}, 
       #{householdId,jdbcType=VARCHAR})
   </insert>
+
+  <!--向作废表中添加数据-->
+  <insert id="insertBanSelective" parameterType="com.example.service.interview.CustomerInterviewDO">
+    insert into CUSTOMER_INTERVIEW_BAN
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="customerId != null">
+        CUSTOMER_ID,
+      </if>
+      <if test="customerName != null">
+        CUSTOMER_NAME,
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER,
+      </if>
+      <if test="sex != null">
+        SEX,
+      </if>
+      <if test="isMarried != null">
+        IS_MARRIED,
+      </if>
+      <if test="education != null">
+        EDUCATION,
+      </if>
+      <if test="phone != null">
+        PHONE,
+      </if>
+      <if test="familySize != null">
+        FAMILY_SIZE,
+      </if>
+      <if test="nativeAddress != null">
+        NATIVE_ADDRESS,
+      </if>
+      <if test="residenceAddress != null">
+        RESIDENCE_ADDRESS,
+      </if>
+      <if test="cardHolder != null">
+        CARD_HOLDER,
+      </if>
+      <if test="cardNumber != null">
+        CARD_NUMBER,
+      </if>
+      <if test="appraiseSum != null">
+        APPRAISE_SUM,
+      </if>
+      <if test="appliedSum != null">
+        APPLIED_SUM,
+      </if>
+      <if test="timeLimit != null">
+        TIME_LIMIT,
+      </if>
+      <if test="provide != null">
+        PROVIDE,
+      </if>
+      <if test="repayment != null">
+        REPAYMENT,
+      </if>
+      <if test="interestSettlement != null">
+        INTEREST_SETTLEMENT,
+      </if>
+      <if test="type != null">
+        TYPE,
+      </if>
+      <if test="userId != null">
+        USER_ID,
+      </if>
+      <if test="userName != null">
+        USER_NAME,
+      </if>
+      <if test="orgCode != null">
+        ORG_CODE,
+      </if>
+      <if test="orgName != null">
+        ORG_NAME,
+      </if>
+      <if test="gridName != null">
+        GRID_NAME,
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE,
+      </if>
+      <if test="comment != null">
+        COMMENT,
+      </if>
+      <if test="approvalStatus != null">
+        APPROVAL_STATUS,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="attachFlag != null">
+        ATTACH_FLAG,
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT,
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT,
+      </if>
+      <if test="purpose != null">
+        PURPOSE,
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="customerId != null">
+        #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="customerName != null">
+        #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="isMarried != null">
+        #{isMarried,jdbcType=VARCHAR},
+      </if>
+      <if test="education != null">
+        #{education,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="familySize != null">
+        #{familySize,jdbcType=VARCHAR},
+      </if>
+      <if test="nativeAddress != null">
+        #{nativeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="residenceAddress != null">
+        #{residenceAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="cardHolder != null">
+        #{cardHolder,jdbcType=VARCHAR},
+      </if>
+      <if test="cardNumber != null">
+        #{cardNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="appraiseSum != null">
+        #{appraiseSum,jdbcType=VARCHAR},
+      </if>
+      <if test="appliedSum != null">
+        #{appliedSum,jdbcType=VARCHAR},
+      </if>
+      <if test="timeLimit != null">
+        #{timeLimit,jdbcType=VARCHAR},
+      </if>
+      <if test="provide != null">
+        #{provide,jdbcType=VARCHAR},
+      </if>
+      <if test="repayment != null">
+        #{repayment,jdbcType=VARCHAR},
+      </if>
+      <if test="interestSettlement != null">
+        #{interestSettlement,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null">
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="gridName != null">
+        #{gridName,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null">
+        #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalStatus != null">
+        #{approvalStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="attachFlag != null">
+        #{attachFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=BIGINT},
+      </if>
+      <if test="purpose != null">
+        #{purpose,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        #{householdId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+
   <insert id="insertSelective" parameterType="com.example.service.interview.CustomerInterviewDO">
     insert into CUSTOMER_INTERVIEW
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -292,6 +511,8 @@
       </if>
     </trim>
   </insert>
+
+
   <update id="updateByPrimaryKeySelective" parameterType="com.example.service.interview.CustomerInterviewDO">
     update CUSTOMER_INTERVIEW
     <set>
@@ -434,89 +655,160 @@
       HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=BIGINT}
   </update>
+
   <select id="getListByIdNumber" parameterType="com.example.service.interview.CustomerInterviewDO" resultMap="BaseResultMap">
    select * from  CUSTOMER_INTERVIEW where 1=1  and id_number = #{idNumber}
   </select>
+
   <select id="getListByIdNumbersAndApprovalStatus" parameterType="java.util.Map" resultMap="BaseResultMap">
-   select * from  CUSTOMER_INTERVIEW where 1=1 and id_number in 
-     <foreach item="item" index="index" collection="idNumberList" 
-                         open="(" separator="," close=")">
-                        #{item}
-                </foreach>
+    select * from  CUSTOMER_INTERVIEW where 1=1 and id_number in
+    <foreach item="item" index="index" collection="idNumberList"
+             open="(" separator="," close=")">
+      #{item}
+    </foreach>
     and APPROVAL_STATUS !='4' and type=#{type}
   </select>
+
   <select id="getListByIds" parameterType="java.util.Map" resultMap="BaseResultMap">
-   select * from  CUSTOMER_INTERVIEW where 1=1 and id in
-    <foreach item="item" index="index" collection="idList" 
-                         open="(" separator="," close=")">
-                        #{item}
-                </foreach>
+    select * from  CUSTOMER_INTERVIEW where 1=1 and id in
+    <foreach item="item" index="index" collection="idList"
+             open="(" separator="," close=")">
+      #{item}
+    </foreach>
   </select>
-   <select id="getList" parameterType="java.util.Map"  resultMap="BaseResultMap">
-  select distinct ci.id, ci.*,
-  (select ivf.id from INTERVIEW_FILE ivf where ivf.INTERVIEW_ID=ci.id and ivf.type='2'  order by ivf.CREATED_AT desc fetch first 1 rows only ) as photo  
-  from CUSTOMER_INTERVIEW   ci     left join  GRID_INFO  gi on ci.grid_code=gi.grid_code
-  left join INTERVIEW_FILE itf on  itf.INTERVIEW_ID= ci.id 
-    where 1=1  and ci.org_code  like #{orgCode}||'%'
+
+  <select id="getList" parameterType="java.util.Map"  resultMap="BaseResultMap">
+    select distinct ci.id, ci.*,
+      (select ivf.id
+      from INTERVIEW_FILE ivf
+      where ivf.INTERVIEW_ID=ci.id and ivf.type='2'
+      order by ivf.CREATED_AT desc
+      fetch first 1 rows only ) as photo
+    from CUSTOMER_INTERVIEW   ci
+    left join  GRID_INFO  gi on ci.grid_code=gi.grid_code
+    left join INTERVIEW_FILE itf on  itf.INTERVIEW_ID= ci.id
+    where 1=1
     <if test='photo =="0"'>
- and (select count(INTERVIEW_ID) from INTERVIEW_FILE where INTERVIEW_ID=ci.id  and type='2')=0
-   </if>
+      and (select count(INTERVIEW_ID) from INTERVIEW_FILE where INTERVIEW_ID=ci.id  and type='2')=0
+    </if>
     <if test='photo =="1"'>
-    and itf.type='2'
-   </if>
-  
-   <if test="userId != null">
-   and gi.user_id =#{userId} 
-   </if>
-   
-   <if test='approvalStatus =="0"'>
-   and ((ci.approval_status ='0') or (ci.approval_status ='5'))
-   </if>
-   <if test='approvalStatus =="1"'>
-   and ci.approval_status = #{approvalStatus} 
-   </if>
-   <if test='approvalStatus =="2"'>
-   and ci.approval_status = #{approvalStatus} 
-   </if>
+      and itf.type='2'
+    </if>
+
+    <if test="roleId == 1">
+      and gi.user_id = #{userId}
+    </if>
+    <if test="roleId != 1">
+      and gi.org_code IN
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+
+    <if test='approvalStatus =="0"'>
+      and ((ci.approval_status ='0') or (ci.approval_status ='5'))
+    </if>
+    <if test='approvalStatus =="1"'>
+      and ci.approval_status = #{approvalStatus}
+    </if>
+    <if test='approvalStatus =="2"'>
+      and ci.approval_status = #{approvalStatus}
+    </if>
     <if test='approvalStatus =="3"'>
-   and ci.approval_status = #{approvalStatus} 
-   </if>
-   <if test='approvalStatus =="4"'>
-   and ci.approval_status = #{approvalStatus} 
-   </if>
-   
-   
-   
-   <if test="gridCode != null">
-     and  ci.GRID_CODE  = #{gridCode}
-      </if>
-       <if test="someOrgCode != null">
-     and  ci.org_code  = #{someOrgCode}
-      </if>
-  
-  
-   <if test='attachFlag =="1"'>
-   and ci.attach_flag !='1.1.1'  and ci.attach_flag !='0.0.0' 
-   </if>
-   <if test='attachFlag =="2"'>
-   and ci.attach_flag ='1.1.1' 
-   </if>
+      and ci.approval_status = #{approvalStatus}
+    </if>
+    <if test='approvalStatus =="4"'>
+      and ci.approval_status = #{approvalStatus}
+    </if>
+    <if test="gridCode != null">
+      and  ci.GRID_CODE  = #{gridCode}
+    </if>
+    <if test="someOrgCode != null">
+      and  ci.org_code  = #{someOrgCode}
+    </if>
+    <if test='attachFlag =="1"'>
+      and ci.attach_flag !='1.1.1'  and ci.attach_flag !='0.0.0'
+    </if>
+    <if test='attachFlag =="2"'>
+      and ci.attach_flag ='1.1.1'
+    </if>
     <if test='attachFlag =="3"'>
-   and ci.attach_flag ='0.0.0' 
-   </if>
-   
-   
-   <if test="idNumber != null">
-   and ci.id_number  like '%'||#{idNumber}||'%'
-  </if>
-  
-  <if test="customerName != null">
-   and ci.customer_name  like '%'||#{customerName}||'%'
-  </if> -->
-  order by ci.created_at desc
-      
-  
+      and ci.attach_flag ='0.0.0'
+    </if>
+    <if test="idNumber != null">
+      and ci.id_number  like '%'||#{idNumber}||'%'
+    </if>
+    <if test="customerName != null">
+      and ci.customer_name  like '%'||#{customerName}||'%'
+    </if>
+    order by ci.created_at desc
   </select>
-  
-  
+
+  <!--获取作废列表-->
+  <select id="listBanInterview" parameterType="java.util.Map"  resultMap="BaseResultMap">
+    select distinct ci.updated_at, ci.*,
+    (select ivf.id
+    from INTERVIEW_FILE ivf
+    where ivf.INTERVIEW_ID=ci.updated_at and ivf.type='2'
+    order by ivf.CREATED_AT desc
+    fetch first 1 rows only ) as photo
+    from CUSTOMER_INTERVIEW_BAN   ci
+    left join  GRID_INFO  gi on ci.grid_code=gi.grid_code
+    left join INTERVIEW_FILE itf on  itf.INTERVIEW_ID= ci.updated_at
+    where 1=1
+    <if test='photo =="0"'>
+      and (select count(INTERVIEW_ID) from INTERVIEW_FILE where INTERVIEW_ID=ci.updated_at  and type='2')=0
+    </if>
+    <if test='photo =="1"'>
+      and itf.type='2'
+    </if>
+    <if test="roleId == 1">
+      and gi.user_id = #{userId}
+    </if>
+    <if test="roleId != 1">
+      and gi.org_code IN
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test='approvalStatus =="0"'>
+      and ((ci.approval_status ='0') or (ci.approval_status ='5'))
+    </if>
+    <if test='approvalStatus =="1"'>
+      and ci.approval_status = #{approvalStatus}
+    </if>
+    <if test='approvalStatus =="2"'>
+      and ci.approval_status = #{approvalStatus}
+    </if>
+    <if test='approvalStatus =="3"'>
+      and ci.approval_status = #{approvalStatus}
+    </if>
+    <if test='approvalStatus =="4"'>
+      and ci.approval_status = #{approvalStatus}
+    </if>
+    <if test="gridCode != null">
+      and  ci.GRID_CODE  = #{gridCode}
+    </if>
+    <if test="someOrgCode != null">
+      and  ci.org_code  = #{someOrgCode}
+    </if>
+    <if test='attachFlag =="1"'>
+      and ci.attach_flag !='1.1.1'  and ci.attach_flag !='0.0.0'
+    </if>
+    <if test='attachFlag =="2"'>
+      and ci.attach_flag ='1.1.1'
+    </if>
+    <if test='attachFlag =="3"'>
+      and ci.attach_flag ='0.0.0'
+    </if>
+    <if test="idNumber != null">
+      and ci.id_number  like '%'||#{idNumber}||'%'
+    </if>
+    <if test="customerName != null">
+      and ci.customer_name  like '%'||#{customerName}||'%'
+    </if>
+    order by ci.created_at desc
+  </select>
+
+
 </mapper>

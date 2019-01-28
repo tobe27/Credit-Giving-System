@@ -31,14 +31,14 @@ public class CustomerPovertyDOController {
 	 }
 	 /**
 	     * 删除
-	     * @param id
+	     * @param map
 	     * @return
 	     * @throws Exception
 	     */
-	  @RequestMapping(value = "/poverty/{id}", method = RequestMethod.DELETE)
-	    public ResultBean delete(@RequestBody @PathVariable Long id) throws Exception {
-		  customerPovertyDOService.deleteByPrimaryKey(id);
-	        return new ResultBean().success();
+	  @RequestMapping(value = "/poverty/delete", method = RequestMethod.DELETE)
+	    public ResultBean delete(@RequestParam Map<String,String> map) throws Exception {
+		  customerPovertyDOService.delete(map);
+		  return new ResultBean().success();
 	    }
 	  /**
 	     * 修改

@@ -246,6 +246,7 @@ public class OrgDOServiceImpl implements OrgDOService {
                 childMap.put("orgCode", orgDO.getOrgCode());
                 childMap.put("coreOrgCode", orgDO.getCoreOrgCode());
                 childMap.put("orgName", orgDO.getOrgName());
+                childMap.put("shortName", orgDO.getShortName());
                 childMap.put("parentOrgCode", orgDO.getParentOrgCode());
                 childMap.put("corpOrgCode", orgDO.getCorpOrgCode());
                 childMap.put("level", orgDO.getLevel());
@@ -257,6 +258,7 @@ public class OrgDOServiceImpl implements OrgDOService {
                 childList.add(childMap);
             }
         }
+        System.out.println(childList);
         return childList;
     }
 
@@ -269,6 +271,7 @@ public class OrgDOServiceImpl implements OrgDOService {
                 childMap.put("orgCode", orgDO.getOrgCode());
                 childMap.put("coreOrgCode", orgDO.getCoreOrgCode());
                 childMap.put("orgName", orgDO.getOrgName());
+                childMap.put("shortName", orgDO.getShortName());
                 childMap.put("parentOrgCode", orgDO.getParentOrgCode());
                 childMap.put("corpOrgCode", orgDO.getCorpOrgCode());
                 childMap.put("level", orgDO.getLevel());

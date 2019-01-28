@@ -1,5 +1,6 @@
 package com.example.service.black;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,15 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import com.example.service.conclusion.ConclusionDO;
+import com.example.service.conclusion.ConclusionDOMapper;
+import com.example.service.customer.CustomerDO;
+import com.example.service.customer.CustomerDOMapper;
+import com.example.service.interview.CustomerInterviewDO;
+import com.example.service.interview.CustomerInterviewDOMapper;
+import com.example.service.org.OrgDO;
+import com.example.service.survey.SurveyDO;
+import com.example.service.survey.SurveyDOMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,32 +51,49 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
 	private final OrgDOMapper orgDOMapper;
 	private final CustomerWhiteDOMapper customerWhiteDOMapper;
 	private final CustomerBlackDOMapper customerBlackDOMapper;
+	private final SurveyDOMapper surveyDOMapper;
+	private final CustomerInterviewDOMapper customerInterviewDOMapper;
+	private final CustomerDOMapper customerDOMapper;
+	private final ConclusionDOMapper conclusionDOMapper;
 	 @Resource
 	private AsyncTaskBlackSave asyncTaskBlackSave;
 	@Autowired
-	public CustomerBlackDOServiceImpl(CustomerBlackDOMapper customerBlackDOMapper,CustomerTagRelationDOMapper customerTagRelationDOMapper , OrgDOMapper orgDOMapper,GridInfoDOMapper  gridInfoDOMapper,CustomerWhiteDOMapper customerWhiteDOMapper) {
+	public CustomerBlackDOServiceImpl(CustomerBlackDOMapper customerBlackDOMapper,CustomerTagRelationDOMapper customerTagRelationDOMapper , OrgDOMapper orgDOMapper,GridInfoDOMapper  gridInfoDOMapper,CustomerWhiteDOMapper customerWhiteDOMapper,SurveyDOMapper surveyDOMapper,CustomerInterviewDOMapper customerInterviewDOMapper,CustomerDOMapper customerDOMapper,ConclusionDOMapper conclusionDOMapper) {
 		this.customerTagRelationDOMapper=customerTagRelationDOMapper;
 		this.orgDOMapper=orgDOMapper;
 		this.gridInfoDOMapper=gridInfoDOMapper;
 		this.customerWhiteDOMapper=customerWhiteDOMapper;
 		this.customerBlackDOMapper=customerBlackDOMapper;
-
+		this.surveyDOMapper = surveyDOMapper;
+		this.customerInterviewDOMapper=customerInterviewDOMapper;
+		this.customerDOMapper=customerDOMapper;
+		this.conclusionDOMapper = conclusionDOMapper;
 	}
 	 /**
      * 删除
-     * @param id
+     * @param map
      * @return
      * @throws Exception
     */
 	@Transactional
 	@Override
-	public boolean deleteByPrimaryKey(Long id) throws Exception {
-		//删除客户标签中的黑名单
-		CustomerBlackDO record=customerBlackDOMapper.selectByPrimaryKey(id);
-		CustomerTagRelationDO tag=new CustomerTagRelationDO().setIdNumber(record.getIdNumber()).setTagId((long)1);
+	public boolean delete(Map<String,String> map) throws Exception {
+		if(!map.containsKey("idNumber")) {
+			throw new ServiceException("请求参数异常！");
+		} else {
+			map.put("idNumber",map.get("idNumber").toUpperCase());
+		}
+		if(!map.containsKey("orgCode")) {
+			throw new ServiceException("请求参数异常！");
+		}
+		OrgDO org=orgDOMapper.selectByIdNumberInBlackAndPoverty(map.get("idNumber"),1);
+		if (org !=null && !map.get("orgCode").equals(org.getOrgCode())){
+			throw new ServiceException("对不起，这个客户所在的法人机构为："+ org.getOrgName() +",您不能删除！");
+		}
+		CustomerTagRelationDO tag=new CustomerTagRelationDO().setIdNumber(map.get("idNumber")).setTagId((long)1);
 		customerTagRelationDOMapper.deleteByIdNumberAndTagId(tag);
 		try {
-			return customerBlackDOMapper.deleteByPrimaryKey(id)==1;
+			return customerBlackDOMapper.deleteByIdNumber(map.get("idNumber"))>=1;
 		} catch (Exception e) {
 			logger.info("删除黑名单标签异常:" + e.getMessage());
 			throw new ServiceException("删除黑名单标签异常");
@@ -84,36 +111,67 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
 		if (StringUtil.isNotIdNumber(record.getIdNumber())) {
             throw new ServiceException("不是有效的中国居民身份证号！");
         }
+		record.setIdNumber(record.getIdNumber().toUpperCase());
 		//校验是否已存在相同身份证号的黑名单
 		Map<String,Object> checkMap=new HashMap<>();
 		checkMap.put("idNumber", record.getIdNumber());
 		List<CustomerBlackDO> cpoList=customerBlackDOMapper.getByIdNumber(checkMap);
 		if(cpoList.size()>0) {
 			throw new ServiceException("系统中已存在黑名单信息");
-		}		
+		}
 		long now=System.currentTimeMillis();
 		record.setUpdatedAt(now);
 		record.setCreatedAt(now);
 		// 校验客户的家庭标签是否有白名单
-				List<CustomerTagRelationDO> list = customerTagRelationDOMapper.listCustomerTagRelationsByHouseholdId(record.getHouseholdId());
-				for(CustomerTagRelationDO tagDo:list) {
-				 //如果存在白名单记录需要删除
-				if((long)5==tagDo.getTagId()) {
-					//删除客户标签中的白名单
-					Map<String,Object> map=new HashMap<>();
-					map.put("idNumber",tagDo.getIdNumber());
-					List<CustomerWhiteDO> whiteList=customerWhiteDOMapper.getByIdNumber(map);
-					CustomerTagRelationDO tag=new CustomerTagRelationDO().setIdNumber(whiteList.get(0).getIdNumber()).setTagId((long)5);
+		String householdId = customerDOMapper.getHouseholdIdByIdNumber(record.getIdNumber());
+		List<CustomerTagRelationDO> list = customerTagRelationDOMapper.listCustomerTagRelationsByHouseholdId(householdId);
+		//作废评议信息，即 是否有效置为“0”
+		try {
+			surveyDOMapper.updateByHouseholdIdSelective(new SurveyDO().setHouseholdId(householdId).setIsValid("0"));
+			// 同时客户信息-授信额度=0，有效调查次数=0，是否下结论=否
+			customerDOMapper.updateByHouseholdIdSelective(
+					new CustomerDO()
+							.setHouseholdId(householdId)
+							.setAmount(new BigDecimal("0"))
+							.setIsConcluded("否")
+							.setIsBorrower("否")
+							.setValidTime(0));
+		} catch (Exception e) {
+			logger.info("评议信息作废异常:" + e.getMessage());
+			throw new ServiceException("评议信息作废异常");
+		}
+		for(CustomerTagRelationDO tagDo:list) {
+			 //如果存在白名单记录需要删除
+			if((long)5==tagDo.getTagId()) {
+				//删除客户标签中的白名单
+				try {
+					CustomerTagRelationDO tag=new CustomerTagRelationDO().setIdNumber(tagDo.getIdNumber()).setTagId((long)5);
 					customerTagRelationDOMapper.deleteByIdNumberAndTagId(tag);
-					try {
-						 customerWhiteDOMapper.deleteByPrimaryKey(whiteList.get(0).getId());
-					} catch (Exception e) {
-						logger.info("删除白名单标签异常:" + e.getMessage());
-						throw new ServiceException("删除白名单标签异常");
-					} 
-				 }
-				
+					customerWhiteDOMapper.deleteByIdNumber(tagDo.getIdNumber());
+				} catch (Exception e) {
+					logger.info("删除白名单标签异常:" + e.getMessage());
+					throw new ServiceException("删除白名单标签异常");
 				}
+				//查询面签信息
+				CustomerInterviewDO interview = customerInterviewDOMapper.selectByIdNumber(tagDo.getIdNumber());
+				// 调查结论作废，即 是否有效置为“0”
+				try {
+					conclusionDOMapper.updateByHouseholdIdSelective(new ConclusionDO().setHouseholdId(interview.getHouseholdId()).setIsValid("0"));
+				} catch (Exception e) {
+					logger.info("作废调查结论异常:" + e.getMessage());
+					throw new ServiceException("作废调查结论异常");
+				}
+
+				// 删除面签信息，同时将面签数据移植到作废表中
+				try {
+					customerInterviewDOMapper.deleteByPrimaryKey(interview.getId());
+					customerInterviewDOMapper.insertBanSelective(interview.setUpdatedAt(interview.getId())); // 用updateAt字段存储面签的ID
+				} catch (Exception e) {
+					logger.info("作废面签信息异常:" + e.getMessage());
+					throw new ServiceException("作废面签信息异常");
+				}
+			 }
+		}
 		CustomerTagRelationDO tag=new CustomerTagRelationDO().setIdNumber(record.getIdNumber()).setTagId((long)1);
 		try {
 			customerTagRelationDOMapper.insertSelective(tag);
@@ -159,35 +217,24 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
 		} catch (Exception e) {
 			logger.info("修改黑名单异常:" + e.getMessage());
 			throw new ServiceException("修改黑名单异常！");
-		
+
 		}
 	}
 
 	 /**
      * 分页
-     * @param record
-     * @return
+     * @param map
      * @throws Exception
      */
 	@Transactional
 	@Override
 	public List<CustomerBlackDO> getList(Map<String, Object> map) throws Exception {
-		if(!map.containsKey("roleId") || !map.containsKey("orgCode")||!map.containsKey("pageNum")||!map.containsKey("pageSize")) {
+		if(!map.containsKey("pageNum") || !map.containsKey("pageSize")) {
 			throw new ServiceException("查询参数异常！");
 		}
-		//如果是客户经理登录的
-		if(Long.parseLong(map.get("roleId").toString())==1) {
-			if(!map.containsKey("idNumber")	||"".equals(map.get("idNumber").toString())) {
-				throw new ServiceException("客户经理查询必须输入身份证号！");	
-			}	
+		if (map.containsKey("idNumber")){
+			map.put("idNumber", map.get("idNumber").toString().toUpperCase());
 		}
-		
-		String orgCode=map.get("orgCode").toString();
-		if(orgCode.length()>=9) {
-		orgCode=orgCode.substring(0, 6);
-		map.put("orgCode", orgCode);
-		}
-		
 		PageHelper.startPage(Integer.parseInt(map.get("pageNum").toString()), Integer.parseInt(map.get("pageSize").toString()));
 		try {
 			return customerBlackDOMapper.getList(map);
@@ -198,7 +245,7 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
 	}
 	/**
      * 从excel导入
-     * @param List<Map<String,Object>> list
+     * @param  list
      * @return
      * @throws Exception
      */
@@ -211,16 +258,16 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
 		if(list.size()>5000) {
 			 throw new ServiceException("单次上传最多5000条数据");
 		}
-		long now = System.currentTimeMillis();   
+		long now = System.currentTimeMillis();
 		for(Map<String, Object> map:list) {
 			if(map.get("2")==null||"".equals(map.get("2").toString())) {
 				 throw new ServiceException("身份证号不能为空");
 			}
-			String idNumber=map.get("2").toString();
+			String idNumber=map.get("2").toString().toUpperCase();
 			if(idNumberList.contains(idNumber)) {
 				throw new ServiceException("文件中存在重复身份证号:"+idNumber);
 			}
-			
+
 			if (StringUtil.isNotIdNumber(idNumber)) {
 	            throw new ServiceException("身份证号:"+idNumber+"不是有效的中国居民身份证号！");
 	        }
@@ -248,47 +295,75 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
 		map.put("idNumberList", idNumberList);
 		List<CustomerBlackDO> doubleList=customerBlackDOMapper.getByIdNumbers(map);
 		if(doubleList !=null && !doubleList.isEmpty()) {
-			/*String doubleIdNumber="";
-			for(CustomerBlackDO cd:doubleList) {
-				doubleIdNumber=doubleIdNumber+","+cd.getIdNumber();
-			}*/
 			throw new ServiceException("系统中已存在"+doubleList.get(0).getIdNumber());
 		}
 		List<CustomerTagRelationDO> toList=new ArrayList<>();
-		  List<CustomerBlackDO> saveReList=new ArrayList<>();
+	    List<CustomerBlackDO> saveReList=new ArrayList<>();
 		for(int i=0;i<bovrrtyDOList.size();i++) {
+			// 校验客户的家庭标签是否有白名单
+			String householdId = customerDOMapper.getHouseholdIdByIdNumber(bovrrtyDOList.get(0).getIdNumber());
+			List<CustomerTagRelationDO> tagList = customerTagRelationDOMapper.listCustomerTagRelationsByHouseholdId(householdId);
+			//作废评议信息，即 是否有效置为“0”
+			try {
+				surveyDOMapper.updateByHouseholdIdSelective(new SurveyDO().setHouseholdId(householdId).setIsValid("0"));
+				// 同时客户信息-授信额度=0，有效调查次数=0，是否下结论=否
+				customerDOMapper.updateByHouseholdIdSelective(
+						new CustomerDO()
+								.setHouseholdId(householdId)
+								.setAmount(new BigDecimal("0"))
+								.setIsConcluded("否")
+								.setIsBorrower("否")
+								.setValidTime(0));
+			} catch (Exception e) {
+				logger.info("评议信息作废异常:" + e.getMessage());
+				throw new ServiceException("评议信息作废异常");
+			}
+			for(CustomerTagRelationDO tagDo:tagList) {
+				//如果存在白名单记录需要删除
+				if((long)5==tagDo.getTagId()) {
+					//删除客户标签中的白名单
+					try {
+						CustomerTagRelationDO tag=new CustomerTagRelationDO().setIdNumber(tagDo.getIdNumber()).setTagId((long)5);
+						customerTagRelationDOMapper.deleteByIdNumberAndTagId(tag);
+						customerWhiteDOMapper.deleteByIdNumber(tagDo.getIdNumber());
+					} catch (Exception e) {
+						logger.info("删除白名单标签异常:" + e.getMessage());
+						throw new ServiceException("删除白名单标签异常");
+					}
+					//查询面签信息
+					CustomerInterviewDO interview = customerInterviewDOMapper.selectByIdNumber(tagDo.getIdNumber());
+					// 调查结论作废，即 是否有效置为“0”
+					try {
+						conclusionDOMapper.updateByHouseholdIdSelective(new ConclusionDO().setHouseholdId(interview.getHouseholdId()).setIsValid("0"));
+					} catch (Exception e) {
+						logger.info("作废调查结论作废异常:" + e.getMessage());
+						throw new ServiceException("作废调查结论作废异常");
+					}
+
+					// 删除面签信息，同时将面签数据移植到作废表中
+					try {
+						customerInterviewDOMapper.deleteByPrimaryKey(interview.getId());
+						customerInterviewDOMapper.insertBanSelective(interview.setUpdatedAt(interview.getId())); // 用updateAt字段存储面签的ID
+					} catch (Exception e) {
+						logger.info("作废面签信息异常:" + e.getMessage());
+						throw new ServiceException("作废面签信息异常");
+					}
+				}
+			}
 			toList.add(new CustomerTagRelationDO().setIdNumber(bovrrtyDOList.get(i).getIdNumber()).setTagId((long)1));
-			 saveReList.add(bovrrtyDOList.get(i));
-			 if(saveReList.size()>=200) {
-	               try {
-					asyncTaskBlackSave.executeAsyncTask(saveReList,customerBlackDOMapper);
+			saveReList.add(bovrrtyDOList.get(i));
+		 	if(saveReList.size()>=200 || i==bovrrtyDOList.size()-1) {
+				try {
+					customerBlackDOMapper.batchSave(saveReList);
+					customerTagRelationDOMapper.batchSave(toList);
 				} catch (Exception e) {
 					logger.info("批量导入黑名单异常" + e.getMessage());
 					throw new ServiceException("批量导入黑名单异常！");
 				}
-	               saveReList=new ArrayList<>();
-	            }
-	            if(i==bovrrtyDOList.size()-1) {
-	              try {
-					asyncTaskBlackSave.executeAsyncTask(saveReList, customerBlackDOMapper);
-				} catch (Exception e) {
-					logger.info("批量导入黑名单异常" + e.getMessage());
-					throw new ServiceException("批量导入黑名单异常！");
-				}
-	            }
+			    saveReList=new ArrayList<>();
+			    toList=new ArrayList<>();
+			}
 		}
-		//删除相关的白名单和标签
-	    customerWhiteDOMapper.deleteByIdNumbers(map);
-	    map.put("tagId", 5);
-		customerTagRelationDOMapper.deleteByIdNumbersAndTagId(map);
-		long now1=System.currentTimeMillis();
-		System.out.println("=====存完贫困户"+(now1-now));
-		if(!toList.isEmpty()) {
-      	  customerTagRelationDOMapper.batchSave(toList);
-        }
-		System.out.println("=====存完标签"+(now1-now));
-		
-		
 		Map<String,Object> returnMap=new HashMap<>();
 		returnMap.put("success", bovrrtyDOList.size());
 		return returnMap;
@@ -303,16 +378,16 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
 	@Override
 	public boolean deleteByOrgCode(Long roleId, String orgCode) throws Exception {
 		if(roleId!=4) {
-			throw new ServiceException("非法人机构管理员不允许删除黑名单");	
+			throw new ServiceException("非法人机构管理员不允许删除黑名单");
 		}
 		if(orgCode==null ||"".equals(orgCode)) {
-			throw new ServiceException("机构编号不能为空");	
+			throw new ServiceException("机构编号不能为空");
 		}
 		CustomerBlackDO cbo=new CustomerBlackDO();
 		cbo.setOrgCode(orgCode);
 		List<CustomerBlackDO> list=customerBlackDOMapper.getListByOrgCode(cbo);
 		if(list.isEmpty()) {
-			throw new ServiceException("未检索到相关法人机构的黑名单数据");	
+			throw new ServiceException("未检索到相关法人机构的黑名单数据");
 		}
 		List<String> idNumberList=new ArrayList<>();
 		for(CustomerBlackDO black:list) {
@@ -323,14 +398,10 @@ public class CustomerBlackDOServiceImpl implements CustomerBlackDOService {
 		map.put("tagId", 1);
 		try {
 			customerTagRelationDOMapper.deleteByIdNumbersAndTagId(map);
-			customerBlackDOMapper.deleteByOrdCode(cbo);
-			
-			return customerBlackDOMapper.deleteByOrdCode(cbo)==1;
+			return customerBlackDOMapper.deleteByOrdCode(cbo) >= 1;
 		} catch (Exception e) {
 			logger.info("批量删除黑名单异常:" + e.getMessage());
 			throw new ServiceException("批量删除黑名单异常");
 		}
 	}
-	
-
 }

@@ -21,7 +21,7 @@ public interface ResidentDOService {
      * @return
      * @throws Exception
      */
-    boolean insertSelective(ResidentDO record) throws Exception;
+    long insertSelective(ResidentDO record) throws Exception;
 
     /**
      * 详情

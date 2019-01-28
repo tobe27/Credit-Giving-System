@@ -42,7 +42,7 @@ public interface SurveyDOService {
      * @param record
      * @return
      */
-    List<SurveyDO> listByIdNumberAndIsValid(SurveyDO record) throws Exception;
+    List<SurveyDO> listByHouseholdIdAndIsValid(SurveyDO record) throws Exception;
 
     /**
      * 编辑

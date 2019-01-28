@@ -2,6 +2,7 @@ package com.example.service.grid;
 
 import java.util.List;
 import java.util.Map;
+import java.math.BigDecimal;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,14 @@ public interface GridInfoDOMapper {
     int updateByPrimaryKeySelective(GridInfoDO record);
 
     int updateByPrimaryKey(GridInfoDO record);
+
+    int updateByUserIdSelective(GridInfoDO record);
+
+    List<String> listGridReviewName(String gridCode);
+
+    int getCalTypeByGridCode(String gridCode);
+
+    BigDecimal getMaxCreatMoneyByGridCode(String gridCode);
 
     // 校验网格号是否存在
     String checkExistByGridCode(String gridCode);

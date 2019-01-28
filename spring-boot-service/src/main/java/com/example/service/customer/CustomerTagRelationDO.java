@@ -26,4 +26,7 @@ public class CustomerTagRelationDO {
 
     private List<String> idNumberList;
 
+    // 变更身份证使用
+    private String oldIdNumber;
+    private String householdId;
 }

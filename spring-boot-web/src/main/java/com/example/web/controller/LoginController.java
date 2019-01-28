@@ -67,12 +67,14 @@ public class LoginController {
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(token, token);
         subject.login(usernamePasswordToken);
 
+        UserDO userDO1 = userDOService.getUserDO(userDO.getId());
+
         // 最近登录时间
         UserDO user = new UserDO();
         user.setId(userDO.getId()).setLastLoginAt(System.currentTimeMillis());
         userDOService.updateFieldById(user);
 
-        return new ResultBean().success(userDOService.getUserDO(userDO.getId()).setTaskDate(userDOService.getTaskDate())).withMore("Authorization", token);
+        return new ResultBean().success(userDO1.setTaskDate(userDOService.getTaskDate())).withMore("Authorization", token);
     }
 
 

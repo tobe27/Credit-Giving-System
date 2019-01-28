@@ -11,11 +11,11 @@ import com.example.service.white.CustomerWhiteDO;
 public interface CustomerGreyDOService {
 	 /**
       * 删除
-      * @param id
+      * @param map
       * @return
       * @throws Exception
      */
-	  boolean deleteByPrimaryKey(Long id)throws Exception;
+	  boolean deleteGrey(Map<String,String> map)throws Exception;
 	    /**
 	     * 新增
 	     * @param record

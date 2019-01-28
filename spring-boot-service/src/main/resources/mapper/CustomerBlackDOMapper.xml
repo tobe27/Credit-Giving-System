@@ -36,11 +36,19 @@
     delete from CUSTOMER_BLACK
     where ID = #{id,jdbcType=BIGINT}
   </delete>
+  <delete id="deleteByIdNumber" parameterType="java.lang.String">
+    delete from CUSTOMER_BLACK
+    where UPPER(ID_NUMBER) = #{idNumber}
+  </delete>
   <delete id="deleteByOrdCode" parameterType="com.example.service.black.CustomerBlackDO" >
    delete from CUSTOMER_BLACK where org_code like #{orgCode}||'%'
   </delete>
   <select id="getListByOrgCode" parameterType="com.example.service.black.CustomerBlackDO" resultMap="BaseResultMap" >
     select * from CUSTOMER_BLACK where org_code like #{orgCode}||'%'
+  </select>
+
+  <select id="listByGridCode" parameterType="String" resultMap="BaseResultMap" >
+    select * from CUSTOMER_BLACK where grid_code = #{gridCode}
   </select>
   
   
@@ -247,25 +255,14 @@
   
   
   <select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
-     select * from CUSTOMER_BLACK where 1=1 
-     
+     select * from CUSTOMER_BLACK where 1=1
      <if test="idNumber != null">
-     and   ID_NUMBER  like '%'||#{idNumber}||'%'
-      </if>
-      <if test="idNumber == null">
-     and org_code  like #{orgCode}||'%'
-      </if>
-     
-       <if test="someOrgCode != null">
-     and  org_code  = #{someOrgCode}
-      </if>
-      
-     
-       <if test="customerName != null">
-     and   CUSTOMER_NAME  like '%'||#{customerName}||'%'
-      </if>
-    
-      order by created_at desc
+      and UPPER(ID_NUMBER)  = #{idNumber}
+     </if>
+     <if test="customerName != null">
+      and CUSTOMER_NAME  like '%'||#{customerName}||'%'
+     </if>
+     order by CREATED_AT desc
   </select>
   
   <update id="updateByPrimaryKey" parameterType="com.example.service.black.CustomerBlackDO">

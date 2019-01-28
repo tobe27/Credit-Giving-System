@@ -31,4 +31,20 @@ public class BusinessDOController {
     public ResultBean get(@PathVariable String idNumber) throws Exception {
         return new ResultBean().success(businessDOService.getBusinessByIdNumber(idNumber));
     }
+
+
+    /**
+     * 获取业务信息
+     * @param householdId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/business", method = RequestMethod.GET)
+    public ResultBean list(String householdId) throws Exception {
+        return new ResultBean().success().withMore("AssureDO", businessDOService.listAssureByIdNumber(householdId))
+                .withMore("DepositDO", businessDOService.listDepositByIdNumber(householdId))
+                .withMore("LoanDO", businessDOService.listLoanByIdNumber(householdId));
+    }
+
+
 }

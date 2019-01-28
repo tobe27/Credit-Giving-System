@@ -10,28 +10,11 @@ import java.util.List;
 @Accessors(chain = true)
 public class BlueDO {
     private String creditId;
-
     private String name;
-
     private String idNumber;
-
-    private BigDecimal amountSum;
-
-    private BigDecimal balanceSum;
-
-    private String startDate;
-
-    private String endDate;
-
-    private BigDecimal lmtAmount;
-
-    private String custManagerId;
-
-    private String orgId;
-
-    // 关联使用
-    private Long userId;
-    private Long roleId;
+    private String reasonEn;
     private String orgCode;
-    private List<String> orgCodeList;
+    private String createdDate;
+
+    private String reasonCh;//原因
 }

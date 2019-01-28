@@ -3,6 +3,8 @@ package com.example.service.user;
 import com.example.common.util.MD5Util;
 import com.example.common.util.StringUtil;
 import com.example.service.exception.ServiceException;
+import com.example.service.grid.GridInfoDO;
+import com.example.service.grid.GridInfoDOMapper;
 import com.example.service.org.OrgDOMapper;
 import com.example.service.role.RoleDO;
 import com.github.pagehelper.PageHelper;
@@ -19,18 +21,17 @@ import java.util.List;
  */
 @Service
 public class UserDOServiceImpl implements UserDOService {
-    private final
-    UserDOMapper userDOMapper;
-    private final
-    UserRoleRelationDOMapper userRoleRelationDOMapper;
-    private final
-    OrgDOMapper orgDOMapper;
+    private final UserDOMapper userDOMapper;
+    private final UserRoleRelationDOMapper userRoleRelationDOMapper;
+    private final OrgDOMapper orgDOMapper;
+    private final GridInfoDOMapper gridInfoDOMapper;
 
     @Autowired
-    public UserDOServiceImpl(UserDOMapper userDOMapper, UserRoleRelationDOMapper userRoleRelationDOMapper, OrgDOMapper orgDOMapper) {
+    public UserDOServiceImpl(UserDOMapper userDOMapper, UserRoleRelationDOMapper userRoleRelationDOMapper, OrgDOMapper orgDOMapper, GridInfoDOMapper gridInfoDOMapper) {
         this.userDOMapper = userDOMapper;
         this.userRoleRelationDOMapper = userRoleRelationDOMapper;
         this.orgDOMapper = orgDOMapper;
+        this.gridInfoDOMapper = gridInfoDOMapper;
     }
 
     private static Logger logger = LoggerFactory.getLogger(UserDOServiceImpl.class);
@@ -290,6 +291,17 @@ public class UserDOServiceImpl implements UserDOService {
             // 密码加密
             record.setPassword(MD5Util.create(record.getPassword()));
         }
+
+
+        // 角色为1时,角色或机构变更及停用
+        UserDO userDO = userDOMapper.getUserDO(record.getId());
+        Long roleId = userDO.getRoles().get(0).getId();
+        Long newRoleId = record.getRoles().get(0).getId();
+        if (roleId == 1 && (newRoleId != 1 || !record.getOrgCode().equals(userDO.getOrgCode()) || "0".equals(record.getStatus()))) {
+            // 将该用户的管理网格的userId置为0
+            gridInfoDOMapper.updateByUserIdSelective(new GridInfoDO().setUserId(record.getId()));
+        }
+
         // 修改时间
         long now = System.currentTimeMillis();
         record.setUpdatedAt(now);
@@ -310,6 +322,10 @@ public class UserDOServiceImpl implements UserDOService {
         return count == 1;
     }
 
+    private void disableUser(UserDO record) {
+
+    }
+
     /**
      * 编辑用户部分字段
      * 如果修改密码则加密
@@ -322,6 +338,12 @@ public class UserDOServiceImpl implements UserDOService {
         // 如果密码不为空，则加密
         if (StringUtil.isNotBlank(record.getPassword())) {
             record.setPassword(MD5Util.create(record.getPassword()));
+        }
+
+        // 角色为1时,角色或机构变更及停用
+        if ("0".equals(record.getStatus())) {
+            // 将该用户的管理网格的userId置为0
+            gridInfoDOMapper.updateByUserIdSelective(new GridInfoDO().setUserId(record.getId()));
         }
 
         try {

@@ -49,4 +49,15 @@ public class GlobalExceptionHandler {
         return new ResultBean().fail(serviceException.getMessage());
     }
 
+
+    /**
+     * 拦截ServiceException后返回ResultBean
+     * @param e ServiceException异常
+     * @return ResultBean
+     */
+    @ExceptionHandler(value = Exception.class)
+    public ResultBean responseException(Exception e) {
+        return new ResultBean().fail(e.getMessage());
+    }
+
 }

@@ -32,14 +32,14 @@ public class CustomerBlackDOController {
 	 }
 	 /**
 	     * 删除
-	     * @param id
+	     * @param map
 	     * @return
 	     * @throws Exception
 	     */
-	  @RequestMapping(value = "/black/{id}", method = RequestMethod.DELETE)
-	    public ResultBean delete(@RequestBody @PathVariable Long id) throws Exception {
-		  customerBlackDOService.deleteByPrimaryKey(id);
-	        return new ResultBean().success();
+	  @RequestMapping(value = "/black/delete", method = RequestMethod.DELETE)
+	    public ResultBean delete(@RequestParam Map<String,String> map) throws Exception {
+		  customerBlackDOService.delete(map);
+		  return new ResultBean().success();
 	    }
 	  /**
 	     * 修改

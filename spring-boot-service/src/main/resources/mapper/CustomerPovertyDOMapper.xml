@@ -56,29 +56,22 @@
   </select>
     <select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
      select * from CUSTOMER_POVERTY where 1=1 
-       <if test="idNumber != null">
-     and   ID_NUMBER  like '%'||#{idNumber}||'%'
-      </if>
-      <if test="idNumber == null">
-     and org_code  like #{orgCode}||'%'
-      </if>
-       <if test="someOrgCode != null">
-     and  org_code  = #{someOrgCode}
-      </if>
-      
-      <if test="idNumber != null">
-     and   ID_NUMBER  like '%'||#{idNumber}||'%'
-      </if>
-       <if test="customerName != null">
-     and   CUSTOMER_NAME  like '%'||#{customerName}||'%'
-      </if>
-    
-      order by created_at desc
+     <if test="idNumber != null">
+        and UPPER(ID_NUMBER) = #{idNumber}
+     </if>
+     <if test="customerName != null">
+        and CUSTOMER_NAME  like '%'||#{customerName}||'%'
+     </if>
+     order by CREATED_AT desc
   </select>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from CUSTOMER_POVERTY
     where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByIdNumber" parameterType="java.lang.String">
+    delete from CUSTOMER_POVERTY
+    where UPPER(ID_NUMBER) = #{idNumber}
   </delete>
   <insert id="insert" parameterType="com.example.service.poverty.CustomerPovertyDO">
     insert into CUSTOMER_POVERTY (ID, CUSTOMER_ID, CUSTOMER_NAME , 

@@ -55,8 +55,8 @@
     <result column="REGISTER_PERSON" jdbcType="VARCHAR" property="registerPerson" />
     <result column="LAST_MODIFY_PERSON" jdbcType="VARCHAR" property="lastModifyPerson" />
     <result column="STATUS" jdbcType="VARCHAR" property="status" />
-      <result column="INTERVIEW_ID" jdbcType="BIGINT" property="interviewId" />
-      <result column="AMOUNT" jdbcType="VARCHAR" property="amount" />
+    <result column="INTERVIEW_ID" jdbcType="BIGINT" property="interviewId" />
+    <result column="AMOUNT" jdbcType="DECIMAL" property="amount" />
     <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
     <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
     <!--新增字段-->
@@ -66,24 +66,249 @@
     <result column="AGE" jdbcType="INTEGER" property="age" />
     <result column="OUT_ENSURE_AMOUNT" jdbcType="DECIMAL" property="outEnsureAmount" />
 
-      <!--关联使用-->
-      <result column="GRID_NAME" jdbcType="VARCHAR" property="gridName" />
+    <!--关联使用-->
+    <result column="GRID_NAME" jdbcType="VARCHAR" property="gridName" />
+    <result column="cal_type" jdbcType="INTEGER" property="calType" />
 
   </resultMap>
 
+  <!--获取ODS是否开启-->
+  <select id="getODSIsYes" resultType="String">
+      select accessable from task_status
+    </select>
 
-    <!--获取客户的同时显示标签-->
-    <resultMap id="customerTagResultMap" type="com.example.service.customer.CustomerDO" extends="BaseResultMap">
-        <collection property="tags" column="id_number"   ofType="com.example.service.customer.CustomerTagRelationDO" select="listByIdNumber" >
-        </collection>
-    </resultMap>
+  <!--获取客户的同时显示标签-->
+  <resultMap id="customerTagResultMap" type="com.example.service.customer.CustomerDO" extends="BaseResultMap">
+    <collection property="tags" column="id_number"   ofType="com.example.service.customer.CustomerTagRelationDO" select="listByIdNumber" >
+    </collection>
+  </resultMap>
 
-    <resultMap id="customerTagRelationResultMap" type="com.example.service.customer.CustomerTagRelationDO">
-        <id column="ID" jdbcType="BIGINT" property="id" />
-        <result column="TAG_ID" jdbcType="BIGINT" property="tagId" />
-        <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
-        <result column="tag_name" jdbcType="VARCHAR" property="tagName" />
-    </resultMap>
+  <!--获取客户的同时显示调查信息-->
+  <resultMap id="customerSurveyResultMap" type="com.example.service.customer.CustomerDO" extends="BaseResultMap">
+    <collection property="surveyDOList" column="household_id"   ofType="com.example.service.survey" select="listSurveyByHouseholdId" >
+    </collection>
+  </resultMap>
+
+  <resultMap id="customerTagRelationResultMap" type="com.example.service.customer.CustomerTagRelationDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="TAG_ID" jdbcType="BIGINT" property="tagId" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="tag_name" jdbcType="VARCHAR" property="tagName" />
+  </resultMap>
+
+  <resultMap id="surveyResultMap" type="com.example.service.survey.SurveyDO">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="ID_NUMBER" jdbcType="VARCHAR" property="idNumber" />
+    <result column="HOUSEHOLD_ID" jdbcType="VARCHAR" property="householdId" />
+    <result column="IS_FAMILIAR" jdbcType="VARCHAR" property="isFamiliar" />
+    <result column="NEGATIVE_REASON" jdbcType="VARCHAR" property="negativeReason" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="OUT_WORK" jdbcType="VARCHAR" property="outWork" />
+    <result column="HOUSE_VALUE" jdbcType="VARCHAR" property="houseValue" />
+    <result column="CAR_VALUE" jdbcType="VARCHAR" property="carValue" />
+    <result column="MAIN_BUSINESS" jdbcType="VARCHAR" property="mainBusiness" />
+    <result column="SCALE" jdbcType="VARCHAR" property="scale" />
+    <result column="INCOME" jdbcType="VARCHAR" property="income" />
+    <result column="PAYOUT" jdbcType="VARCHAR" property="payout" />
+    <result column="CREDIT_AMOUNT" jdbcType="VARCHAR" property="creditAmount" />
+    <result column="BORROWER" jdbcType="VARCHAR" property="borrower" />
+    <result column="SURVEY_TYPE" jdbcType="VARCHAR" property="surveyType" />
+    <result column="SENATOR" jdbcType="VARCHAR" property="senator" />
+    <result column="IS_VALID" jdbcType="VARCHAR" property="isValid" />
+    <result column="DATE" jdbcType="VARCHAR" property="date" />
+    <result column="CREATED_AT" jdbcType="BIGINT" property="createdAt" />
+    <result column="UPDATED_AT" jdbcType="BIGINT" property="updatedAt" />
+  </resultMap>
+
+
+  <!--待评议客户查询，无标签客户，查询方式：网格、与户主关系、有效调查次数（全部/0/1/2）、姓名或身份证-->
+  <select id="listNoTagCustomersByGridCodeAndRelationshipAndValidTimeAndNameAndIdNumber" parameterType="com.example.service.customer.CustomerDO" resultMap="BaseResultMap">
+    select customera.*, grid.grid_name
+    from USER_CUSTOMER customera
+    left join grid_info grid on grid.grid_code = customera.grid_code
+    where not exists (
+    select distinct HOUSEHOLD_ID from USER_CUSTOMER customerb
+    where exists (
+    select ID_NUMBER from DB_CUSTOMER_TAG_RELATION where customerb.ID_NUMBER = DB_CUSTOMER_TAG_RELATION.ID_NUMBER
+    )
+    and customera.HOUSEHOLD_ID = customerb.HOUSEHOLD_ID
+    )
+    <if test="validTime != null and validTime != 3 and validTime != 4">
+      and customera.VALID_TIME = #{validTime}
+    </if>
+    <if test="validTime != null and validTime == 3">
+      and <![CDATA[ customera.VALID_TIME < 3 ]]>
+    </if>
+    <if test="validTime != null and validTime == 4">
+      and <![CDATA[ customera.VALID_TIME >= 3 ]]>
+    </if>
+    <if test="gridCode != null">
+      and customera.grid_code = #{gridCode}
+    </if>
+    <if test="relationship != null">
+      and customera.relationship = #{relationship}
+    </if>
+    <if test="name != null">
+      and customera.name like '%'||#{name}||'%'
+    </if>
+    <if test="idNumber != null">
+      and customera.ID_NUMBER = #{idNumber}
+    </if>
+    <if test="isConcluded != null">
+      and customera.is_concluded = #{isConcluded}
+    </if>
+    <if test="isBorrower != null">
+      and customera.is_borrower = #{isBorrower}
+    </if>
+    <if test="roleId == 1">
+      and grid.user_id = #{userId}
+    </if>
+    <if test="roleId != 1">
+      and grid.org_code IN
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    order by customera.HOUSEHOLD_ID
+  </select>
+
+  <!--不可评议客户，有标签客户（除白名单），查询方式：网格、与户主关系、有效调查次数（全部/0/1/2）、姓名或身份证-->
+  <select id="listHaveTagCustomersByGridCodeAndRelationshipAndTagIdAndNameAndIdNumber" parameterType="com.example.service.customer.CustomerDO" resultMap="customerTagResultMap">
+    select distinct customer.ID_NUMBER, customer.*, grid.grid_name
+    from USER_CUSTOMER customer
+    left join grid_info grid on grid.grid_code = customer.grid_code
+    where exists (
+      select distinct HOUSEHOLD_ID from USER_CUSTOMER uc where exists (
+        select ID_NUMBER from DB_CUSTOMER_TAG_RELATION
+        where uc.ID_NUMBER = DB_CUSTOMER_TAG_RELATION.ID_NUMBER
+        <if test="tagId == null">
+          and TAG_ID in (1, 2, 3, 4, 6)
+        </if>
+        <if test="tagId != null and tagId != 2">
+          and TAG_ID = #{tagId}
+        </if>
+        <if test="tagId != null and tagId == 2">
+          and TAG_ID in (2, 6)
+        </if>
+      ) and customer.HOUSEHOLD_ID = uc.HOUSEHOLD_ID
+    )
+    <if test="gridCode != null">
+      and customer.grid_code = #{gridCode}
+    </if>
+    <if test="relationship != null">
+      and customer.relationship = #{relationship}
+    </if>
+    <if test="name != null">
+      and customer.name like '%'||#{name}||'%'
+    </if>
+    <if test="idNumber != null">
+      and customer.ID_NUMBER = #{idNumber}
+    </if>
+    <if test="roleId == 1">
+      and grid.user_id = #{userId}
+    </if>
+    <if test="roleId != 1">
+      and grid.org_code IN
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    order by customer.HOUSEHOLD_ID
+  </select>
+
+  <!--已评议客户查询，包含白名单，查询方式：网格、与户主关系、有效调查次数（全部/>3）、姓名或身份证-->
+  <select id="listYetReviewCustomersByGridCodeAndRelationshipAndValidTimeAndNameAndIdNumber" parameterType="com.example.service.customer.CustomerDO" resultMap="BaseResultMap">
+    select customera.*, grid.grid_name, grid.cal_type
+    from USER_CUSTOMER customera
+    left join grid_info grid on grid.grid_code = customera.grid_code
+    where not exists (
+    select distinct HOUSEHOLD_ID from USER_CUSTOMER customerb
+    where exists (
+    select ID_NUMBER from DB_CUSTOMER_TAG_RELATION ctr where customerb.ID_NUMBER = ctr.ID_NUMBER and ctr.tag_id != 5
+    )
+    and customera.HOUSEHOLD_ID = customerb.HOUSEHOLD_ID
+    )
+
+    <if test="validTime != null and validTime == 4">
+      and <![CDATA[ customera.VALID_TIME >= 3 ]]>
+    </if>
+    <if test="gridCode != null">
+      and customera.grid_code = #{gridCode}
+    </if>
+    <if test="relationship != null">
+      and customera.relationship = #{relationship}
+    </if>
+    <if test="name != null">
+      and customera.name like '%'||#{name}||'%'
+    </if>
+    <if test="idNumber != null">
+      and customera.ID_NUMBER = #{idNumber}
+    </if>
+    <if test="isConcluded != null">
+      and customera.is_concluded = #{isConcluded}
+    </if>
+    <if test="isBorrower != null">
+      and customera.is_borrower = #{isBorrower}
+    </if>
+    <if test="roleId == 1">
+      and grid.user_id = #{userId}
+    </if>
+    <if test="roleId != 1">
+      and grid.org_code IN
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+
+    order by customera.HOUSEHOLD_ID
+  </select>
+
+
+  <!--判断网格中下结论的个数-->
+  <select id="countIsConcluded" parameterType="java.lang.String" resultType="Integer">
+    select count(*)
+    from USER_CUSTOMER customer
+    where customer.IS_CONCLUDED = '是' and customer.GRID_CODE = #{gridCode}
+  </select>
+
+  <!--面签通过后打印调查表中是否有存款-->
+  <select id="countFamilyInDeposit" parameterType="java.lang.String" resultType="Integer">
+    select count(*)
+    from ODS_CUSTOMER_DEPOSIT deposit
+    left join USER_CUSTOMER customer on deposit.ID_NUMBER = customer.ID_NUMBER
+    where customer.HOUSEHOLD_ID = #{householdId}
+  </select>
+
+  <!--评议客户-户主导出，包含白名单，查询方式：网格、与户主关系、有效调查次数（全部）-->
+  <select id="listSurveyCustomersByGridCodeAndRelationshipAndUserId" parameterType="com.example.service.customer.CustomerDO" resultMap="customerSurveyResultMap">
+    select customera.*, grid.grid_name, grid.cal_type
+    from USER_CUSTOMER customera
+    left join grid_info grid on grid.grid_code = customera.grid_code
+    where not exists (
+    select distinct HOUSEHOLD_ID from USER_CUSTOMER customerb
+    where exists (
+    select ID_NUMBER from DB_CUSTOMER_TAG_RELATION ctr where customerb.ID_NUMBER = ctr.ID_NUMBER and ctr.tag_id != 5
+    )
+    and customera.HOUSEHOLD_ID = customerb.HOUSEHOLD_ID
+    )
+
+    and customera.relationship = '户主'
+
+    <if test="gridCode != null">
+      and customera.grid_code = #{gridCode}
+    </if>
+    <if test="roleId == 1">
+      and grid.user_id = #{userId}
+    </if>
+  </select>
+
+  <!--根据户号获取数据-->
+  <select id="listSurveyByHouseholdId" parameterType="com.example.service.survey.SurveyDO" resultMap="surveyResultMap">
+    select *
+    from USER_SURVEY
+    where household_id = #{householdId}
+  </select>
 
 
   <!--通过姓名和户号获取身份证号-->
@@ -93,6 +318,12 @@
     where name = #{name} and household_id = #{householdId}
   </select>
 
+  <select id="getHouseholdIdByIdNumber" parameterType="java.lang.String" resultType="String">
+    select household_id
+    from USER_CUSTOMER
+    where id_number = #{idNumber}
+  </select>
+
   <select id="getByPrimaryKey" parameterType="java.lang.Long" resultMap="customerTagResultMap">
     select customer.*, grid.grid_name
     from USER_CUSTOMER customer
@@ -100,19 +331,25 @@
     where customer.ID = #{id}
   </select>
 
+  <select id="listByHouseholdId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select customer.*
+    from USER_CUSTOMER customer
+    where customer.household_id = #{householdId}
+  </select>
+
 
   <!--通过身份证查询家庭成员所有的身份证号-->
   <select id="getAllFamilyIdNumbersByIdNumbers" parameterType="java.util.Map" resultType="java.lang.String">
-   select ID_NUMBER from  USER_CUSTOMER where HOUSEHOLD_ID in
-   ( select HOUSEHOLD_ID  from  USER_CUSTOMER  where ID_NUMBER in 
-  
-      <foreach collection="idNumberList" index="index" item="item" open="(" separator="," close=")">
-              #{item}
-           </foreach>
-       )
+    select ID_NUMBER from  USER_CUSTOMER where HOUSEHOLD_ID in
+    ( select HOUSEHOLD_ID  from  USER_CUSTOMER  where ID_NUMBER in
+
+    <foreach collection="idNumberList" index="index" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    )
   </select>
 
-    <!--通过身份证查询，唯一性判定-->
+  <!--通过身份证查询，唯一性判定-->
   <select id="getByIdNumber" parameterType="java.lang.String" resultMap="customerTagResultMap">
     select customer.*, grid.grid_name
     from USER_CUSTOMER customer
@@ -120,10 +357,10 @@
     where customer.id_number = #{idNumber}
   </select>
   <select id="getByIdNumbers" parameterType="java.util.Map"  resultMap="BaseResultMap">
-  select * from USER_CUSTOMER where ID_NUMBER in   <foreach item="item" index="index" collection="idNumberList" 
-                         open="(" separator="," close=")">
-                        #{item}
-                </foreach>
+    select * from USER_CUSTOMER where ID_NUMBER in   <foreach item="item" index="index" collection="idNumberList"
+                                                              open="(" separator="," close=")">
+    #{item}
+  </foreach>
   </select>
 
   <select id="listByHouseholdIdAndGridCode" parameterType="com.example.service.customer.CustomerDO" resultMap="BaseResultMap">
@@ -131,20 +368,21 @@
     from USER_CUSTOMER customer
     where 1=1
     <if test="householdId != null and householdId != ''">
-       and customer.household_id = #{householdId}
+      and customer.household_id = #{householdId}
     </if>
     <if test="gridCode != null">
-       and customer.grid_code = #{gridCode}
+      and customer.grid_code = #{gridCode}
     </if>
     <if test="validTime != null and validTime != 3">
-       and customer.valid_time = #{validTime}
+      and customer.valid_time = #{validTime}
     </if>
     <if test="validTime != null and validTime == 3">
-       and <![CDATA[ customer.valid_time < 0 ]]>
+      and <![CDATA[ customer.valid_time < 0 ]]>
     </if>
+    order by customer.native_address
   </select>
 
-    <!--分页列表-登录用户和机构查询客户信息-->
+  <!--分页列表-登录用户和机构查询客户信息-->
   <select id="listCustomers" parameterType="com.example.service.customer.CustomerDO" resultMap="customerTagResultMap">
     select DISTINCT customer.ID, customer.*, grid.grid_name
     from USER_CUSTOMER customer
@@ -152,54 +390,54 @@
     left join grid_info grid on grid.grid_code = customer.grid_code
     where 1=1
     <if test="name != null">
-        and customer.name like '%'||#{name}||'%'
+      and customer.name like '%'||#{name}||'%'
     </if>
-      <if test="idNumber != null and idNumber != ''">
-          and customer.id_number = #{idNumber}
-      </if>
-      <if test="householdId != null and householdId != ''">
-          and customer.household_id = #{householdId}
-      </if>
+    <if test="idNumber != null and idNumber != ''">
+      and customer.id_number = #{idNumber}
+    </if>
+    <if test="householdId != null and householdId != ''">
+      and customer.household_id = #{householdId}
+    </if>
 
-      <if test="tagId != null">
-          and ctr.tag_id = #{tagId}
-      </if>
-      <if test="isConcluded != null">
-          and customer.is_concluded = #{isConcluded}
-      </if>
-      <if test="isBorrower != null">
-          and customer.is_borrower = #{isBorrower}
-      </if>
-      <if test="validTime != null and validTime != 3">
-          and customer.valid_time = #{validTime}
-      </if>
-      <if test="validTime != null and validTime == 3">
-          and <![CDATA[ customer.valid_time >= #{validTime}]]>
-      </if>
-      <if test="status != null">
-          and customer.status = #{status}
-      </if>
-      <if test="relationship != null">
-          and customer.relationship = #{relationship}
-      </if>
-      <if test="gridCode != null">
-          and grid.grid_code = #{gridCode}
-      </if>
---       客户经理只能查看自己网格下的客户
-      <if test="roleId == 1">
-          and grid.user_id = #{userId}
-      </if>
---       非客户经理可以查看本机构及子机构下的所有客户
-      <if test="roleId != 1">
-          and grid.org_code IN
-          <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
-              #{item}
-          </foreach>
-      </if>
-      ORDER BY customer.household_id
+    <if test="tagId != null">
+      and ctr.tag_id = #{tagId}
+    </if>
+    <if test="isConcluded != null">
+      and customer.is_concluded = #{isConcluded}
+    </if>
+    <if test="isBorrower != null">
+      and customer.is_borrower = #{isBorrower}
+    </if>
+    <if test="validTime != null and validTime != 3">
+      and customer.valid_time = #{validTime}
+    </if>
+    <if test="validTime != null and validTime == 3">
+      and <![CDATA[ customer.valid_time >= #{validTime}]]>
+    </if>
+    <if test="status != null">
+      and customer.status = #{status}
+    </if>
+    <if test="relationship != null">
+      and customer.relationship = #{relationship}
+    </if>
+    <if test="gridCode != null">
+      and grid.grid_code = #{gridCode}
+    </if>
+    --       客户经理只能查看自己网格下的客户
+    <if test="roleId == 1">
+      and grid.user_id = #{userId}
+    </if>
+    --       非客户经理可以查看本机构及子机构下的所有客户
+    <if test="roleId != 1">
+      and grid.org_code IN
+      <foreach collection="orgCodeList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    ORDER BY customer.household_id
   </select>
 
-    <!--客户标签关联-->
+  <!--客户标签关联-->
   <select id="listByIdNumber" parameterType="java.lang.String" resultMap="customerTagRelationResultMap">
     select ctr.*, tag.name tag_name
     from DB_CUSTOMER_TAG_RELATION ctr
@@ -386,12 +624,12 @@
       <if test="age != null">
         AGE,
       </if>
-        <if test="interviewId != null">
-            INTERVIEW_ID,
-        </if>
-        <if test="amount != null">
-            AMOUNT,
-        </if>
+      <if test="interviewId != null">
+        INTERVIEW_ID,
+      </if>
+      <if test="amount != null">
+        AMOUNT,
+      </if>
       <if test="createdAt != null">
         CREATED_AT,
       </if>
@@ -571,12 +809,12 @@
       <if test="age != null">
         #{age},
       </if>
-        <if test="interviewId != null">
-            #{interviewId,jdbcType=BIGINT},
-        </if>
-        <if test="amount != null">
-            #{amount,jdbcType=VARCHAR},
-        </if>
+      <if test="interviewId != null">
+        #{interviewId,jdbcType=BIGINT},
+      </if>
+      <if test="amount != null">
+        #{amount},
+      </if>
       <if test="createdAt != null">
         #{createdAt,jdbcType=BIGINT},
       </if>
@@ -585,33 +823,33 @@
       </if>
     </trim>
   </insert>
-<insert id="batchSave" parameterType="java.util.List">
-  insert into USER_CUSTOMER(
-  CREDIT_ID,NAME,
-TYPE,ID_TYPE,ID_NUMBER,SIGN_ORG,IS_LONG_TERM,SIGN_DATE,DUE_DATE,DISTRICT_ADDRESS,BIRTHDAY,GENDER,DETAIL_ADDRESS,POSTCODE,NATIVE_ADDRESS,PHONE_NUMBER,NATIONALITY,
-NATION,POLITICS_STATUS,EDUCATION_BACKGROUND,PHYSICAL_CONDITION,MARITAL_STATUS,SPOUSE_NAME,SPOUSE_ID_NUMBER,SPOUSE_PHONE_NUMBER,SPOUSE_COMPANY_NAME,
-CAREER_TYPE,TAX_TYPE,MAIN_BUSINESS,INDUSTRY_TYPE,IS_STAFF,IS_STOCKHOLDER,IS_CIVIL_SERVANT,IS_HOUSE_OWNER,HOUSEHOLD_ID,COMPANY_NAME,WORK_YEAR,COMPANY_ADDRESS,
-IS_FARMER,IS_BUY_HOME,CELL_NAME,CELL_ADDRESS,LIVING_CONDITION,IS_BUSINESS_OWNER,IS_BORROWER,GRID_CODE,CUSTOMER_MANAGER,SUPPORT_MANAGER,MAIN_ORG_NAME,
-REGISTER_PERSON,LAST_MODIFY_PERSON,STATUS,RELATIONSHIP,IS_CONCLUDED,VALID_TIME,AGE,INTERVIEW_ID,AMOUNT,CREATED_AT,UPDATED_AT
-  
-  )
-  VALUES
-  <foreach  collection="list" item="item" separator=",">
-        (
-        
- #{item.creditId}, #{item.name}, #{item.type},#{item.idType}, #{item.idNumber}, #{item.signOrg}, #{item.isLongTerm}, 
- #{item.signDate}, #{item.dueDate}, #{item.districtAddress},#{item.birthday}, #{item.gender}, #{item.detailAddress}, #{item.postcode}, 
- #{item.nativeAddress}, #{item.phoneNumber}, #{item.nationality},#{item.nation}, #{item.politicsStatus}, #{item.educationBackground}, #{item.physicalCondition}, 
- #{item.maritalStatus}, #{item.spouseName}, #{item.spouseIdNumber},#{item.spousePhoneNumber}, #{item.spouseCompanyName}, #{item.careerType}, #{item.taxType}, 
- #{item.mainBusiness}, #{item.industryType}, #{item.isStaff},#{item.isStockholder}, #{item.isCivilServant}, #{item.isHouseOwner}, #{item.householdId}, 
- #{item.companyName}, #{item.workYear}, #{item.companyAddress},#{item.isFarmer}, #{item.isBuyHome}, #{item.cellName}, #{item.cellAddress}, 
- #{item.livingCondition}, #{item.isBusinessOwner}, #{item.isBorrower},#{item.gridCode}, #{item.customerManager}, #{item.supportManager}, #{item.mainOrgName}, 
- #{item.registerPerson}, #{item.lastModifyPerson}, #{item.status},#{item.relationship}, #{item.isConcluded}, #{item.validTime}, #{item.age}, 
- #{item.interviewId}, #{item.amount}, #{item.createdAt},#{item.updatedAt}
- 
-   )
+  <insert id="batchSave" parameterType="java.util.List">
+    insert into USER_CUSTOMER(
+    CREDIT_ID,NAME,
+    TYPE,ID_TYPE,ID_NUMBER,SIGN_ORG,IS_LONG_TERM,SIGN_DATE,DUE_DATE,DISTRICT_ADDRESS,BIRTHDAY,GENDER,DETAIL_ADDRESS,POSTCODE,NATIVE_ADDRESS,PHONE_NUMBER,NATIONALITY,
+    NATION,POLITICS_STATUS,EDUCATION_BACKGROUND,PHYSICAL_CONDITION,MARITAL_STATUS,SPOUSE_NAME,SPOUSE_ID_NUMBER,SPOUSE_PHONE_NUMBER,SPOUSE_COMPANY_NAME,
+    CAREER_TYPE,TAX_TYPE,MAIN_BUSINESS,INDUSTRY_TYPE,IS_STAFF,IS_STOCKHOLDER,IS_CIVIL_SERVANT,IS_HOUSE_OWNER,HOUSEHOLD_ID,COMPANY_NAME,WORK_YEAR,COMPANY_ADDRESS,
+    IS_FARMER,IS_BUY_HOME,CELL_NAME,CELL_ADDRESS,LIVING_CONDITION,IS_BUSINESS_OWNER,IS_BORROWER,GRID_CODE,CUSTOMER_MANAGER,SUPPORT_MANAGER,MAIN_ORG_NAME,
+    REGISTER_PERSON,LAST_MODIFY_PERSON,STATUS,RELATIONSHIP,IS_CONCLUDED,VALID_TIME,AGE,INTERVIEW_ID,AMOUNT,CREATED_AT,UPDATED_AT
+
+    )
+    VALUES
+    <foreach  collection="list" item="item" separator=",">
+      (
+
+      #{item.creditId}, #{item.name}, #{item.type},#{item.idType}, #{item.idNumber}, #{item.signOrg}, #{item.isLongTerm},
+      #{item.signDate}, #{item.dueDate}, #{item.districtAddress},#{item.birthday}, #{item.gender}, #{item.detailAddress}, #{item.postcode},
+      #{item.nativeAddress}, #{item.phoneNumber}, #{item.nationality},#{item.nation}, #{item.politicsStatus}, #{item.educationBackground}, #{item.physicalCondition},
+      #{item.maritalStatus}, #{item.spouseName}, #{item.spouseIdNumber},#{item.spousePhoneNumber}, #{item.spouseCompanyName}, #{item.careerType}, #{item.taxType},
+      #{item.mainBusiness}, #{item.industryType}, #{item.isStaff},#{item.isStockholder}, #{item.isCivilServant}, #{item.isHouseOwner}, #{item.householdId},
+      #{item.companyName}, #{item.workYear}, #{item.companyAddress},#{item.isFarmer}, #{item.isBuyHome}, #{item.cellName}, #{item.cellAddress},
+      #{item.livingCondition}, #{item.isBusinessOwner}, #{item.isBorrower},#{item.gridCode}, #{item.customerManager}, #{item.supportManager}, #{item.mainOrgName},
+      #{item.registerPerson}, #{item.lastModifyPerson}, #{item.status},#{item.relationship}, #{item.isConcluded}, #{item.validTime}, #{item.age},
+      #{item.interviewId}, #{item.amount}, #{item.createdAt},#{item.updatedAt}
+
+      )
     </foreach>
-</insert>
+  </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.example.service.customer.CustomerDO">
     update USER_CUSTOMER
     <set>
@@ -783,12 +1021,12 @@ REGISTER_PERSON,LAST_MODIFY_PERSON,STATUS,RELATIONSHIP,IS_CONCLUDED,VALID_TIME,A
       <if test="age != null">
         AGE = #{age},
       </if>
-        <if test="interviewId != null">
-            INTERVIEW_ID = #{interviewId,jdbcType=BIGINT},
-        </if>
-        <if test="amount != null">
-            AMOUNT = #{amount,jdbcType=VARCHAR},
-        </if>
+      <if test="interviewId != null">
+        INTERVIEW_ID = #{interviewId,jdbcType=BIGINT},
+      </if>
+      <if test="amount != null">
+        AMOUNT = #{amount},
+      </if>
       <if test="createdAt != null">
         CREATED_AT = #{createdAt,jdbcType=BIGINT},
       </if>
@@ -797,6 +1035,214 @@ REGISTER_PERSON,LAST_MODIFY_PERSON,STATUS,RELATIONSHIP,IS_CONCLUDED,VALID_TIME,A
       </if>
     </set>
     where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--根据户号进行更新-->
+  <update id="updateByHouseholdIdSelective" parameterType="com.example.service.customer.CustomerDO">
+    update USER_CUSTOMER
+    <set>
+      <if test="creditId != null">
+        CREDIT_ID = #{creditId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="idType != null">
+        ID_TYPE = #{idType,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="signOrg != null">
+        SIGN_ORG = #{signOrg,jdbcType=VARCHAR},
+      </if>
+      <if test="isLongTerm != null">
+        IS_LONG_TERM = #{isLongTerm,jdbcType=VARCHAR},
+      </if>
+      <if test="signDate != null">
+        SIGN_DATE = #{signDate,jdbcType=VARCHAR},
+      </if>
+      <if test="dueDate != null">
+        DUE_DATE = #{dueDate,jdbcType=VARCHAR},
+      </if>
+      <if test="districtAddress != null">
+        DISTRICT_ADDRESS = #{districtAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        BIRTHDAY = #{birthday,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        GENDER = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="detailAddress != null">
+        DETAIL_ADDRESS = #{detailAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="postcode != null">
+        POSTCODE = #{postcode,jdbcType=VARCHAR},
+      </if>
+      <if test="nativeAddress != null">
+        NATIVE_ADDRESS = #{nativeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNumber != null">
+        PHONE_NUMBER = #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="nationality != null">
+        NATIONALITY = #{nationality,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null">
+        NATION = #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="politicsStatus != null">
+        POLITICS_STATUS = #{politicsStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="educationBackground != null">
+        EDUCATION_BACKGROUND = #{educationBackground,jdbcType=VARCHAR},
+      </if>
+      <if test="physicalCondition != null">
+        PHYSICAL_CONDITION = #{physicalCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="maritalStatus != null">
+        MARITAL_STATUS = #{maritalStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseName != null">
+        SPOUSE_NAME = #{spouseName,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseIdNumber != null">
+        SPOUSE_ID_NUMBER = #{spouseIdNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="spousePhoneNumber != null">
+        SPOUSE_PHONE_NUMBER = #{spousePhoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="spouseCompanyName != null">
+        SPOUSE_COMPANY_NAME = #{spouseCompanyName,jdbcType=VARCHAR},
+      </if>
+      <if test="careerType != null">
+        CAREER_TYPE = #{careerType,jdbcType=VARCHAR},
+      </if>
+      <if test="taxType != null">
+        TAX_TYPE = #{taxType,jdbcType=VARCHAR},
+      </if>
+      <if test="mainBusiness != null">
+        MAIN_BUSINESS = #{mainBusiness,jdbcType=VARCHAR},
+      </if>
+      <if test="industryType != null">
+        INDUSTRY_TYPE = #{industryType,jdbcType=VARCHAR},
+      </if>
+      <if test="isStaff != null">
+        IS_STAFF = #{isStaff,jdbcType=VARCHAR},
+      </if>
+      <if test="isStockholder != null">
+        IS_STOCKHOLDER = #{isStockholder,jdbcType=VARCHAR},
+      </if>
+      <if test="isCivilServant != null">
+        IS_CIVIL_SERVANT = #{isCivilServant,jdbcType=VARCHAR},
+      </if>
+      <if test="isHouseOwner != null">
+        IS_HOUSE_OWNER = #{isHouseOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="workYear != null">
+        WORK_YEAR = #{workYear,jdbcType=VARCHAR},
+      </if>
+      <if test="companyAddress != null">
+        COMPANY_ADDRESS = #{companyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="isFarmer != null">
+        IS_FARMER = #{isFarmer,jdbcType=VARCHAR},
+      </if>
+      <if test="isBuyHome != null">
+        IS_BUY_HOME = #{isBuyHome,jdbcType=VARCHAR},
+      </if>
+      <if test="cellName != null">
+        CELL_NAME = #{cellName,jdbcType=VARCHAR},
+      </if>
+      <if test="cellAddress != null">
+        CELL_ADDRESS = #{cellAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="livingCondition != null">
+        LIVING_CONDITION = #{livingCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="isBusinessOwner != null">
+        IS_BUSINESS_OWNER = #{isBusinessOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="isBorrower != null">
+        IS_BORROWER = #{isBorrower,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManager != null">
+        CUSTOMER_MANAGER = #{customerManager,jdbcType=VARCHAR},
+      </if>
+      <if test="supportManager != null">
+        SUPPORT_MANAGER = #{supportManager,jdbcType=VARCHAR},
+      </if>
+      <if test="mainOrgName != null">
+        MAIN_ORG_NAME = #{mainOrgName,jdbcType=VARCHAR},
+      </if>
+      <if test="registerPerson != null">
+        REGISTER_PERSON = #{registerPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyPerson != null">
+        LAST_MODIFY_PERSON = #{lastModifyPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="relationship != null">
+        RELATIONSHIP = #{relationship},
+      </if>
+      <if test="isConcluded != null">
+        IS_CONCLUDED = #{isConcluded},
+      </if>
+      <if test="validTime != null">
+        VALID_TIME = #{validTime},
+      </if>
+      <if test="age != null">
+        AGE = #{age},
+      </if>
+      <if test="interviewId != null">
+        INTERVIEW_ID = #{interviewId,jdbcType=BIGINT},
+      </if>
+      <if test="amount != null">
+        AMOUNT = #{amount},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    where HOUSEHOLD_ID = #{householdId}
+  </update>
+
+  <!--根据户号进行更新-减一次有效调查次数-->
+  <update id="minusValidTimeByHouseholdIdAndGridCodeAndSenator" parameterType="com.example.service.customer.CustomerDO">
+    update USER_CUSTOMER
+    set valid_time = valid_time - 1
+    where household_id in (
+      select DISTINCT HOUSEHOLD_ID from USER_SURVEY
+      where  not exists (select USER_CONCLUSION.HOUSEHOLD_ID from USER_CONCLUSION where USER_SURVEY.HOUSEHOLD_ID = USER_CONCLUSION.HOUSEHOLD_ID and USER_CONCLUSION.IS_VALID = '是')
+      and exists(select HOUSEHOLD_ID  from USER_CUSTOMER where USER_SURVEY.HOUSEHOLD_ID = USER_CUSTOMER.HOUSEHOLD_ID and USER_CUSTOMER.GRID_CODE = #{gridCode})
+      and USER_SURVEY.SENATOR = #{senator}
+      and USER_SURVEY.IS_VALID = '是'
+    )
+  </update>
+
+  <!--根据户号进行更新-减一次有效调查次数-->
+  <update id="plusValidTimeByHouseholdId" parameterType="com.example.service.customer.CustomerDO">
+    update USER_CUSTOMER
+    set valid_time = valid_time + 1
+    where household_id = #{householdId}
   </update>
 
   <!--根据身份证进行更新-->
@@ -975,7 +1421,7 @@ REGISTER_PERSON,LAST_MODIFY_PERSON,STATUS,RELATIONSHIP,IS_CONCLUDED,VALID_TIME,A
         INTERVIEW_ID = #{interviewId,jdbcType=BIGINT},
       </if>
       <if test="amount != null">
-        AMOUNT = #{amount,jdbcType=VARCHAR},
+        AMOUNT = #{amount},
       </if>
       <if test="createdAt != null">
         CREATED_AT = #{createdAt,jdbcType=BIGINT},

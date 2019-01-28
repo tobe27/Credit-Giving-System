@@ -75,12 +75,7 @@ public class AsyncTaskCustomerSave {
                      .setLastModifyPerson(record.getUserName())
                      .setCreatedAt(System.currentTimeMillis())
                      .setUpdatedAt(System.currentTimeMillis());
-             // 从ODS获取数据补全信息
-             for(ODSCustomerDO odo:odsCustomerDOList) {
-            	 if(odo.getIdNumber().equals(record.getIdNumber())) {
-            		 customerDO= getCustomerFromODS1(customerDO,odo);
-            	 }
-             }
+
              customerList.add(customerDO);
          }
         customerDOMapper.batchSave(customerList);

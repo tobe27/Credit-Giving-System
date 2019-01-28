@@ -56,6 +56,12 @@ public class CustomerImageDOServiceImpl implements CustomerImageDOService {
 		    if("1.2".equals(record.getType())) {
 		    	fileName=record.getIdNumber()+now+"身份证背面";
 		    }
+			if("1.3".equals(record.getType())) {
+				fileName=record.getIdNumber()+now+"配偶身份证正面";
+			}
+			if("1.4".equals(record.getType())) {
+				fileName=record.getIdNumber()+now+"配偶身份证背面";
+			}
 		    if("2".equals(record.getType())) {
 		    	fileName=record.getIdNumber()+now+"资产信息";
 		    }

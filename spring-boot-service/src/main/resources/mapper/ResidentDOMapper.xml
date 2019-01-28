@@ -25,6 +25,14 @@
     <result column="GRID_NAME" jdbcType="VARCHAR" property="gridName" />
   </resultMap>
 
+  <!--================信息变更，姓名和身份证号==开始======================-->
+  <!--判断新姓名是否存在该户中-->
+  <select id="countInResidentByHouseholdIdAndName" parameterType="com.example.service.resident.ResidentDO" resultType="Integer">
+    select count(*)
+    from user_resident
+    where household_id = #{householdId} and name = #{name}
+  </select>
+
   <!--通过身份证修改户籍表身份证号，户号，网格-->
   <update id="modifyResidentIdNumberAndHouseholdIdAndGridCodeByOldIdNumber" parameterType="com.example.service.resident.ResidentDO">
     update user_resident
@@ -82,13 +90,52 @@
     where id_number = #{oldIdNumber}
   </update>
 
+  <!--通过户号和姓名修改调查表姓名-->
   <update id="modifyNameByNameAndHouseholdId" parameterType="com.example.service.resident.ResidentDO">
     update user_survey
     set
     <if test="name != null" >
-      borrower = #{name}
+      borrower = #{name},
+      name = #{name}
     </if>
     where borrower = #{oldName} and household_id = #{householdId}
+  </update>
+
+  <!--通过身份证号修改结论姓名、身份证-->
+  <update id="modifyConclusionNameAndIdNumberByOldIdNumber" parameterType="com.example.service.resident.ResidentDO">
+    update user_conclusion
+    set
+    <if test="name != null" >
+      borrower = #{name},
+      name = #{name}
+    </if>
+    where id_number = #{oldIdNumber}
+  </update>
+
+  <!--通过身份证号修改面签姓名、身份证-->
+  <update id="modifyInterviewNameAndIdNumberByOldIdNumber" parameterType="com.example.service.resident.ResidentDO">
+    update customer_interview
+    set
+    <if test="name != null" >
+      CUSTOMER_NAME = #{name},
+    </if>
+    <if test="idNumber != null" >
+      id_number = #{idNumber}
+    </if>
+    where id_number = #{oldIdNumber}
+  </update>
+
+  <!--通过身份证号修改面签作废姓名、身份证-->
+  <update id="modifyInterviewBanNameAndIdNumberByOldIdNumber" parameterType="com.example.service.resident.ResidentDO">
+    update customer_interview_ban
+    set
+    <if test="name != null" >
+      CUSTOMER_NAME = #{name},
+    </if>
+    <if test="idNumber != null" >
+      id_number = #{idNumber}
+    </if>
+    where id_number = #{oldIdNumber}
   </update>
 
   <!--通过身份证修改标签关联表身份证号-->
@@ -100,6 +147,39 @@
     </if>
     where id_number = #{oldIdNumber}
   </update>
+
+  <!--通过身份证修改白名单库姓名、身份证号-->
+  <update id="modifyWhiteNameAndIdNumberByOldIdNumber" parameterType="com.example.service.resident.ResidentDO">
+    update customer_white
+    set
+    <if test="name != null" >
+      CUSTOMER_NAME = #{name},
+    </if>
+    <if test="idNumber != null" >
+      ID_NUMBER = #{idNumber}
+    </if>
+    where id_number = #{oldIdNumber}
+  </update>
+
+  <!--通过身份证修改灰名单库姓名、身份证号-->
+  <update id="modifyGreyNameAndIdNumberByOldIdNumber" parameterType="com.example.service.resident.ResidentDO">
+    update customer_grey
+    set
+    <if test="name != null" >
+      CUSTOMER_NAME = #{name},
+    </if>
+    <if test="idNumber != null" >
+      ID_NUMBER = #{idNumber}
+    </if>
+    where id_number = #{oldIdNumber}
+  </update>
+
+  <!--获取新旧身份证号客户是否在1-黑/3-贫/4-蓝-->
+  <select id="countInBlackAndPovertyAndBlueByIdNumberAndOldIdNumber" parameterType="com.example.service.resident.ResidentDO" resultType="Integer">
+    select count(*)
+    from DB_CUSTOMER_TAG_RELATION
+    where TAG_ID in (1,3, 4) and ID_NUMBER in (#{idNumber}, #{oldIdNumber})
+  </select>
 
   <select id="getByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select resident.*, grid.grid_name
@@ -152,7 +232,7 @@
       and resident.household_id = #{householdId}
     </if>
     <if test="gridCode != null">
-      and resident.grid_code = #{gridCode}
+      and grid.grid_code = #{gridCode}
     </if>
     --       客户经理只能查看自己网格下的客户
     <if test="roleId == 1">
@@ -172,6 +252,11 @@
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from USER_RESIDENT
     where ID = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <delete id="deleteByIdNumber" parameterType="java.lang.String">
+    delete from USER_RESIDENT
+    where ID_NUMBER = #{idNumber}
   </delete>
 
   <insert id="insertSelective" parameterType="com.example.service.resident.ResidentDO">
@@ -289,7 +374,8 @@
       </if>
     </trim>
   </insert>
-<insert id="batchSave" parameterType="java.util.List">
+
+  <insert id="batchSave" parameterType="java.util.List">
   insert into USER_RESIDENT(NAME,ID_NUMBER,CONTACT,COUNTY,TOWNSHIP,VILLAGE,
         GROUP,HOUSEHOLD_ID,RELATIONSHIP,IS_IN_LIST,REMARK,USER_ID,USER_NAME, ORG_NAME,GRID_CODE,CREATED_AT,UPDATED_AT)
   VALUES
@@ -298,6 +384,65 @@
         , #{item.isInList}, #{item.remark}, #{item.userId}, #{item.userName}, #{item.orgName}, #{item.gridCode},#{item.createdAt},#{item.updatedAt})
     </foreach>
 </insert>
+
+  <update id="updateByIdNumberSelective" parameterType="com.example.service.resident.ResidentDO">
+    update USER_RESIDENT
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null">
+        CONTACT = #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="county != null">
+        COUNTY = #{county,jdbcType=VARCHAR},
+      </if>
+      <if test="township != null">
+        TOWNSHIP = #{township,jdbcType=VARCHAR},
+      </if>
+      <if test="village != null">
+        VILLAGE = #{village,jdbcType=VARCHAR},
+      </if>
+      <if test="group != null">
+        GROUP = #{group,jdbcType=VARCHAR},
+      </if>
+      <if test="householdId != null">
+        HOUSEHOLD_ID = #{householdId,jdbcType=VARCHAR},
+      </if>
+      <if test="relationship != null">
+        RELATIONSHIP = #{relationship,jdbcType=VARCHAR},
+      </if>
+      <if test="isInList != null">
+        IS_IN_LIST = #{isInList,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        ORG_NAME = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="gridCode != null">
+        GRID_CODE = #{gridCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        CREATED_AT = #{createdAt,jdbcType=BIGINT},
+      </if>
+      <if test="updatedAt != null">
+        UPDATED_AT = #{updatedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID_NUMBER = #{idNumber}
+  </update>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.example.service.resident.ResidentDO">
     update USER_RESIDENT
     <set>

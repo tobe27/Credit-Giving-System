@@ -25,8 +25,16 @@ public interface CustomerTagRelationDOMapper {
     List<CustomerTagRelationDO> listByIdNumber(String idNumber);
 
     Set<Long> listTagIdByHouseholdId(String householdId);
+
     List<CustomerTagRelationDO> listCustomerTagRelationsByHouseholdId(String householdId);
+
+    List<CustomerTagRelationDO> listCustomerTagRelationsByHouseholdIdAndIfNNTagId(CustomerTagRelationDO record);
+
     int  batchSave(@Param("list")List<CustomerTagRelationDO> list);
+
     List<CustomerTagRelationDO> getListByIdNumbers(Map<String,Object> map);
+
     int deleteByIdNumbersAndTagId(Map<String,Object> map);
+
+    int updateByOldIdNumberSelective(CustomerTagRelationDO record);
 }

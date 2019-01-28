@@ -8,7 +8,7 @@
     <result column="ASSURE_TYPE" jdbcType="VARCHAR" property="assureType" />
     <result column="ASSURE_ID" jdbcType="VARCHAR" property="assureId" />
     <result column="CONT_ID" jdbcType="VARCHAR" property="contId" />
-    <result column="SUM_BALANCE" jdbcType="DECIMAL" property="sumBalance" />
+    <result column="LOAN_BALANCE" jdbcType="DECIMAL" property="sumBalance" />
   </resultMap>
 
   <insert id="insertSelective" parameterType="com.example.service.business.ODSAssureDO">
@@ -33,7 +33,7 @@
         CONT_ID,
       </if>
       <if test="sumBalance != null">
-        SUM_BALANCE,
+        LOAN_BALANCE,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">

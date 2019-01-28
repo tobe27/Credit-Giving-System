@@ -36,11 +36,28 @@ public interface GridInfoService {
      */
     boolean updateByPrimaryKeySelective(GridInfoDO record)throws Exception;
     /**
-     * @param record
+     * @param
      * @return
      * @throws Exception
      */
-    List<GridInfoDO> list(Map<String,Object> map)throws Exception;
+    List<GridInfoDO> list(Map<String,Object> map) throws Exception;
+
+    /**
+     * 列出所有评议员姓名
+     * @param gridCode
+     * @return
+     * @throws Exception
+     */
+    List<String> listGridReviewName(String gridCode) throws Exception;
+
+    /**
+     * 计算方式，1-平均，2-最小
+     * @param gridCode
+     * @return
+     * @throws Exception
+     */
+    int getCalTypeByGridCode(String gridCode) throws Exception;
+
     /**查询网格数据
      * @param gridCode
      * @return

@@ -14,7 +14,7 @@ import com.example.service.grey.CustomerGreyDO;
 @Repository
 public interface CustomerPovertyDOMapper {
     int deleteByPrimaryKey(Long id);
-
+    int deleteByIdNumber(String idNumber);
     int insert(CustomerPovertyDO record);
 
     int insertSelective(CustomerPovertyDO record);

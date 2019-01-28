@@ -11,11 +11,11 @@ import com.example.service.grey.CustomerGreyDO;
 public interface CustomerBlackDOService {
 	/**
      * 删除
-     * @param id
+     * @param map
      * @return
      * @throws Exception
     */
-	  boolean deleteByPrimaryKey(Long id)throws Exception;
+	  boolean delete(Map<String,String> map)throws Exception;
 	  /**
 	     * 批量删除
 	     * @param roleId orgCode

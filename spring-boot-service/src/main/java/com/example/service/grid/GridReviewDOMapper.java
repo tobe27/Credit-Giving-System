@@ -14,6 +14,8 @@ public interface GridReviewDOMapper {
     GridReviewDO selectByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(GridReviewDO record);
+
+    int updateStatusByReviewNameAndGridCode(GridReviewDO record);
     
     int  deleteByGridCode(GridReviewDO record);
 

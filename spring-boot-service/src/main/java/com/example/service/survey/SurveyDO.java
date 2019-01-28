@@ -49,4 +49,11 @@ public class SurveyDO {
     private Long createdAt;
 
     private Long updatedAt;
+
+    // 统一返回错误信息
+    private String errorMessage;
+
+    // 传入参数使用
+    private String gridCode;
+    private Double maxCreditAmount;
 }

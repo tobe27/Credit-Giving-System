@@ -3,6 +3,7 @@ package com.example.common.util;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,12 +20,14 @@ public class JSONUtil {
      * @param object
      * @return
      */
-    public static Map<String, Object> convertObject2Map(Object object) {
-        JSONObject jsonObject = (JSONObject) JSON.toJSON(object);
-        Set<Map.Entry<String, Object>> entrySet = jsonObject.entrySet();
+    public static Map<String, Object> convertObject2Map(Object object) throws IllegalAccessException {
         Map<String, Object> map = new HashMap<>();
-        for (Map.Entry<String, Object> entry : entrySet) {
-            map.put(entry.getKey(), entry.getValue());
+        Class<?> clazz = object.getClass();
+        for (Field field : clazz.getDeclaredFields()) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+            Object value = field.get(object);
+            map.put(fieldName, value);
         }
         return map;
     }
